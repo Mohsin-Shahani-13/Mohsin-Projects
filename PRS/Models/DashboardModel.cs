@@ -469,7 +469,7 @@ namespace IP.Models
             query = dtWidget.Rows[0]["WidgetQuery"].ToString();
             query = change_query_params(query);
             //query = query.Replace("<programid>", "10034"); // Replace with your actual program ID
-            query = query.Replace("<programId>", HttpContext.Current.Session["ProgramId"].ToString());
+            //query = query.Replace("<programId>", HttpContext.Current.Session["ProgramId"].ToString());
 
             string connection_type = dtWidget.Rows[0]["ConType"].ToString();
             cDAL widget_db = get_widget_connection(connection_type.ToUpper());
@@ -595,7 +595,7 @@ namespace IP.Models
             query = dtWidget.Rows[0]["WidgetQuery"].ToString();
             query = change_query_params(query);
             //query = query.Replace("<programid>", "10034"); // Replace with your actual program ID
-            query = query.Replace("<programId>", HttpContext.Current.Session["ProgramId"].ToString());
+            //query = query.Replace("<programId>", HttpContext.Current.Session["ProgramId"].ToString());
 
             string connection_type = dtWidget.Rows[0]["ConType"].ToString();
             cDAL widget_db = get_widget_connection(connection_type.ToUpper());

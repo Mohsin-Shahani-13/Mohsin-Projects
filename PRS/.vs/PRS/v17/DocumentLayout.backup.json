@@ -3,40 +3,15 @@
   "WorkspaceRootPath": "F:\\Mohsin-Projects\\PRS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\areas\\supplychain\\views\\ro\\option.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:areas\\supplychain\\views\\ro\\option.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\models\\dashboardmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:models\\dashboardmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\areas\\supplychain\\views\\ro\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:areas\\supplychain\\views\\ro\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mohsin\\AppData\\Local\\Temp\\.vsdbgsrc\\043a653163fa6d74da2e6433a4c1159a3910b3a26ffde4eb30be651058988cf8\\DashboardModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\areas\\supplychain\\models\\ro.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:areas\\supplychain\\models\\ro.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\areas\\supplychain\\controllers\\rocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:areas\\supplychain\\controllers\\rocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\global.asax.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:global.asax.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\classess\\csite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:classess\\csite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\views\\dashboard\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:views\\dashboard\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -49,117 +24,41 @@
           "SelectedChildIndex": 1,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DashboardModel.cs",
+              "DocumentMoniker": "C:\\Users\\mohsin\\AppData\\Local\\Temp\\.vsdbgsrc\\043a653163fa6d74da2e6433a4c1159a3910b3a26ffde4eb30be651058988cf8\\DashboardModel.cs",
+              "ToolTip": "C:\\Users\\mohsin\\AppData\\Local\\Temp\\.vsdbgsrc\\043a653163fa6d74da2e6433a4c1159a3910b3a26ffde4eb30be651058988cf8\\DashboardModel.cs",
+              "ViewState": "AgIAAGcCAAAAAAAAAAAwwBkCAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-23T14:51:57.263Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Option.cshtml",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Views\\RO\\Option.cshtml",
-              "RelativeDocumentMoniker": "Areas\\SupplyChain\\Views\\RO\\Option.cshtml",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Views\\RO\\Option.cshtml",
-              "RelativeToolTip": "Areas\\SupplyChain\\Views\\RO\\Option.cshtml",
-              "ViewState": "AgIAAA4BAAAAAAAAAAAgwBcBAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-01-22T16:15:09.693Z",
+              "Title": "DashboardModel.cs",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Models\\DashboardModel.cs",
+              "RelativeDocumentMoniker": "Models\\DashboardModel.cs",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Models\\DashboardModel.cs",
+              "RelativeToolTip": "Models\\DashboardModel.cs",
+              "ViewState": "AgIAAM0BAAAAAAAAAAApwPcCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-23T14:51:35.642Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "RO.cs",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Models\\RO.cs",
-              "RelativeDocumentMoniker": "Areas\\SupplyChain\\Models\\RO.cs",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Models\\RO.cs",
-              "RelativeToolTip": "Areas\\SupplyChain\\Models\\RO.cs",
-              "ViewState": "AgIAAGMAAAAAAAAAAIAwwG0AAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-22T16:06:34.148Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ROController.cs",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Controllers\\ROController.cs",
-              "RelativeDocumentMoniker": "Areas\\SupplyChain\\Controllers\\ROController.cs",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Controllers\\ROController.cs",
-              "RelativeToolTip": "Areas\\SupplyChain\\Controllers\\ROController.cs",
-              "ViewState": "AgIAALoAAAAAAAAAAAD4vzsAAABkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-22T16:06:23.034Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Views\\RO\\Index.cshtml",
-              "RelativeDocumentMoniker": "Areas\\SupplyChain\\Views\\RO\\Index.cshtml",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Areas\\SupplyChain\\Views\\RO\\Index.cshtml",
-              "RelativeToolTip": "Areas\\SupplyChain\\Views\\RO\\Index.cshtml",
-              "ViewState": "AgIAAH8AAAAAAAAAAAAgwIEAAAAUAAAAAAAAAA==",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Views\\Dashboard\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Dashboard\\Index.cshtml",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Views\\Dashboard\\Index.cshtml",
+              "RelativeToolTip": "Views\\Dashboard\\Index.cshtml",
+              "ViewState": "AgIAAOkCAAAAAAAAAAAAAD0DAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-01-22T16:05:58.556Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "cSite.cs",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Classess\\cSite.cs",
-              "RelativeDocumentMoniker": "Classess\\cSite.cs",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Classess\\cSite.cs",
-              "RelativeToolTip": "Classess\\cSite.cs",
-              "ViewState": "AgIAAEIAAAAAAAAAAAApwEsAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-22T15:54:26.653Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "Controllers\\HomeController.cs",
-              "ViewState": "AgIAALwAAAAAAAAAAAAowMAAAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-22T15:51:21.885Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Global.asax.cs",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Global.asax.cs",
-              "RelativeDocumentMoniker": "Global.asax.cs",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Global.asax.cs",
-              "RelativeToolTip": "Global.asax.cs",
-              "ViewState": "AgIAAH8AAAAAAAAAAAApwIgAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-22T15:47:20.295Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAI0AAAAAAAAAAAAAAJ8AAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-01-22T15:07:04.881Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Views\\Home\\Login.cshtml",
-              "RelativeDocumentMoniker": "Views\\Home\\Login.cshtml",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Views\\Home\\Login.cshtml",
-              "RelativeToolTip": "Views\\Home\\Login.cshtml",
-              "ViewState": "AgIAAHQCAAAAAAAAAAAAAIcCAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-01-22T15:03:45.035Z"
+              "WhenOpened": "2025-01-23T14:49:10.89Z",
+              "EditorCaption": ""
             }
           ]
         }
