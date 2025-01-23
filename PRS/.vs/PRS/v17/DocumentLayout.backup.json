@@ -3,15 +3,28 @@
   "WorkspaceRootPath": "F:\\Mohsin-Projects\\PRS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\models\\dashboardmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:models\\dashboardmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\classess\\cauth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:classess\\cauth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mohsin\\AppData\\Local\\Temp\\.vsdbgsrc\\043a653163fa6d74da2e6433a4c1159a3910b3a26ffde4eb30be651058988cf8\\DashboardModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\views\\dashboard\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:views\\dashboard\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|F:\\Mohsin-Projects\\PRS\\classess\\csite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:classess\\csite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:views\\home\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\areas\\listingreports\\models\\defectlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:areas\\listingreports\\models\\defectlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|f:\\mohsin-projects\\prs\\models\\home.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{17791D53-852D-46AA-91C5-EA2B098ABD65}|PRS.csproj|solutionrelative:models\\home.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -21,43 +34,88 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DashboardModel.cs",
-              "DocumentMoniker": "C:\\Users\\mohsin\\AppData\\Local\\Temp\\.vsdbgsrc\\043a653163fa6d74da2e6433a4c1159a3910b3a26ffde4eb30be651058988cf8\\DashboardModel.cs",
-              "ToolTip": "C:\\Users\\mohsin\\AppData\\Local\\Temp\\.vsdbgsrc\\043a653163fa6d74da2e6433a4c1159a3910b3a26ffde4eb30be651058988cf8\\DashboardModel.cs",
-              "ViewState": "AgIAAGcCAAAAAAAAAAAwwBkCAAAEAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "DefectList.cs",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Areas\\ListingReports\\Models\\DefectList.cs",
+              "RelativeDocumentMoniker": "Areas\\ListingReports\\Models\\DefectList.cs",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Areas\\ListingReports\\Models\\DefectList.cs [Read Only]",
+              "RelativeToolTip": "Areas\\ListingReports\\Models\\DefectList.cs [Read Only]",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAgwFEAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-23T14:51:57.263Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-23T15:21:16.617Z",
+              "EditorCaption": " [Read Only]"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "DashboardModel.cs",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Models\\DashboardModel.cs",
-              "RelativeDocumentMoniker": "Models\\DashboardModel.cs",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Models\\DashboardModel.cs",
-              "RelativeToolTip": "Models\\DashboardModel.cs",
-              "ViewState": "AgIAAM0BAAAAAAAAAAApwPcCAAAAAAAAAAAAAA==",
+              "Title": "cAuth.cs",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Classess\\cAuth.cs",
+              "RelativeDocumentMoniker": "Classess\\cAuth.cs",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Classess\\cAuth.cs",
+              "RelativeToolTip": "Classess\\cAuth.cs",
+              "ViewState": "AgIAAOIAAAAAAAAAAAAmwNUAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-23T14:51:35.642Z",
+              "WhenOpened": "2025-01-23T15:00:16.988Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Views\\Dashboard\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Dashboard\\Index.cshtml",
-              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Views\\Dashboard\\Index.cshtml",
-              "RelativeToolTip": "Views\\Dashboard\\Index.cshtml",
-              "ViewState": "AgIAAOkCAAAAAAAAAAAAAD0DAAA1AAAAAAAAAA==",
+              "Title": "cSite.cs",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Classess\\cSite.cs",
+              "RelativeDocumentMoniker": "Classess\\cSite.cs",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Classess\\cSite.cs",
+              "RelativeToolTip": "Classess\\cSite.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwFQAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-22T15:54:26.653Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Views\\Home\\Login.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\Login.cshtml",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Views\\Home\\Login.cshtml",
+              "RelativeToolTip": "Views\\Home\\Login.cshtml",
+              "ViewState": "AgIAAJIBAAAAAAAAAAAAAOIBAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-01-23T14:49:10.89Z",
+              "WhenOpened": "2025-01-23T15:00:07.43Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Home.cs",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Models\\Home.cs",
+              "RelativeDocumentMoniker": "Models\\Home.cs",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Models\\Home.cs",
+              "RelativeToolTip": "Models\\Home.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-23T15:00:00.848Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "F:\\Mohsin-Projects\\PRS\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "F:\\Mohsin-Projects\\PRS\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAAKkAAAAAAAAAAIAwwLkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-23T14:59:55.922Z",
               "EditorCaption": ""
             }
           ]

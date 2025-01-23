@@ -162,13 +162,13 @@ public class HomeController : Controller
 
     [OutputCache(Duration = 0)]
     [HttpPost]
-    public JsonResult ValidateUser(string username, string password, string ddlDomain)
+    public JsonResult ValidateUser(string username, string password)
     {
         LoginStatus status = new LoginStatus();
         cAuth oAuth = new cAuth();
 
 
-        bool isValidUser = oAuth.CheckUser(username, password, ddlDomain);
+        bool isValidUser = oAuth.CheckUser(username, password);
 
         if (isValidUser)
         {

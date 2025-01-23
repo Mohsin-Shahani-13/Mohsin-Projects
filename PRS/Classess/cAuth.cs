@@ -30,30 +30,35 @@ namespace IP.Models
 
         public string ConType { get; set; }
         public string Permission { get; set; }
-        public bool CheckUser(string username, string password, string domain)
+        public bool CheckUser(string username, string password)
         {
+            // Initialize your DAL object
+            cDAL oDAL = new cDAL("ACTIVE");
             bool check = false;
-            //Check Existing User
-            // int dbChkUsr = Convert.ToInt32(CheckExistingUser(username));
-            bool domainChkUsr = ValidateActDirUser(username, password, domain);
-            //UserName have  authentication in Domain and Database 
-            if (domainChkUsr)
-            {
 
+            // Query to validate the username and password
+            string query = "SELECT COUNT(*) FROM IP.[User] WHERE [User] = '<username>' AND [Password] = '<password>'";
+
+            // Replace placeholders in the query with actual values
+            query = query.Replace("<username>", username);
+            query = query.Replace("<password>", password);
+
+            // Execute the query and fetch the result
+            DataTable dt = oDAL.GetData(query);
+
+            // Check if the query returned a result and process it
+            if (dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0][0]) > 0)
+            {
                 check = true;
-                return check;
             }
 
-            if (domainChkUsr)
-            {
-                Autenticated = "authenticated";
-            }
             return check;
         }
+
         //Add User Records
         public void AddUser(String empName)
         {
-            oDAL = new cDAL("INIT");
+            oDAL = new cDAL("ACTIVE");
             string sql =
                     @"
                         INSERT INTO Employee                                   
@@ -80,7 +85,7 @@ namespace IP.Models
         //Check Existing User
         public Object CheckExistingUser(string userName)
         {
-            oDAL = new cDAL("INIT");
+            oDAL = new cDAL("ACTIVE");
             string sql = @"
              SELECT COUNT(WinLogin) 
                     FROM Ip.Employee 
@@ -91,7 +96,7 @@ namespace IP.Models
         //Get UserName Detail
         public DataTable GetUserDetail(string userName)
         {
-            oDAL = new cDAL("INIT");
+            oDAL = new cDAL("ACTIVE");
             string sql = @"
                 SELECT EmpId,EmpName,IsAdmin,DBType, DefaultSite 
                 FROM Employee 
@@ -120,94 +125,94 @@ namespace IP.Models
             oDAL.Execute(sql);
         }
         //Domain check
-        public bool ValidateActDirUser(string username, string password, string sDomain)
-        {
-            bool bResult = false;
-            try
-            {
-                if (sDomain == "teleplan")
-                {
-                    PrincipalContext domain;
-                    try
-                    {
-                        // Connect to the domain:
-                        domain = new PrincipalContext(ContextType.Domain, "tgn.teleplan.com", username, password);
-                        bResult = domain.ValidateCredentials(username, password);
+        //public bool ValidateActDirUser(string username, string password)
+        //{
+        //    bool bResult = false;
+        //    try
+        //    {
+        //        //if (sDomain == "teleplan")
+        //        //{
+        //        //    PrincipalContext domain;
+        //        //    try
+        //        //    {
+        //        //        // Connect to the domain:
+        //        //        domain = new PrincipalContext(ContextType.Domain, "tgn.teleplan.com", username, password);
+        //        //        bResult = domain.ValidateCredentials(username, password);
 
-                        if (domain.ConnectedServer.Contains("Exception"))
-                            bResult = false;
+        //        //        if (domain.ConnectedServer.Contains("Exception"))
+        //        //            bResult = false;
 
-                        if (!bResult)
-                            Message = "Authenticated! failed";
-                    }
-                    catch (Exception ex)
-                    {
-                        Message = "Authenticated! failed";
-                        // Unable to connect to the domain (connection error or bad username/password):
-                        return false;
-                    }
-                    return bResult;
-                }
-                else if (sDomain == "Valuout")
-                {
-                    PrincipalContext domain;
-                    try
-                    {
-                        // Connect to the domain:
-                        domain = new PrincipalContext(ContextType.Domain, "valuout.com", username, password);
-                        bResult = domain.ValidateCredentials(username, password);
+        //        //        if (!bResult)
+        //        //            Message = "Authenticated! failed";
+        //        //    }
+        //        //    catch (Exception ex)
+        //        //    {
+        //        //        Message = "Authenticated! failed";
+        //        //        // Unable to connect to the domain (connection error or bad username/password):
+        //        //        return false;
+        //        //    }
+        //        //    return bResult;
+        //        //}
+        //        //else if (sDomain == "Valuout")
+        //        //{
+        //        //    PrincipalContext domain;
+        //        //    try
+        //        //    {
+        //        //        // Connect to the domain:
+        //        //        domain = new PrincipalContext(ContextType.Domain, "valuout.com", username, password);
+        //        //        bResult = domain.ValidateCredentials(username, password);
 
-                        if (domain.ConnectedServer.Contains("Exception"))
-                            bResult = false;
+        //        //        if (domain.ConnectedServer.Contains("Exception"))
+        //        //            bResult = false;
 
-                        if (!bResult)
-                            Message = "Authenticated! failed";
-                    }
-                    catch (Exception ex)
-                    {
-                        Message = "Authenticated! failed";
-                        // Unable to connect to the domain (connection error or bad username/password):
-                        return false;
-                    }
-                    return bResult;
-                }
-                else if (sDomain == "reconext")
-                {
-                    PrincipalContext domain;
-                    try
-                    {
-                        // Connect to the domain:
-                        domain = new PrincipalContext(ContextType.Domain, "reconext.com", "svc_PlusRS", "4cce55PRS#");
-                        bResult = domain.ValidateCredentials(username, password);
+        //        //        if (!bResult)
+        //        //            Message = "Authenticated! failed";
+        //        //    }
+        //        //    catch (Exception ex)
+        //        //    {
+        //        //        Message = "Authenticated! failed";
+        //        //        // Unable to connect to the domain (connection error or bad username/password):
+        //        //        return false;
+        //        //    }
+        //        //    return bResult;
+        //        //}
+        //        //else if (sDomain == "reconext")
+        //        //{
+        //        //    PrincipalContext domain;
+        //        //    try
+        //        //    {
+        //        //        // Connect to the domain:
+        //        //        domain = new PrincipalContext(ContextType.Domain, "reconext.com", "svc_PlusRS", "4cce55PRS#");
+        //        //        bResult = domain.ValidateCredentials(username, password);
 
-                        if (domain.ConnectedServer.Contains("Exception"))
-                            bResult = false;
+        //        //        if (domain.ConnectedServer.Contains("Exception"))
+        //        //            bResult = false;
 
-                        if (!bResult)
-                            Message = "Authenticated! failed";
+        //        //        if (!bResult)
+        //        //            Message = "Authenticated! failed";
 
-                    }
-                    catch (Exception ex)
-                    {
-                        Message = "Authenticated! failed";
-                        // Unable to connect to the domain (connection error or bad username/password):
-                        return false;
-                    }
+        //        //    }
+        //        //    catch (Exception ex)
+        //        //    {
+        //        //        Message = "Authenticated! failed";
+        //        //        // Unable to connect to the domain (connection error or bad username/password):
+        //        //        return false;
+        //        //    }
 
-                    return bResult;
-                }
-            }
-            catch (Exception ex)
-            {
-                Message = ex.Message;
-                bResult = false;
-            }
-            return bResult;
-        }
+        //        //    return bResult;
+        //        //}
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Message = ex.Message;
+        //        bResult = false;
+        //    }
+        //    return bResult;
+        //}
 
         public bool UpdateEmpDbType(string conType)
         {
-            oDAL = new cDAL("INIT");
+            oDAL = new cDAL("ACTIVE");
             string sql = @"UPDATE Employee 
                            SET DBType = '" + conType + "' " +
                            "WHERE EmpId = '" + HttpContext.Current.Session["SigninId"] + "'";
@@ -217,14 +222,14 @@ namespace IP.Models
             return true;
         }
 
-        public bool CheckUserForRegister(string username, string password, string domain)
+        public bool CheckUserForRegister(string username, string password )
         {
             bool check = false;
             //Check Existing User
             int dbChkUsr = Convert.ToInt32(CheckExistingUser(username));
-            bool domainChkUsr = ValidateActDirUser(username, password, domain);
+            
             //UserName have  authentication in Domain and Database 
-            if (domainChkUsr && dbChkUsr > 0)
+            if (dbChkUsr > 0)
             {
                 //Get User Name Detail
                 DataTable dt = GetUserDetail(username);
@@ -251,7 +256,7 @@ namespace IP.Models
                 return check;
             }
             //UserName  authentication in Domain but username did not found in Database 
-            if (domainChkUsr && dbChkUsr == 0)
+            if (dbChkUsr == 0)
             {
                 //AddUserRecords
                 AddUser(username);
