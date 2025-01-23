@@ -1,0 +1,499 @@
+﻿@model IP.Models.DBIngenico
+@{
+    ViewBag.Title = "Ingenico";
+    Layout = null;
+}
+
+<style>
+    .even {
+        background-color: #080808 !important;
+        color: limegreen !important;
+    }
+
+    .odd {
+        background-color: black !important;
+        color: limegreen !important;
+    }
+
+    table > thead > tr > th {
+        background-color: #202020 !important;
+    }
+
+
+    #LstData_info {
+        visibility: hidden;
+    }
+
+    .red_clr {
+        color: red;
+    }
+
+    #LstData_paginate {
+        visibility: hidden;
+    }
+
+    .yellow_clr {
+        color: yellow;
+    }
+</style>
+@*<div id="parentDiv" class="container-fluid">
+        <div id="dataList" class="box panel panel-default">
+            <div class="box-header with-border text-center" style="background-color:black; color:limegreen; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                <h6 id="DBTitle" style="font-size:30px; text-align:center" class="box-title"></h6>
+            </div>
+            <div class="box-body" style="background-color: black">
+                <table id="LstData" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 28px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                    <thead class="sorted-asc" style="font-size: 14px;">
+                        <tr style="font-size:16px;">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                    <tfoot>
+                        <tr style="border-color:white">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th id="pageDS" style="color:white; text-align:center;background-color:#202020;"></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>*@
+<div class="container-fluid" style="background-color:black">
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <h6 id="DBTitle" style="font-size:30px; text-align:center;background-color:black; color:limegreen;" class="box-title"></h6>
+            <div class="box-body" style="background-color: black">
+                <table id="LstData" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 28px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                    <thead class="sorted-asc" style="font-size: 14px;">
+                        <tr style="font-size:22px;">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <div class="col-sm-3 col-lg-3 col-md-4  text-center" style="width:100%;background-color:#202020 ">
+                <h6 id="pageDS" style="font-size:30px; text-align:center;font-weight:bold;height:30px;color:whitesmoke; font-family:Arial;"></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var childCount = 0;
+    $(document).ready(function () {
+        setInterval(function () {
+            cache_clear()
+        }, 30000);
+    });
+    function cache_clear() {
+        childCount = (childCount + 1);
+        LoaData();
+    }
+    ToggleDataList(false);
+    LoaData();
+    function LoaData() {
+        //$('#tblBody').empty();
+
+        var tableHeader = $('.table').innerHeight();
+        var topHeader = $('.box-header').innerHeight();
+        var browserHeight = window.innerHeight;
+        var gridHeight = browserHeight - tableHeader - topHeader - 8;
+        $('#DBTitle').text('');
+        $('#pageDS').text('');
+        var title = '';
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/DBIngenico/GetList',
+            data: {
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#DBTitle').append(data.DBTitle);
+                var title = data.shift
+                dataLst(data.lstIngenico, title);
+
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+
+    function dataLst(data, title) {
+
+        var columnDef = '';
+        var childArray = [];
+
+        while (data.length > 0) {
+            childArray.push(data.splice(0, 15));
+        }
+
+        if (title == "Morning") {
+
+            columnDef = [
+
+
+                { "title": "R Lvl", "width": "50px", "targets": 0 },
+                { "title": "User Name", "targets": 1 },
+                {
+                    "title": "Targets", "width": "80px", "className": "text-center", "targets": 2,
+                },
+                {
+                    "title": "6:00 To 7:00", "width": "70px", "className": "text-center", "targets": 3,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "7:00 To 8:00", "width": "70px", "className": "text-center", "targets": 4,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "8:00 To 9:00", "width": "70px", "className": "text-center", "targets": 5,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "9:00 To 10:00", "width": "70px", "className": "text-center", "targets": 6,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "10:00 To 11:00", "width": "70px", "className": "text-center", "targets": 7,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "11:00 To 12:00", "width": "70px", "className": "text-center", "targets": 8,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "12:00 To 13:00", "width": "70px", "className": "text-center", "targets": 9,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "13:00 To 14:00", "width": "70px", "className": "text-center", "targets": 10,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+
+                {
+                    "title": "Total", "width": "80px", "className": "text-center", "targets": 11,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+
+                {
+                    "title": "To Do", "width": "80px", "className": "text-center", "targets": 12,
+                    //render: function (data, type, row) {
+
+                    //    var val;
+                    //    var decimalVal = +data;
+                    //    if (decimalVal == 0) {
+                    //        decimalVal = '';
+                    //        val = '<div class=red_clr>' + decimalVal + '</div>';
+
+                    //    }
+                    //    else {
+                    //        val = '<div class=red_clr>' + thousands_separators(data.toFixed(1)) + '</div>';
+                    //    }
+
+
+                    //    return val;
+                    //},
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                }
+
+            ];
+        }
+        else if (title == "Afternoon") {
+
+            columnDef = [
+
+
+                { "title": "R Lvl", "width": "50px", "targets": 0 },
+                { "title": "User Name", "targets": 1 },
+                { "title": "Targets", "width": "80px", "className": "text-center", "targets": 2 },
+                {
+                    "title": "14:00 To 15:00", "width": "70px", "className": "text-center", "targets": 3,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "15:00 To 16:00", "width": "70px", "className": "text-center", "targets": 4,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "16:00 To 17:00", "width": "70px", "className": "text-center", "targets": 5,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "17:00 To 18:00", "width": "70px", "className": "text-center", "targets": 6,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "18:00 To 19:00", "width": "70px", "className": "text-center", "targets": 7,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "19:00 To 20:00", "width": "70px", "className": "text-center", "targets": 8,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "20:00 To 21:00", "width": "70px", "className": "text-center", "targets": 9,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "21:00 To 22:00", "width": "70px", "className": "text-center", "targets": 10,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+
+                {
+                    "title": "Total", "width": "80px", "className": "text-center", "targets": 11,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+
+                {
+                    "title": "To Do", "width": "80px", "className": "text-center", "targets": 12,
+                    //render: function (data, type, row) {
+
+                    //    var val;
+                    //    var decimalVal = +data;
+                    //    if (decimalVal == 0) {
+                    //        decimalVal = '';
+                    //        val = '<div class=red_clr>' + decimalVal + '</div>';
+
+                    //    }
+                    //    else {
+                    //        val = '<div class=red_clr>' + thousands_separators(data.toFixed(1)) + '</div>';
+                    //    }
+
+
+                    //    return val;
+                    //},
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                }
+
+            ];
+        }
+        else if (title == "Night") {
+
+            columnDef = [
+
+
+                { "title": "R Lvl", "width": "50px", "targets": 0 },
+                { "title": "User Name", "targets": 1 },
+                { "title": "Targets", "width": "80px", "className": "text-center", "targets": 2 },
+                {
+                    "title": "22:00 To 23:00", "width": "70px", "className": "text-center", "targets": 3,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "23:00 To 24:00", "width": "70px", "className": "text-center", "targets": 4,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "0:00 To 1:00", "width": "70px", "className": "text-center", "targets": 5,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "1:00 To 2:00", "width": "70px", "className": "text-center", "targets": 6,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "2:00 To 3:00", "width": "70px", "className": "text-center", "targets": 7,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "3:00 To 4:00", "width": "70px", "className": "text-center", "targets": 8,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "4:00 - 5:00", "width": "70px", "className": "text-center", "targets": 9,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+                {
+                    "title": "5:00 To 6:00", "width": "70px", "className": "text-center", "targets": 10,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+
+                {
+                    "title": "Total", "width": "80px", "className": "text-center", "targets": 11,
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                },
+
+                {
+                    "title": "To Do", "width": "80px", "className": "text-center", "targets": 12,
+                    //render: function (data, type, row) {
+                    //    var val;
+                    //    var decimalVal = +data;
+                    //    if (decimalVal == 0) {
+                    //        decimalVal = '';
+                    //        val = '<div class=red_clr>' + decimalVal + '</div>';
+
+                    //    }
+                    //    else {
+                    //        val = '<div class=red_clr>' + thousands_separators(data.toFixed(1)) + '</div>';
+                    //    }
+
+
+                    //    return val;
+                    //},
+                    render: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(1));
+                    }
+                }
+
+            ];
+        }
+
+        var totalCounter = childArray.length; // No of Child array length
+        if (childCount >= totalCounter) { //Childcount Greater than TotalCount
+            childCount = 0;
+        }
+        ToggleDataList(true);
+        MakeDataGrid('LstData', childArray[childCount], 0, columnDef, false, false, false);
+        PageOf(childCount, totalCounter);
+
+
+    }
+    function PageOf(childCount, totalCounter) {
+
+        $('#pageDS').text('');
+        if (totalCounter > 0) {
+            childCount = (childCount + 1);
+        }
+        $('#pageDS').text(" Showing " + childCount + " of " + totalCounter);
+    }
+
+</script>

@@ -1,0 +1,300 @@
+﻿@model IP.Areas.ListingReports.Models.FimerTesterResults
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+ /*   .modal-body{
+        overflow-y:scroll;
+        text-overflow:clip;
+    }*/
+    .modal-backdrop.in {
+        filter: alpha(opacity=0);
+        opacity: .0;
+    }
+
+    .modal-backdrop {
+        position: relative;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1040;
+        background-color: #000;
+    }
+    textarea {
+        resize: none !important;
+    }
+
+    .notexport {
+        text-align: center;
+    }
+    </style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstFimerTesterResults" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                @*<tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>*@
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "TEXTBOX_WA";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+
+    $.fn.dataTable.render.ellipsisAdr2 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "TEXTBOX_AL";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+
+    $.fn.dataTable.render.ellipsisAdr3 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+             var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                //var str = data.toString(); // cast numbers
+                var header = "TEXTBOX_VAR";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    //$.fn.dataTable.render.ellipsis = function (cutoff) {
+
+    //    return function (data, type, row) {
+    //        if (type === 'display') {
+    //            var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+    //            var header1 = "";
+    //            var header2 = "";
+    //            var header3 = "";
+    //            header1 = "TEXTBOX_WA";
+    //            header2 = "TEXTBOX_AL";
+    //            header3 = "TEXTBOX_VAR";
+
+
+    //            return str.length < cutoff ?
+
+    //                str :
+
+    //                str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL1(\'' + "TEXTBOX_WA" + '\', \'' + str + '\')"> More</a>';
+    //            str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL2(\'' + "TEXTBOX_AL" + '\', \'' + str + '\')"> More</a>';
+    //            str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL3(\'' + "TEXTBOX_VAR" + '\', \'' + str + '\')"> More</a>';
+    //            // str.substr(0, cutoff - 1) + '<input class="form-control"  type="multiline" onclick="showComments(\'' + header + '\', \'' + str + '\')" />';
+    //        }
+    //        // Search, order and type can use the original data
+    //        return data;
+    //    };
+    //};
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var _serialNo = $('#serialNo').val();
+        //var _programId = $('#ProgramID').val();
+        //var _ProgramName = $("#ProgramID option:selected").text();
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/FimerTesterResults/GetList',
+            data: {
+                serialNo: _serialNo,
+                //programId: _programId,
+                //ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "id", "title": "ID", "width": "60px", "visible": false },
+                        {
+                            "data": "SERIAL", "title": "Serial No.", "width": "80px"
+                            //,render: function (data, type, row) {
+                            //    var d = data.toString();
+                            //    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&page=list" target=_blank > ' + "\u200C" + d + '</a>';
+
+                            //    return url;
+                            //}
+                        },
+                        { "data": "USER_NAME", "title": "Username", "width": "80px" },
+                        { "data": "MICRO_VER", "title": "Micro_Ver", "width": "70px" },
+                        { "data": "DCDC_VER", "title": "DCDC_VER", "width": "70px" },
+                        { "data": "INV_VER", "title": "INV_VER", "width": "70px" },
+                        { "data": "MICRO_S_N", "title": "MICRO_S_N", "width": "120px" },
+                        { "data": "MICRO_P_N", "title": "MICRO_P_N", "width": "60px" },
+                        { "data": "TYPE", "title": "Type", "width": "100px" },
+                        { "data": "STANDARD", "title": "STANDARD", "width": "70px" },
+                        { "data": "STATO_MACCHINA", "title": "STATO_MACCHINA", "width": "90px" },
+                        { "data": "STATO_DCDC1", "title": "STATO_DCDC1", "width": "100px" },
+                        { "data": "STATO_DCDC2", "title": "STATO_DCDC2", "width": "90px" },
+                        { "data": "STATO_INVERTER", "title": "STATO_INVERTER", "width": "90px" },
+                        { "data": "STATO_ALLARME", "title": "STATO_ALLARME", "width": "100px" },
+                        { "data": "TEXTBOX_WA", "title": "TEXTBOX_WA", "render": $.fn.dataTable.render.ellipsisAdr1(20) },
+                        { "data": "CommentTextForExport", "title": "TEXTBOX_WA", "visible": false },
+                        { "data": "TEXTBOX_AL", "title": "TEXTBOX_AL", "render": $.fn.dataTable.render.ellipsisAdr2(20) },
+                        { "data": "CommentTextForExport1", "title": "TEXTBOX_AL", "visible": false },
+                        { "data": "TEXTBOX_VAR", "title": "TEXTBOX_VAR", "render": $.fn.dataTable.render.ellipsisAdr3(20) },
+                        { "data": "CommentTextForExport2", "title": "TEXTBOX_VAR", "visible": false },
+                        { "data": "LIFETIME_ENERGY", "title": "LIFETIME_ENERGY", "width": "90px" },
+                        { "data": "PARTIAL_ENERGY", "title": "PARTIAL_ENERGY", "width": "90px" },
+                        { "data": "LIFETIME", "title": "LIFETIME", "width": "90px" },
+                        { "data": "GRID_TIME", "title": "GRID_TIME", "width": "80px" },
+                        { "data": "PARTIAL_TIME", "title": "PARTIAL_TIME", "width": "80px" },
+                        { "data": "TODAY_ENERGY", "title": "TODAY_ENERGY", "width": "100px" },
+                        { "data": "WEEK_ENERGY", "title": "WEEK_ENERGY", "width": "90px" },
+                        { "data": "MONTH_ENERGY", "title": "MONTH_ENERGY", "width": "90px" },
+                        { "data": "YEAR_ENERGY", "title": "YEAR_ENERGY", "width": "100px" },
+                        { "data": "LAST_CPD", "title": "LAST_CPD", "width": "80px" },
+                        { "data": "CREATION_TIME", "title": "CREATION_TIME", "width": "90px", "className": "text-right" },
+
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        //$(api.column().footer()).html(thousands_separators(api.column().data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstFimerTesterResults', data.lstFimerTesterResults, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+
+</script>
+

@@ -1,0 +1,403 @@
+﻿@model IP.Models.WidgetModel
+@{
+    Layout = null;
+}
+<style type="text/css">
+    #btnUploadFile {
+        margin: 4px 6px 0px 0px;
+        font-weight: 600;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="datalist">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="box panel">
+                    <div class="box-header with-border bg-blue-gradient">
+                        <div>
+                            <button type="button" class="btn btn-box-tool pull-left">
+                                <span class="fa fa-th-list fa-lg white"></span>
+                            </button>
+                            <h6 class="box-title"><strong>@Html.DisplayFor(m => m.ReportTitle)</strong></h6>
+                        </div>
+                        <div class="box-tools pull-right" style="position:absolute !important;">
+                            <div id="buttons" class="box-tools pull-right">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-body">
+                        <div>
+                            <table id="lst_widgets" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="notexport"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-8">
+                <div class="box panel">
+                    <div class="box-header with-border bg-blue-gradient">
+                        <h6 class="box-title"><strong>Widget Detail</strong><strong id="filterString"></strong></h6>
+                        <div class="pull-right">
+                            <input type="button" id="btn_new" onclick="reset_controls('N')" class="btn btn-primary" style="padding: 1px 10px 1px 10px !important; " value="New" />
+                            <input type="submit" id="btn_update" onclick="save_widget()" class="btn btn-success" style="padding: 1px 10px 1px 10px !important; " value="Save" />
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div>
+                            <form>
+                                <table cellpadding="0" cellspacing="0" width="98%">
+                                    <tr>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Title:</label>
+                                                <input type="text" id="txt_title" class="form-control" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Type:</label>
+                                                <select id="dd_type" class="form-control">
+                                                    <option value="chart">Chart</option>
+                                                    <option value="count">Count</option>
+                                                    <option value="count_group">Count Group</option>
+                                                    <option value="hyperlist">Hyperlink List</option>
+                                                    <option value="list">List</option>
+                                                    <option value="table">Table</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Group Id:</label>
+                                                <input type="text" id="txt_group_id" class="form-control" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Title Short:</label>
+                                                <input type="text" id="txt_title_short" class="form-control" />
+                                            </div>
+                                        </td>
+                                        <td colspan="2">
+                                            <div class="form-group col-pad">
+                                                <label>Description:</label>
+                                                <input type="text" id="txt_desc" class="form-control" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Value ?:</label>
+                                                <select id="dd_count_type" class="form-control">
+                                                    <option value="cost">Cost</option>
+                                                    <option value="qty">Qty</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Icon:</label>
+                                                <input type="text" id="txt_icon" class="form-control" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Background Color:</label>
+                                                <select id="txt_bg" class="form-control">
+                                                    <option value="bg-aqua">Aqua</option>
+                                                    <option value="bg-green">Green</option>
+                                                    <option value="bg-yellow">Yellow</option>
+                                                    <option value="bg-red">Red</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="form-group col-pad">
+                                                <label>Query:</label>
+                                                <textarea id="txt_query" rows="3" class="form-control"></textarea>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="form-group col-pad">
+                                                <label>Column Format:</label>
+                                                <textarea id="txt_column_format" class="form-control" rows="3"></textarea>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Min. Size:</label>
+                                                <input type="text" id="txt_min_size" class="form-control" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>Max Size:</label>
+                                                <input type="text" id="txt_max_size" class="form-control" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+                                                <label>URL:</label>
+                                                <input type="text" id="txt_URL" class="form-control" />
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group col-pad">
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-pad">
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var row_indexX = 0;
+    var row_index;
+    var table = null;
+    load_all_widgets();
+
+    $(document).ready(function () {
+        $("body").on("contextmenu", function (e) {
+            return false;
+        });
+    });
+
+    function load_all_widgets() {
+        $('#lst_widgets > tbody').empty();
+        $('#lst_widgets > tbody').empty();
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/Widget/GetWidgetList',
+            datatype: JSON,
+            data:
+            {
+                report_code: $("#rptCode").val()
+            },
+            //async:false,
+            success: function (data) {
+                var columnDef = [];
+                columnDef.push({ "title": "Id.", "width": "50px", "targets": 0 });
+                columnDef.push({ "title": "Widget Name.", "targets": 1 });
+                columnDef.push({ "title": "Type", "className": "text-center", "width": "100px", "targets": 2 });
+                columnDef.push({
+                    "title": "Status", "width": "55px",
+                    "targets": 3, "className": "text-center"
+                });
+
+                $('#lst_widgets').DataTable().clear();
+                $('#lst_widgets').DataTable().destroy();
+
+                table = MakeMeDMLGrid('lst_widgets', data.lst_widgets, 0, columnDef, true, false);
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+
+    $('#lst_widgets > tbody').on('click', 'td', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+        row_index = row.index();
+
+        if (row_index == row_indexX) {
+            //reset all controls here
+            $("#filterString").empty();
+
+            row_indexX = 0;
+            row_index = null;
+            return;
+        }
+        row_indexX = row_index;
+        var widget_id = row.data()[0];
+        $("#btn_new").prop("disabled",false);
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/Widget/GetWidget',
+            datatype: JSON,
+            data:
+            {
+                widget_id: widget_id
+            },
+            //async:false,
+            success: function (data) {
+                $("#txt_title").val(data.title);
+                $("#txt_title_short").val(data.title_short);
+                $("#txt_desc").val(data.desc);
+                $("#dd_type").val(data.type);
+                $("#txt_max_size").val(data.max_size);
+                $("#txt_min_size").val(data.min_size);
+                $("#txt_query").val(data.query);
+                $("#txt_URL").val(data.URL);
+                $("#txt_bg").val(data.bg_color);
+                $("#txt_column_format").val(data.column_format);
+                $("#txt_group_id").val(data.group_id);
+                $("#txt_icon").val(data.icon);
+                $("#dd_count_type").val(data.count_type);
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    });
+
+    function save_widget() {
+        alert(row_index);
+        if (row_index != null) {
+            var row = table.row(':eq(' + row_index + ')');
+            var widget_id = row.data()[0];
+            //Update
+            var model_data = {
+                "widget_id" : widget_id,
+                "widget_title": $("#txt_title").val(),
+                "widget_title_short": $("#txt_title_short").val(),
+                "widget_desc": $("#txt_desc").val(),
+                "widget_type": $("#dd_type").val(),
+                "widget_max_size": $("#txt_max_size").val(),
+                "widget_min_size": $("#txt_min_size").val(),
+                "widget_query": $("#txt_query").val(),
+                "widget_URL": $("#txt_URL").val(),
+                "widget_background_color": $("#txt_bg").val(),
+                "widget_column_format": $("#txt_column_format").val(),
+                "widget_group_id": $("#txt_group_id").val(),
+                "widget_count_type": $("#dd_count_type").val(),
+                "widget_icon": $("#txt_icon").val()
+            };
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: '/Widget/UpdateWidget',
+                data: JSON.stringify(model_data),
+                datatype: JSON,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.IsValid) {
+                        load_all_widgets();
+                        row_indexX = 0;
+                        reset_controls('N');
+                    }
+                    else {
+                        showAlert("Error", "Some error occured while saving record(s)");
+                    }
+
+                },
+                onerror: function (r) { r },
+                failure: function (r) { r }
+            });
+        }
+        else {
+            //INSERT
+
+            var model_data = {
+                "widget_title": $("#txt_title").val(),
+                "widget_title_short": $("#txt_title_short").val(),
+                "widget_desc": $("#txt_desc").val(),
+                "widget_type": $("#dd_type").val(),
+                "widget_max_size": $("#txt_max_size").val(),
+                "widget_min_size": $("#txt_min_size").val(),
+                "widget_query": $("#txt_query").val(),
+                "widget_URL": $("#txt_URL").val(),
+                "widget_background_color": $("#txt_bg").val(),
+                "widget_column_format": $("#txt_column_format").val(),
+                "widget_group_id": $("#txt_group_id").val(),
+                "widget_count_type": $("#dd_count_type").val(),
+                "widget_icon": $("#txt_icon").val()
+            };
+
+
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: '/Widget/AddWidget',
+                data:JSON.stringify(model_data),
+                datatype: JSON,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.IsValid) {
+                        load_all_widgets();
+                        row_indexX = 0;
+                        reset_controls('N');
+                    }
+                    else {
+                        showAlert("Error", "Some error occured while saving record(s)");
+                    }
+
+                },
+                onerror: function (r) { r },
+                failure: function (r) { r }
+            });
+        }
+
+
+
+
+    }
+
+    function new_record() {
+        reset_controls('N');
+    }
+    function reset_controls(mode) {
+        if (mode == 'N') {
+            $("#btn_new").attr("disabled", "true");
+            
+            //this.$("input:text,textarea,select").val("");
+            if (row_index != null && row_index > 0)
+            {
+                var row = table.row(':eq(' + row_index + ')');
+                row.deselect();
+            }
+
+            row_indexX = 0;
+            row_index = null;
+        }
+        else if (mode == 'U') {
+
+        }
+    }
+
+</script>

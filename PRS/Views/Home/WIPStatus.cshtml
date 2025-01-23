@@ -1,0 +1,59 @@
+﻿@model IEnumerable<IP.Models.UnitList>
+@{
+    ViewBag.Title = "WIPStatus";
+    Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
+}
+<div id="parentDiv" class="container-fluid" >
+    <div class="row">
+        <div class="col-md-3">
+            <div id="dataList" class="box panel panel-default">
+                <div class="box-header with-border bg-blue-gradient">
+                    <h6 class="box-title"><strong>Unit(s)</strong> due at @Request.QueryString["station"] </h6>
+                </div>
+                <div class="box-body">
+                    <table id="dgList" class="table table-bordered table-striped text-sm">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.serial_number)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                    {
+                        string link = "\\\\DHR\\\\Detail?unitMstId=" + item.UnitMstId;
+                            <tr>
+                                <td>
+                                    <a onclick="OpenPage('@link')">
+                                        @item.serial_number
+                                    </a>
+                                </td>
+                            </tr>
+                    }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="rghtDiv" class="col-md-9">
+
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        function OpenPage(link) {
+            $.ajax({
+                url: link,
+                success: function (data) {
+                    $("#rghtDiv").html(data)
+                }
+            });
+        }
+
+        MakeMeGrid('dgList', 75);
+    </script>
+}
+

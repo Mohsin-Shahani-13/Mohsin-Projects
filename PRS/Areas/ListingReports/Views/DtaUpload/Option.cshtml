@@ -1,0 +1,105 @@
+﻿@model IP.Areas.ListingReports.Models.DtaUpload
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td class="pad" colspan="4">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="DataUpload", Value = "DataUpload",  },
+                   new SelectListItem{ Text="DataUploadSchedule", Value = "DataUploadSchedule" },
+                   new SelectListItem{ Text="DataUploadArchive", Value = "DataUploadArchive",  },
+                   new SelectListItem{ Text="DataUploadScheduleArchive", Value = "DataUploadScheduleArchive" },
+
+
+                }, new { @id = "rptName", @class = "form-control" })
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $(document).ready(function () {
+
+        $("#ProgramID").show();
+
+        $("#rptType").change(function () {
+            var selected_state = document.getElementById("rptType").value;
+            if (selected_state === "DataUpload") {
+
+                $("#ProgramID").show();
+
+            }
+            else if (selected_state === "DataUploadSchedule") {
+                $("#ProgramID").show();
+
+            }
+            else if (selected_state === "DataUploadArchive") {
+                $("#ProgramID").show();
+
+            }
+            else if (selected_state === "DataUploadScheduleArchive") {
+                $("#ProgramID").show();
+
+            }
+            else {
+                $('#lblMsg').empty();
+                $("#ProgramID").show();
+
+            }
+
+        });
+    })
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        Go();
+
+    });
+
+    function Go() {
+
+        var ProgramID = $('#ddProgram').val();
+        var ProgramName = $('#ddProgram option:selected').text();
+        var rptName = $('#rptName option:selected').text();
+
+
+        $('#option').modal('hide');
+        OpenPage('\\ListingReports\\DtaUpload\\Index?ProgramID=' + ProgramID + '&ProgramName=' + ProgramName + '&rptName=' + rptName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+
+
+</script>

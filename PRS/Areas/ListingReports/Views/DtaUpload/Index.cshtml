@@ -1,0 +1,225 @@
+﻿@model IP.Areas.ListingReports.Models.DtaUpload
+@{
+  
+        ViewBag.Title = "Index";
+        Layout = null;
+    }
+
+    <div id="parentDiv" class="container-fluid">
+        <div id="dataList" class="box panel panel-default">
+            <div class="box-header with-border bg-blue-gradient">
+                <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                    <span class="fa fa-filter fa-lg white"></span>
+                </button>
+                <h6 class="box-title"><strong>@ViewBag.ReportTitle</strong><strong id="filterString"></strong></h6>
+                <div id="buttons" class="box-tools pull-right">
+
+                </div>
+            </div>
+            <div class="box-body" id="lstp">
+                <table id="lstDtaUpload" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                    <thead class="sorted-asc">
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            @if (@ViewBag.rptName == "DataUpload" || @ViewBag.rptName == "DataUploadSchedule")
+                            {
+                                <th></th>
+                            }
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                    @*<tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            @if (@ViewBag.rptName == "DataUpload" || @ViewBag.rptName == "DataUploadSchedule")
+                            
+                            {
+                                <th></th> 
+                            }
+                                
+                            </tr>
+                    </tfoot>*@
+                </table>
+            </div>
+        </div>
+    </div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+            $('#option').modal('hide');
+
+            var ProgramID = $('#ddProgram').val();
+            var ProgramName = $('#ddProgram option:selected').text();
+            var rptName = $('#rptName option:selected').text()
+
+       
+            $.ajax({
+                
+                cache: false,
+                type: 'GET',
+                url: '/DtaUpload/GetList',
+                data: {
+
+                    ProgramID: ProgramID,
+                    ProgramName: ProgramName,
+                    rptName: rptName
+
+                },
+                datatype: JSON,
+                success: function (data) {
+                   
+                    $('#filterString').append(data.filterString);
+    
+                    if (rptName == "DataUpload" || rptName == "DataUploadSchedule") {
+                        var columnDef = [
+                            { "data": "ID", "title": "Id", "width": "40px" },
+                            { "data": "ProgramID", "title": "Program Id", "width": "50px" },
+                            { "data": "DataUploadScriptID", "title": "DataUploadScript Id", "width": "40px" },
+                            { "data": "DataUploadScriptName", "title": "DataUploadScript Name", "width": "180px" },
+                            { "data": "BatchID", "title": "Batch Id", "width": "70px" },
+                            { "data": "StatusDescription", "title": "Status Desc.", "width": "60px" },
+                            { "data": "Message", "title": "Message", "width": "100px" },
+                            { "data": "UserID", "title": "User Id", "width": "50px" },
+                            { "data": "C01", "title": "C01", "width": "60px" },
+                            { "data": "C02", "title": "C02", "width": "80px" },
+                            { "data": "C03", "title": "C03", "width": "100px" },
+                            { "data": "C04", "title": "C04", "width": "50px" },
+                            { "data": "C05", "title": "C05", "width": "50px" },
+                            { "data": "C06", "title": "C06", "width": "90px" },
+                            { "data": "C07", "title": "C07", "width": "80px" },
+                            { "data": "C08", "title": "C08", "width": "180px" },
+                            { "data": "C09", "title": "C09", "width": "50px" },
+                            { "data": "C10", "title": "C10", "width": "90px" },
+                            { "data": "C11", "title": "C11", "width": "40px" },
+                            { "data": "C12", "title": "C12", "width": "55px" },
+                            { "data": "C13", "title": "C13", "width": "40px" },
+                            { "data": "C14", "title": "C14", "width": "60px" },
+                            { "data": "C15", "title": "C15", "width": "57px" },
+                            { "data": "C16", "title": "C16", "width": "100px" },
+                            { "data": "C17", "title": "C17", "width": "50px" },
+                            { "data": "C18", "title": "C18", "width": "40px" },
+                            { "data": "C19", "title": "C19", "width": "50px" },
+                            { "data": "CreateDate", "title": "Created On", "width": "100px", "className": "text-right" },
+                            { "data": "LastActivityDate", "title": "Last Activity On", "width": "100px", "className": "text-right" },
+
+                        ]
+                        
+                    }
+                   else
+                    //(rptName == "DataUploadArchive" || rptName == "DataUploadScheduleArchive")
+                    {
+
+                        var columnDef = [
+                            { "data": "ID", "title": "Id", "width": "40px" },
+                            { "data": "ProgramID", "title": "Program Id", "width": "40px" },
+                            { "data": "DataUploadScriptID", "title": "DataUploadScript Id", "width": "40px" },
+                            { "data": "BatchID", "title": "Batch Id", "width": "40px" },
+                            { "data": "StatusID", "title": "Status Id", "width": "40px" },
+                            { "data": "Message", "title": "Message", "width": "350px" },
+                            { "data": "UserID", "title": "User Id", "width": "50px" },
+                            { "data": "C01", "title": "C01", "width": "80px" },
+                            { "data": "C02", "title": "C02", "width": "150px" },
+                            { "data": "C03", "title": "C03", "width": "40px" },
+                            { "data": "C04", "title": "C04", "width": "40px" },
+                            { "data": "C05", "title": "C05", "width": "40px" },
+                            { "data": "C06", "title": "C06", "width": "40px" },
+                            { "data": "C07", "title": "C07", "width": "40px" },
+                            { "data": "C08", "title": "C08", "width": "90px" },
+                            { "data": "C09", "title": "C09", "width": "40px" },
+                            { "data": "C10", "title": "C10", "width": "100px" },
+                            { "data": "C11", "title": "C11", "width": "40px" },
+                            { "data": "C12", "title": "C12", "width": "40px" },
+                            { "data": "C13", "title": "C13", "width": "40px" },
+                            { "data": "C14", "title": "C14", "width": "40px" },
+                            { "data": "C15", "title": "C15", "width": "40px" },
+                            { "data": "C16", "title": "C16", "width": "130px" },
+                            { "data": "C17", "title": "C17", "width": "40px" },
+                            { "data": "C18", "title": "C18", "width": "40px" },
+                            { "data": "C19", "title": "C19", "width": "40px" },
+                            { "data": "CreateDate", "title": "Created On", "width": "100px", "className": "text-right" },
+                            { "data": "LastActivityDate", "title": "Last Activity On", "width": "100px", "className": "text-right" },
+
+                        ]
+                    }
+                  ToggleDataList(true);
+            
+                    //var footerfunc = function ()
+                    //{
+                 
+                    //}
+                    MakeDataGrid('lstDtaUpload', data.lstDtaUpload, 0, columnDef, true, true, false);
+
+                  if (data["ErrorMessage"] != null) {
+                   $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                     }
+               },
+               onerror: function (r) { r },
+               failure: function (r) { r }
+          });
+        }
+      
+    
+</script>
+

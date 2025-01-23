@@ -1,0 +1,263 @@
+﻿@model IP.Areas.SupplyChain.Models.WIPAgingByWO
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+
+     /* #panel_bottom{
+        text-align: center;
+        padding-bottom: 50px;
+        width: 100%;
+        
+    }*/
+
+   
+    #lstWIPAgingByWO_info, #lstWIPAgingByWO_paginate {
+        margin-top: 6px;
+    }
+    .text_decoration_footer {
+        color: #0089db;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title" id="WIPBYWO"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP" style="height:42%">
+            <table id="lstWIPAgingByWO" class="table table-bordered table-striped text-sm table-hover" style="width:100%;padding-right:6px; ">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot style="background-color:white;">
+                    <tr>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="row section-color" >
+        <div id="panel_bottom" class="col-md-12 section-padding">
+            <div id="bot_section" class="box panel panel-default leftsection" style="height:54%;">
+                <h4 style="padding-top:150px; text-align:center;">Click hyperlinks on Above section to load data</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    ToggleDataListPartShrtge('bot_section', false);
+    LoadData();
+    function LoadData() {
+
+        $('#tblBody').empty();
+        $('#option').modal('hide');
+
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/WIPAgingByWO/GetList',
+            data: {
+                programId: _programId,
+                ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [
+
+                    { "data": "Workstation", "title": "Work Station", "width": "500px" },
+                    {
+                        "data": "NoAging", "title": "NO Aging", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] + '&frmDt=0&toDt=0' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "1Day", "title": "1 Day", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] + '&frmDt=1&toDt=1' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "2Days", "title": "2 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] + '&frmDt=2&toDt=2' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+
+                    {
+                        "data": "3Days", "title": "3 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] + '&frmDt=3&toDt=3' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "4Days", "title": "4 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] + '&frmDt=4&toDt=4' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "5Days", "title": "5 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] +  '&frmDt=5&toDt=5' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+
+                    {
+                        "data": "6-9Days", "title": "6-9 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&frmDt=6&toDt=9' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+
+                    {
+                        "data": "10-15Days", "title": "10-15 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&frmDt=10&toDt=15' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "16-30Days", "title": "16-30 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] +  '&frmDt=16&toDt=30' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": ">30Days", "title": ">30 Days", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] +  '&frmDt=31&toDt=10000' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "Total", "title": "Total", "width": "40px", "className": "text-right", "targets": 0,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?workstation=' + row["Workstation"] + '&ProgramId=' + row["ProgramID"] +  '&frmDt=0&toDt=10000' + '' + '\',\'bot_section\')">' + thousands_separators(data) + '</a>';
+                            return url;
+                        }
+                    },
+                ];
+                var footerfunc = function () {
+                    var api = this.api();
+
+                    $(api.column(1).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '0' + '&toDt=' + '0' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(1, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(2).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '1' + '&toDt=' + '1' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(2, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(3).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '2' + '&toDt=' + '2' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(3, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(4).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '3' + '&toDt=' + '3' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(4, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(5).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '4' + '&toDt=' + '4' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(5, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(6).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '5' + '&toDt=' + '5' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(6, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(7).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '6' + '&toDt=' + '9' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(7, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(8).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '10' + '&toDt=' + '15' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(8, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(9).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '16' + '&toDt=' + '30' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(9, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(10).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '31' + '&toDt=' + '10000' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(10, { search: 'applied' }).data().sum()) + '</a>');
+                    $(api.column(11).footer()).html('<a href="#" class="Part_Undrln" onclick="OpenViewWIP(\'\\\\SupplyChain\\\\WIPAgingByWO\\\\GetData?frmDt=' + '0' + '&toDt=' + '10000' + '&workstation=' + 'null' + '\',\'bot_section\')">' + thousands_separators(api.column(11, { search: 'applied' }).data().sum()) + '</a>');
+                }
+
+                var tableHeader = $('.table').innerHeight();
+                var topHeader = $('.incomming').innerHeight();
+                var browserHeight = window.innerHeight;
+                var gridHeight = browserHeight - (tableHeader + topHeader)
+                ToggleDataList(true);
+
+                var h = getHeight(45);
+                MakeFrameGrid('lstWIPAgingByWO', data.lstWipAgingByWO, 330, columnDef, 'buttons', true, true, footerfunc, false, $('#WIPBYWO').text(), true);
+
+                ToggleDataListPartShrtge('bot_section', true);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    function OpenViewWIP(_url, target) {
+
+        $('#panel_bottom').empty();
+        $('#panel_bottom').append('<div id="bot_section" class="box panel panel-default leftsection"><h4><p>Click hyperlinks on Above section to load data</p></h4></div>');
+
+        $.ajax({
+            url: _url,
+            success: function (data) {
+                $('#' + target).hide();
+                $("#wait").css("display", "none");
+                $("#" + target).html(data);
+                $('#' + target).show();
+            }
+        });
+    }
+
+</script>
+

@@ -1,0 +1,262 @@
+﻿@model IP.Areas.ListingReports.Models.DownloadTestResult
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+    textarea {
+        resize: none !important;
+    }
+
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstDownloadTestResult" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var xmlRowCount = 0;
+    //var serialNumbers;
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        var Program = $('#ddProgram option:selected').text();
+        var contract = $('#ddProgram option:selected').val();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var isAllDate = $('#isAllDate').is(':checked');
+        //var TestArea = $('#lstTestArea option:selected').val();
+        var TestArea = $('#lstTestArea').val().join(',');
+        var files = $("#importFile").get(0).files;
+        var fileInput = $('#importFile')[0];
+        var formData = new FormData();
+        formData.append('frmDt', fDate);
+        formData.append('toDt', tDate);
+        formData.append('isAllDate', isAllDate);
+        formData.append('importFile', files[0]);
+        formData.append('testArea', TestArea);
+        formData.append('contract', contract);
+        formData.append('program', Program);
+
+        $.ajax({
+            type: 'POST',
+            url: '/DownloadTestResult/GetList',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $('#btnGo').addClass("disableanchor");
+                if (data.Status === 3 || data.Status === 2) {
+                    $('#uploadModalMsg').text(data.Message);
+                    fileInput.value = "";
+                }
+                else if (data.Status === 0) {
+                    $('#uploadModalMsg').text("An error occurred. Contact Support Team");
+                    console.log(data.Message);
+                    fileInput.value = "";}
+                else {
+                    $('#option').modal('hide');
+                    fileInput.value = "";
+                    xmlRowCount = data.xmlRowCount;
+                    //serialNumbers = data.serialNumbers;
+                    $('#filterString').append(data.filterString);
+
+                    var columnDef = [
+                        { "data": "Program", "title": "Program", "width": "80px", "visible": false },
+                        { "data": "Contract", "title": "Contract", "width": "70px" },
+                        {
+                            "data": "ID", "title": "Id", "width": "50px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\DataWipeResult\\Detail?Id=' + row["ID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "OrderNumber", "title": "Order No.", "width": "70px" },
+                        { "data": "SerialNumber", "title": "Serial No.", "width": "70px" },
+                        { "data": "PartNumber", "title": "Part No.", "width": "70px" },
+                        { "data": "MachineName", "title": "Machine Name", "width": "80px" },
+                        { "data": "Result", "title": "Result", "width": "50px" },
+                        {
+                            "data": "FileReference", "title": "File Ref.", "className": "notexport", "visible": false
+
+                            //render: function (data, type, row) {
+
+                            //    if (row["LogFile"].indexOf("\\") !== -1) {
+
+                            //        var escapedData = $('<div>').text(data).html();
+                            //        var url = '<a href="\\ListingReports\\DataWipeResult\\GetXML?Id=' + row["ID"] + '" target=_blank rel=noonpener nonreferrer > ' + escapedData.substring(0, 86) + (escapedData.length > 86 ? '....' : '') + '</a>';
+                            //    }
+                            //    else {
+                            //        url = row["FileReference"];
+                            //    }
+                            //    return url;
+                            //}
+                        },
+
+                        {
+                            "data": "LogFile", "title": "Log File", "width": "70px", "className": "text-center",
+                            render: function (data, type, row) {
+                                //console.log(row["LogFile"]);
+                                if (data == "\\\\DC1FS01" && row["Exported"] == 1) {
+                                    var escapedData = $('<div>').text(data).html();
+                                    //var url = '<a href="\\ListingReports\\DataWipeResult\\GetXML?Id=' + row["ID"] + '" target=_blank rel=noonpener nonreferrer > ' + escapedData.substring(0, 20) + (escapedData.length > 20 ? '....' : '') + '</a>';
+                                    var url = '<a href="\\ListingReports\\DataWipeResult\\ViewContent?Id=' + row["ID"] + '" target=_blank rel=noonpener nonreferrer title="' + row["Extension"] + '" > View </a>';
+
+                                }
+                                //if (data.startsWith("\\\\") && data.indexOf(".xml") !== -1) {
+                                //    var escapedData = $('<div>').text(data).html();
+                                //    //var url = '<a href="\\ListingReports\\DataWipeResult\\GetXML?Id=' + row["ID"] + '" target=_blank rel=noonpener nonreferrer > ' + escapedData.substring(0, 20) + (escapedData.length > 20 ? '....' : '') + '</a>';
+                                //    var url = '<a href="\\ListingReports\\DataWipeResult\\GetXML?Id=' + row["ID"] + '" target=_blank rel=noonpener nonreferrer > View Xml </a>';
+                                //}
+                                //else if (data.startsWith("\\\\") && data.indexOf(".txt") !== -1) {
+                                //    var escapedData = $('<div>').text(data).html();
+                                //    //var url = '<a href="\\ListingReports\\DataWipeResult\\GetTxt?Id=' + row["ID"] + '" target=_blank rel=noonpener nonreferrer > ' + escapedData.substring(0, 20) + (escapedData.length > 20 ? '....' : '') + '</a>';
+                                //    var url = '<a href="\\ListingReports\\DataWipeResult\\GetTxt?Id=' + row["ID"] + '" target=_blank rel=noonpener nonreferrer > View Txt </a>';
+                                //}
+                                else {
+                                    //url = row["LogFile"].substring(0, 20) + (row["LogFile"].length > 20 ? '....' : '');
+                                    url = "";
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "TestArea", "title": "Test Area" },
+                        { "data": "CellNumber", "title": "Cell No.", "width": "70px" },
+                        { "data": "MiscInfo", "title": "Misc. Info", "width": "100px" },
+                        { "data": "MACAddress", "title": "MAC Address", "width": "120px" },
+                        { "data": "Msg", "title": "Msg", "width": "70px", "width": "100px" },
+                        { "data": "StartTime", "title": "Start On", "width": "100px", "className": "text-right" },
+                        { "data": "EndTime", "title": "End On", "width": "100px", "className": "text-right" },
+                        { "data": "UploadTime", "title": "Upload On", "width": "100px", "className": "text-right" },
+                        { "data": "AsOf", "title": "AsOf", "width": "100px", "className": "text-right" }
+                    ]
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstDownloadTestResult', data.lstDownloadTestResult, 0, columnDef, true, false, false);
+                    var buttonHtml = `
+                        <button class="btn-header btn-box-tool" tabindex="0" aria-controls="lstDownloadTestResult" type="button" title="Download All XML Files" onclick="DownloadFilesAsZip()">
+                    <span>
+                        <span>
+                            <span class="fa-stack">
+                                <i class="fa fa-circle fa-stack-2x" style="color: rgb(31 30 29);"></i>
+                                <i class="fas fa-file-download fa-stack-1x" style="color: white;"></i>
+                            </span>
+                        </span>
+                    </span>
+                        </button>
+                    `;
+
+                    $('.dt-buttons').prepend(buttonHtml);
+
+                    if (data["ErrorMessage"] != null) {
+                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                    }
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function DownloadFilesAsZip() {
+        var Program = $('#ddProgram option:selected').text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var isAllDate = $('#isAllDate').is(':checked');
+        //var TestArea = $('#lstTestArea option:selected').val();
+        var TestArea = $('#lstTestArea').val().join(',');
+        var contract = $('#ddProgram option:selected').val();
+
+
+
+
+
+
+
+        if (xmlRowCount <= 0) {
+            alert("There are no XML records available to download!");
+        }
+        else {
+            if (confirm("Are you sure you want to download [ " + xmlRowCount + " ] records!")) {
+                //var url = '/DownloadTestResult/DownloadFilesAsZip?frmDt=' + fDate + '&toDt=' + tDate + '&isAllDate=' + isAllDate + '&serialNos=' + serialNumbers + '&testArea=' + TestArea + '&contract=' + contract;
+                //window.location.href = url;
+
+                var url = '/DownloadTestResult/DownloadFilesAsZip?frmDt=' + fDate + '&toDt=' + tDate + '&isAllDate=' + isAllDate + '&testArea=' + TestArea + '&program=' + Program + '&contract=' + contract;
+                window.location.href = url;
+
+                //var fDate = $('#fromDt').val();
+                //var tDate = $('#toDt').val();
+                //var isAllDate = $('#isAllDate').is(':checked');
+                //var TestArea = $('#lstTestArea').val().join(',');
+                //var contract = $('#ddProgram option:selected').val();
+                //var formData = new FormData();
+                //formData.append('frmDt', fDate);
+                //formData.append('toDt', tDate);
+                //formData.append('isAllDate', isAllDate);
+                ////formData.append('serialNos', serialNumbers);
+                //formData.append('testArea', TestArea);
+                //formData.append('contract', contract);
+                //fetch('/DownloadTestResult/DownloadFilesAsZip', {
+                //    method: 'POST',
+                //    body: formData,
+                //})
+                //.then(response => response.json())
+                //.then(responseData => {
+                //    console.log(responseData);
+                //})
+                //.catch(error => {
+                //    console.log(error);
+                //});
+            }
+            else
+                return false;
+        }
+    }
+
+</script>

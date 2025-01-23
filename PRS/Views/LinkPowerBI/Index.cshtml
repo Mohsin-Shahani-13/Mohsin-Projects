@@ -1,0 +1,132 @@
+﻿@model IP.Models.LinkPowerBI
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+<style type="text/css">
+    /*.modal-backdrop fade in {
+        opacity: 0 !important;
+    }*/
+
+    .modal-backdrop {
+        position: relative !important;
+    }
+
+    .grpClass {
+        font-weight: bold;
+        background-color: #6c9dc6 !important;
+        color: whitesmoke !important;
+    }
+
+    .subgrpClass {
+        font-weight: bold;
+        background-color: #94C7EE !important;
+        color: white !important;
+    }
+
+    .view-report {
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        text-align: center;
+        width: 30px;
+        height: 20px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+</style>
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle > @ViewBag.Category</strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body">
+            <table id="lstLinkPowerBI" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    ToggleDataList(false);
+    LoaData();
+
+    function LoaData() {
+
+         var conn_type = '@ViewBag.CONN_TYPE';
+        var linked_srvr ='@ViewBag.LinkedSrvr';
+        $('.modal-footer > #designedby').empty();
+        $('.desgndBy').html('<div id="lstMenus_info" role="status" aria-live="polite">' + '@Model.designedBy' + ' | <a id="MailTo" href="' + '@Model.mailTo' + '"  target="_blank" title="Click to report features and bugs">MailTo</a> </div>');
+
+        var lstPowerBI = @Html.Raw(Json.Encode(Model.lstLinkPowerBI));
+
+        var columnDef = [];
+        columnDef.push({ "title": "Workspace", "width": "50px" });
+        columnDef.push({ "visible": false });
+        columnDef.push({ "title": "Report Name" });
+        columnDef.push({ "visible": false });
+        columnDef.push({ "visible": false });
+        columnDef.push({
+            "title": "", "width": "50px", "className": "text-center",
+            render: function (data, type, row) {
+                var url = '';
+                if (row[5] == 'Yes') {
+
+                    //url = '<a href="' + row[3] + '" &page=list" target=_blank > ' + '<button class="view-report">Run</button>' + '</a>'
+
+                    url = '<span onclick="InsertRow(\'' + row[1] + '\', \''
+                        + row[2] + '\', \'' + row[3] + '\');" > ' +
+                        '<button id="btnPBi" class="view-report">Run</button></span>'
+
+                }
+                            else {
+                                url = 'X';
+                            }
+                return url;
+            },
+        });
+
+
+        ToggleDataList(true);
+        MakeDataGrid('lstLinkPowerBI', lstPowerBI, 0, columnDef, true, false);
+        //MakeDataGrid('lstDefectList', data.lstDefectList, 0, columnDef, true, true, footerfunc);
+    }
+
+    function InsertRow(rptCode, rptTitle, rptUrl) {
+        
+        $.ajax({
+            url: "/LinkPowerBI/GetLog",
+            type: 'POST',
+            data: ({
+                rptCode: rptCode,
+                rptTitle: rptTitle,
+                rptUrl: rptUrl
+            }),
+            datatype: "JSON",
+            success: function (data) {
+               
+                window.open(data, '_blank');
+               
+            }
+        });
+    };
+
+</script>
+

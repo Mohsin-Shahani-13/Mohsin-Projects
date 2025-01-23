@@ -1,0 +1,175 @@
+﻿@model IP.Areas.Meta.Models.MetaMTDGlobalShipping
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+@*Name change to Month to Date Receiving Report*@
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstMetaMTDGlobal" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+
+                        <th class="notexport"></th>
+                        <th>Total:</th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+         var status = '@Request.QueryString["status"].ToString()';
+        var statusId ='@Request.QueryString["statusId"].ToString()';
+
+
+       // var _RMARef = $('#RMARef').val();
+        // var _Transaction = $('#Transaction').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MetaMTDGlobalShipping/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                ProgramName: _ProgramName,
+                statusId: statusId,
+                status: status
+               // RMARef: _RMARef
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                       
+                        { "data": "ProgramID", "title": "ProgramID", "width": "40px", "visible": false },
+                        { "data": "SITE", "title": "SITE", "width": "50px" },
+                        { "data": "ORDER_ID", "title": "ID", "width": "40px", "visible": false },
+                        {
+                            "data": "CUST_REF", "title": "ORDER_NO", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\SupplyChain\\SO\\Detail?SOHeaderId=' + row["ORDER_ID"] + '&custRef=' + row["CUST_REF"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "PART_NO", "title": "PART_NO", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PART_NO"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "SERIAL_NO", "title": "SERIAL_NO", "width": "90px",
+                            render: function (data, type, row) {
+                                if (row["SerialNo"] == "*" || row["HAS_SN"] == 'N') {
+                                    url = row["SerialNo"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\\PartsSerial\\Detail?serialNo=' + row["SERIAL_NO"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PART_NO"] + '&page=list" target=_blank > ' + data + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "LINE_NO", "title": "LINE_NO", "width": "80px" },
+                        { "data": "DATE_PROCESSED", "title": "DATE_PROCESSED", "width": "80px" },
+                        { "data": "QUANTITY", "title": "QUANTITY", "width": "70px", "className": "text-right" },
+                        { "data": "QTY_PER_LINE", "title": "QTY_PER_LINE", "width": "100px", "className": "text-right" },
+
+                        {
+                            "data": "MESSAGE_ID", "title": "MESSAGE_ID", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\Biztalk\\Inbound\\Detail?hdrId=' + row["MESSAGE_ID"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "USER_ID", "title": "USER_NAME", "width": "110px" },
+                        { "data": "DATED", "title": "DATED", "width": "110px", "className": "text-right" }
+
+                    ]
+
+                    ToggleDataList(true);
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(8).footer()).html(thousands_separators(api.column(8, { search: 'applied' }).data().sum()));
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9, { search: 'applied' }).data().sum()));
+
+                    }
+                    MakeDataGrid('lstMetaMTDGlobal', data.lstMetaMTDGlobal, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

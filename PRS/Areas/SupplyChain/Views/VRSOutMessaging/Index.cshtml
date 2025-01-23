@@ -1,0 +1,178 @@
+﻿@model IP.Areas.SupplyChain.Models.VRSOutMessaging
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstVRSOutMessaging" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+    $.fn.dataTable.render.ellipsisAdr = function (cutoff, header) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                //var header = "Reported Problem";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        $('#tblBody').empty();
+        var contract = $('#ddContract option:selected').val();
+        var _fDate = $('#fromDt').val();
+        var _tDate = $('#toDt').val();
+        var orderNo = $('#orderNo').val();
+        var serialNo = $('#serialNo').val();
+        var OutMsgType = $('#lstOutMsgType option:selected').text();
+        var isFail = $('.radio-option1:checked').val();
+        var isSuccessed = $('.radio-option2:checked').val();
+        var isUnprocessed = $('.radio-option3:checked').val();
+        //For Multiple Status
+
+        var OutMsgType = '';
+        if (selectedParts == "All") {
+            OutMsgType = "All";
+        }
+        else {
+            $('#lstOutMsgType :selected').each(function (i, sel) {
+                if (i == 0) {
+                    OutMsgType = "'" + ($(sel).val()) + "'";
+                    OutMsgType = "'" + ($(sel).text()) + "'";
+                }
+                else {
+                    OutMsgType += "," + "'" + ($(sel).val()) + "'";
+                    //OutMsgType = "Multiple";
+                }
+            });
+        }
+        var isSingleRow = false;
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/VRSOutMessaging/GetList',
+            data: {
+                contract: contract,
+                fDate: _fDate,
+                tDate: _tDate,
+                orderNo: orderNo,
+                OutMsgType: OutMsgType,
+                isFail: isFail,
+                isSuccessed: isSuccessed,
+                isUnprocessed: isUnprocessed,
+                serialNo: serialNo
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "MESSAGE_ID", "title": "MESSAGE_ID", "width": "80px" },
+                        { "data": "MESSAGE_INSERTED", "title": "MESSAGE_INSERTED", "width": "90px", "className": "text-right" },
+                        { "data": "MESSAGE_SENT", "title": "MESSAGE_SENT", "width": "90px", "className": "text-right" },
+                        { "data": "MESSAGE_TYPE", "title": "MESSAGE_TYPE", "width": "180px" },
+                        { "data": "CERTIFICATE_TYPE", "title": "CERTIFICATE_TYPE", "width": "90px" },
+                        { "data": "MESSAGE_STATUS", "title": "MESSAGE_STATUS", "width": "170px", "render": $.fn.dataTable.render.ellipsisAdr(18, "Message") },
+                        { "data": "MESSAGE_STATUS", "title": "MESSAGE_STATUS", "width": "150px", "visible": false },
+                        { "data": "PROCESSED", "title": "PROCESSED", "width": "200px", "className": "text-center" },
+                        { "data": "OUTCOME", "title": "OUTCOME", "width": "60px" },
+                        { "data": "VENDOR_NAME", "title": "VENDOR_NAME", "width": "70px" },
+                        { "data": "SERIAL_NUMBER", "title": "SERIAL_NUMBER", "width": "90px" },
+                        { "data": "CONTRACT", "title": "CONTRACT", "width": "60px" },
+                        { "data": "SENDER_ID", "title": "SENDER_ID", "width": "60px" },
+                        { "data": "SHIPMENT_REFERENCE", "title": "SHIPMENT_REFERENCE", "width": "130px" },
+                        { "data": "CERT_TYPE", "title": "CERT_TYPE", "width": "70px" },
+                        { "data": "ISSUE_TO", "title": "ISSUE_TO", "width": "80px" },
+                        { "data": "ISSUE_DATE", "title": "ISSUE_DATE", "width": "90px", "className": "text-right" },
+                        { "data": "LEVEL_DETAILS", "title": "LEVEL_DETAILS", "width": "170px" },
+                        { "data": "VENDOR_NAME", "title": "VENDOR_NAME", "width": "100px" },
+                        { "data": "COMMODITY", "title": "COMMODITY", "width": "100px" },
+                        { "data": "MODEL", "title": "MODEL", "width": "170px" },
+                        { "data": "ASSET_TAG", "title": "ASSET_TAG", "width": "100px" },
+                        { "data": "DRIVE_SERIAL_NUMBER", "title": "DRIVE_SERIAL_NUMBER", "width": "120px" },
+                        { "data": "DATE_OF_WIPE", "title": "DATE_OF_WIPE", "width": "90px", "className": "text-right" },
+                        { "data": "SERVICE_REQUEST", "title": "SERVICE_REQUEST", "width": "90px" },
+                        { "data": "N01", "title": "N01", "width": "140px" },
+                        { "data": "NOTES1", "title": "NOTES1", "width": "100px" },
+                        { "data": "ERROR_CATEGORY", "title": "ERROR_CATEGORY", "width": "120px" }
+                    ];
+                    
+                    ToggleDataList(true);
+
+                    MakeDataGrid('lstVRSOutMessaging', data.lstVRSOutMessaging, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>
+
+
+

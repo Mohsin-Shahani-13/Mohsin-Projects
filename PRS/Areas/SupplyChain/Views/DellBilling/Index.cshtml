@@ -1,0 +1,137 @@
+﻿@model IP.Areas.SupplyChain.Models.DellBilling
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstDellBillingReport" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @*<th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>*@
+
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @*<th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>*@
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var programId = $('#ddProgram').val();
+        var programName = $("#ddProgram option:selected").text();
+        var rptType = $('#rptType option:selected').val();
+        var rptName = $("#rptType option:selected").text();
+        var trackingNo = $('#trackingNo').val();
+        var InvNumber = $('#InvNumber').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DellBilling/GetList',
+            data: {
+                programId: programId,
+                ProgramName: programName,
+                rptName: rptName,
+                trackingNo: trackingNo,
+                InvNumber: InvNumber
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "InvoiceNo", "title": "Invoice No", "width": "80px" },
+                        { "data": "Brand", "title": "Brand", "width": "70px" },
+                        { "data": "ChargeType", "title": "Charge Type", "width": "100px" },
+                        { "data": "Reference", "title": "Reference", "width": "200px"  },
+                        {
+                            "data": "Qty", "title": "Qty", "width": "70px", "className": "text-right",
+                            render: $.fn.dataTable.render.number(',', ' ')
+                        },
+                        { "data": "BillDate", "title": "Bill Date", "width": "70px", "className": "text-right" },
+                        { "data": "InvoiceDate", "title": "Invoice Date", "width": "70px", "className": "text-right" },
+                        //{ "data": "PartNo", "title": "Part No.", "width": "110px" },
+                        //{ "data": "Description", "title": "Description" },
+                        {
+                            "data": "ExtraQty", "title": "Extra Line Qty", "width": "70px", "className": "text-right",
+                            render: $.fn.dataTable.render.number(',', ' ')
+                        },
+                        //{ "data": "Cost", "title": "Cost", "width": "70px", "className": "text-right" },
+                        //{ "data": "Amount", "title": "Amount", "width": "70px", "className": "text-right" }
+                    ]
+
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(4).footer()).html(thousands_separators(api.column(4, { search: 'applied' }).data().sum()));
+                        $(api.column(7).footer()).html(thousands_separators(api.column(7, { search: 'applied' }).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstDellBillingReport', data.lstDellBillingReport, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

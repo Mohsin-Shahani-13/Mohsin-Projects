@@ -1,0 +1,421 @@
+﻿@model IP.Models.MetaDiagDB
+@{
+    ViewBag.Title = "Meta";
+    Layout = null;
+}
+
+<style>
+    .even {
+        background-color: #080808 !important;
+        color: limegreen !important;
+    }
+
+    .odd {
+        background-color: black !important;
+        color: limegreen !important;
+    }
+
+    table > thead > tr > th {
+        background-color: #202020 !important;
+    }
+
+
+    #LstData_info {
+        visibility: hidden;
+    }
+
+    .red_clr {
+        color: red;
+    }
+
+    #LstData_paginate {
+        visibility: hidden;
+    }
+
+    .green_clr {
+        color: green;
+    }
+</style>
+
+<div class="container-fluid" style="background-color:black">
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <h6 id="DBTitle" style="font-size:30px; text-align:center;background-color:black; color:limegreen;" class="box-title">@ViewBag.ReportTitle</h6>
+            <div class="box-body" style="background-color: black">
+                <table id="LstData" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 28px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                    <thead class="sorted-asc" style="font-size: 14px;">
+                        <tr style="font-size:22px;">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            @*<th></th>
+                            <th></th>*@
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <div class="col-sm-3 col-lg-3 col-md-4  text-center" style="width:100%;background-color:#202020 ">
+                <h6 id="pageDS" style="font-size:30px; text-align:center;font-weight:bold;height:30px;color:whitesmoke; font-family:Arial;"></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var childCount = 0;
+    $(document).ready(function () {
+        setInterval(function () {
+            cache_clear()
+        }, 300000);
+    });
+    function cache_clear() {
+        childCount = (childCount + 1);
+        LoaData();
+    }
+    ToggleDataList(false);
+    LoaData();
+    function LoaData() {
+        //$('#tblBody').empty();
+
+        var tableHeader = $('.table').innerHeight();
+        var topHeader = $('.box-header').innerHeight();
+        var browserHeight = window.innerHeight;
+        var gridHeight = browserHeight - tableHeader - topHeader - 8;
+        $('#DBTitle').text('');
+        $('#pageDS').text('');
+        var title = '';
+
+
+        var selectedVal = '@Request.QueryString["selected"]';
+        var programId = '@Request.QueryString["programId"]';
+        var selectedText = '@Request.QueryString["selectedText"]';
+        var site = '@Request.QueryString["site"]';
+        var programName = '@Request.QueryString["programName"]';
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/MetaDiagDB/GetList',
+            data: {
+                selectedVal: selectedVal,
+                selectedText: selectedText,
+                programId: programId,
+                site: site,
+                programName: programName
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#DBTitle').append(data.DBTitle);
+                var title = data.shift
+                dataLst(data.lstIngenico, title);
+
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function dataLst(data, title) {
+
+        var columnDef = '';
+        var childArray = [];
+
+        while (data.length > 0) {
+            childArray.push(data.splice(0, 15));
+        }
+
+
+            columnDef = [
+
+
+                { "title": "User Name", "targets": 0  },
+                {
+                    "title": "%01", "width": "60px", "className": "text-center", "targets": 1,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "01", "width": "60px", "className": "text-center", "targets": 1
+                    //,
+                    //render: function (data, type, row) {
+                    //    var val;
+                    //    //if (data < 90) {
+                    //    //    val = '<div class=red_clr>' + data + '</div>';
+                    //    //}
+                    //    //else {
+                    //        val = '<div>' + data + '</div>';
+                    //   // }
+                    //    return val;
+                    //}
+                },
+                {
+                    "title": "%02", "width": "60px", "className": "text-center", "targets": 2,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "02", "width": "60px", "className": "text-center", "targets": 1
+                },
+                {
+                    "title": "%03", "width": "60px", "className": "text-center", "targets": 3,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "03", "width": "60px", "className": "text-center", "targets": 1
+                },
+                {
+                    "title": "%04", "width": "60px", "className": "text-center", "targets": 4,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "04", "width": "60px", "className": "text-center", "targets": 1
+                },
+                {
+                    "title": "%05", "width": "60px", "className": "text-center", "targets": 5,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "05", "width": "60px", "className": "text-center", "targets": 1
+                },
+                {
+                    "title": "%06", "width": "60px", "className": "text-center", "targets": 6,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "06", "width": "60px", "className": "text-center", "targets": 1
+                },
+                {
+                    "title": "%07", "width": "60px", "className": "text-center", "targets": 7,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "07", "width": "60px", "className": "text-center", "targets": 1
+                },
+                {
+                    "title": "%08", "width": "60px", "className": "text-center", "targets": 8,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                },
+                {
+                    "title": "08", "width": "60px", "className": "text-center", "targets": 1
+                },
+                //{
+                //    "title": "%09", "width": "60px", "className": "text-center", "targets": 9,
+                //    render: function (data, type, row) {
+
+                //        var val;
+                //        var percData = data * 100;
+                //        if (percData < 90) {
+                //            if (percData == '0') {
+                //                val = '<div class=red_clr>' + '' + '</div>';
+                //            }
+                //            else {
+                //                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                //            }
+                //        }
+                //        else {
+                //            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                //        }
+                //        return val;
+                //    }
+                //},
+                //{
+                //    "title": "09", "width": "60px", "className": "text-center", "targets": 1
+                //},
+                {
+                    "title": "qTotal", "width": "70px", "className": "text-center", "targets": 10
+                },
+                {
+                    "title": "%Total", "width": "70px", "className": "text-center", "targets": 11,
+                    render: function (data, type, row) {
+
+                        var val;
+                        var percData = data * 100;
+                        if (percData < 90) {
+                            if (percData == '0') {
+                                val = '<div class=red_clr>' + '' + '</div>';
+                            }
+                            else {
+                                val = '<div class=red_clr>' + percData.toFixed(0) + "%" + '</div>';
+                            }
+                        }
+                        else {
+                            val = '<div>' + percData.toFixed(0) + "%" + '</div>';
+                        }
+                        return val;
+                    }
+                }
+
+            ];
+
+        var totalCounter = childArray.length; // No of Child array length
+        if (childCount >= totalCounter) { //Childcount Greater than TotalCount
+            childCount = 0;
+        }
+        ToggleDataList(true);
+        MakeDataGrid('LstData', childArray[childCount], 0, columnDef, false, false, false);
+        PageOf(childCount, totalCounter);
+    }
+
+    function PageOf(childCount, totalCounter) {
+
+        $('#pageDS').text('');
+        if (totalCounter > 0) {
+            childCount = (childCount + 1);
+        }
+        $('#pageDS').text(" Showing " + childCount + " of " + totalCounter);
+    }
+
+</script>

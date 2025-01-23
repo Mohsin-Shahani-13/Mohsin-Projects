@@ -1,0 +1,275 @@
+﻿@model IP.Areas.SupplyChain.Models.ShipmentDocument
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    #renderBody {
+        background-color:white;
+    }
+
+    .body {
+        background-color: white !important;
+    }
+    .table{
+        background-color:white;
+    }
+    .table-container {
+        background-color: white;
+        width: 50%;
+        margin: 20px;
+        border: 1px solid black;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+
+        .table-container td, .table-container th {
+            background-color: white;
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+
+    .table-header {
+        background-color: white;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #f0f0f0;
+    }
+
+    .table-signature-row td {
+        height: 50px;
+    }
+
+    .note {
+        font-size: 12px;
+        font-weight:bold;
+        margin-top: 10px;
+        margin-left: 20px;
+    }
+
+    .download-btn {
+       font-size: 14px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+
+    .gridHeader {
+        background-color: #007bb8 !important;
+        color: white !important;
+    }
+    .tableHeader {
+        background-color: white !important;
+        color: black !important;
+        border-color: black !important;
+    }
+   
+</style>
+<div id="parentDiv" class="container-fluid" style="background-color:white !important;">
+    <div class="box-header with-border bg-blue-gradient">
+        <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+            <span class="fa fa-filter fa-lg white"></span>
+        </button>
+        <button class="download-btn" onclick="DownloadExcel();">Download Excel</button>
+        <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+        <div id="buttons" class="box-tools pull-right">
+
+        </div>
+    </div>
+
+    @*<div>
+        <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+            <span class="fa fa-filter fa-lg black"></span>
+        </button>
+        <button class="download-btn" onclick="DownloadExcel();">Download Excel</button>
+        <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+
+    </div>*@
+    <div class="row">
+        <h4 style="border:1px solid; padding:6px; "><strong>SHIPPER:</strong></h4>
+        <div class="col-md-12" style="margin-left:15px;">
+            <h5 id="Name"></h5>
+            <h6 id="Address"></h6>
+            <h6 id="City"></h6>
+            <span>Tel.</span><span class="phone" id="Phone"></span>
+            <h6 id="Fax">Fax. </h6>
+            <a href="http://www.reconext.com">http://www.reconext.com</a>
+        </div>
+    </div>
+    <div class="row">
+        <h4 style="border:1px solid; padding:4px; border-color:black;"><strong>CONSIGNEE:</strong></h4>
+        <div class="col-md-12" style="padding: 4px; margin-top:0px; border: 1px solid; border-color: black;">
+            <h5 id="CONSIGNEEName"></h5>
+            <h6 id="CONSIGNEEAddress"></h6>
+            <h6 id="CONSIGNEECity"></h6>
+        </div>
+    </div>
+
+    <div id="dataList" class="box panel panel-default">
+
+
+
+
+
+        <div class="box-body" id="lstP">
+
+            <table id="lstShipmentDocument" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                <thead class="sorted-asc" style="background-color: white !important;">
+                    <tr style="background-color:white !important;color:black !important;">
+                        <th class="tableHeader">SHIPMENT DATE:</th>
+                        <th id="ShipmentDate" class="tableHeader"></th>
+
+
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader"></th>
+
+                    </tr>
+                    <tr>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+                        <th class="gridHeader"></th>
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <p class="note">NOTE:</p>
+    <table class="table-container">
+        <tr class="table-header">
+            <td>SHIPPER</td>
+            <td>RECEIVER</td>
+            <td>SECURITY</td>
+        </tr>
+        <tr class="table-signature-row">
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="table-header">
+            <td>NAME:</td>
+            <td>NAME:</td>
+            <td>NAME:</td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+    </table>
+</div>
+<script>
+    var name;
+    var Address;
+    var City;
+    var phone;
+    var shipmentDate;
+    var CONSIGNEEName;
+    var CONSIGNEEAddress;
+    var CONSIGNEECity;
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var custRef = $('#custRef').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/ShipmentDocument/GetList',
+            data: {
+
+                custRef: custRef
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                // Check if lstShipmentInfo and the first object exist
+                if (data.lstShipmentInfo && data.lstShipmentInfo.length > 0) {
+                    var shipmentInfo = data.lstShipmentInfo[0];
+
+                    $('#Name').text(shipmentInfo.Name || 'N/A');
+                    $('#Address').text(shipmentInfo.Address || 'N/A');
+                    $('#City').text(shipmentInfo.City || 'N/A');
+                    $('#Phone').text(shipmentInfo.Phone || 'N/A');
+                    $('#CONSIGNEEName').text(shipmentInfo.CONSIGNEEName || 'N/A');
+                    $('#CONSIGNEEAddress').text(shipmentInfo.CONSIGNEEAddress || 'N/A');
+                    $('#CONSIGNEECity').text(shipmentInfo.CONSIGNEECity || 'N/A');
+                    $('#ShipmentDate').text(shipmentInfo.ShipmentDate || 'N/A');
+                } else {
+                    console.error("No shipment info found.");
+                    $('#Name, #Address, #City, #Phone, #CONSIGNEEName, #CONSIGNEEAddress, #CONSIGNEECity, #ShipmentDate').text('N/A');
+                }
+            
+                
+
+                var columnDef = [
+                    { "data": "CustomerReference", "title": "Customer Reference", "width": "150px" },
+                    { "data": "RMRModule", "title": "RMR Module", "width": "150px" },
+                    { "data": "PartNo", "title": "Part No.", "width": "150px" },
+                    { "data": "ModuleName", "title": "Module Name", "width": "150px" },
+                    { "data": "SerialNo", "title": "Serial No.", "width": "150px" },
+                    { "data": "RCToolNo", "title": "RC Tool No.", "width": "150px" },
+                    { "data": "FRNo", "title": "FR No.", "width": "150px" },
+                    { "data": "RepairResult", "title": "Repair Result", "width": "150px" },
+                    { "data": "PO", "title": "Purchase Order (PO)", "width": "150px" },
+                    { "data": "FailDescription", "title": "Fail Desc.", "width": "150px" },
+                    { "data": "Customer", "title": "Customer Name", "width": "150px" },
+                    { "data": "CheckList", "title": "Checklist Status", "width": "150px" }
+                ];
+
+                ToggleDataList(true);
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    //    $(api.column(14).footer()).html(thousands_separators(api.column(14).data().sum()));
+                    //    //$(api.column(11).footer()).html(thousands_separators(api.column(11).data().sum()));
+
+                }
+
+                MakeDataGrid('lstShipmentDocument', data.lstShipmentDocument, 150, columnDef, true, true, false);
+                //MakeFrameGrid('lstShipmentDocument', data.lstShipmentDocument, 200, columnDef, true, false, true, false, false, $('#ttlRO').text(), false, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+          
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    function DownloadExcel() {
+        var custRef = $('#custRef').val();
+        window.open("\\Externals\\ReportViewer.aspx?custRef=" + custRef + "&rptName=ShipmentDocument", '_blank');
+    }
+</script>

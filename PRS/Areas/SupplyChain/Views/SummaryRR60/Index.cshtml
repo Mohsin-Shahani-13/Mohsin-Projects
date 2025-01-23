@@ -1,0 +1,138 @@
+﻿@model IP.Areas.SupplyChain.Models.SummaryRR60
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstSummaryRR60" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                <thead class="sorted-asc">
+                    <tr>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        //var year = $('#ddyear option:selected').val();
+        var programId = '@Request.QueryString["programId"].ToString()';
+        var programName = '@Request.QueryString["programName"].ToString()';
+        var year = $('#year').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SummaryRR60/GetList',
+            data: {
+                year: year,
+                programId: programId,
+                programName: programName
+               
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+               
+                    var columnDef = [
+                        { "data": "Month", "title": "Month", "width": "150px" },
+                        {
+                            "data": "RR60Units", "title": "Units Rcvd From Shipped", "width": "150px", "className": "text-right",
+                            //render: function (data, type, row) {
+                            //    var val = COLUMN_FORMAT.formatNumber(data);
+                            //    return val;
+                            //}
+                        },
+                        {
+                            "data": "TotalShipped", "title": "Total FGI Units Shipped", "width": "150px", "className": "text-right",
+                            //render: function (data, type, row) {
+                            //    var val = COLUMN_FORMAT.formatNumber(data);
+                            //    return val;
+                            //}
+                        },
+                        {
+                            "data": "RR60_cost", "title": "RR60 %", "width": "150px", "className": "text-right"
+                          }
+                    ];
+
+
+                ToggleDataList(true);
+
+                   // For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(1).footer()).html(thousands_separators(api.column(1).data().sum()));
+                        $(api.column(2).footer()).html(thousands_separators(api.column(2).data().sum()));
+
+                    }
+                
+             
+
+
+                MakeDataGrid('lstSummaryRR60', data.lstSummaryRR60, 0, columnDef, true, true, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

@@ -1,0 +1,94 @@
+﻿@model IP.Models.LinkPowerBI
+@{
+    ViewBag.Title = "option";
+    Layout = null;
+}
+
+
+<style>
+   
+    .pad {
+        width: 560px;
+    }
+    .modal-backdrop {
+        position: relative !important;
+
+    }
+</style>
+<div id="Option" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" id="btn_dismissclose" class="close full-opacity-hover" data-dismiss="modal">&times;</button>
+            <div id="modalHeader" class="modal-header bg-blue-gradient option-title">
+                Power BI Reports
+            </div>
+            <div id="modalBody" class="modal-body">
+                <table>
+                    <tr>
+                        <td colspan="4" class="pad">
+                            @Html.LabelFor(model => model.category, htmlAttributes: new { @class = "col-4 col-form-lable" })
+                            @Html.DropDownList("ddCategory", null, new { id = "ddCategory", @name = "ddCategory", @class = "form-control", @onkeydown = "GoOnEnter()" })
+                        </td>
+                    </tr>
+                    
+                </table>
+                <table width="100%">
+                    <tr>
+                        <td align="center">
+                            <div id="lblMsg" class="optionMsg">
+                            </div>
+                        </td>
+                        <td width="70" align="right">
+                            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+                        </td>
+                        <td width="100" align="center">
+                            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+                        </td>
+                    </tr>
+                </table>
+                <input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+            </div>
+            <div id="modalFooter" class="modal-footer" style="color:gray; font-size:11px; text-align:center; ">
+                <span id="designedby">Designed By - Fasih Ullah khan </span> | <a id="MailTo" href="" target="_blank" title="Click to report features and bugs">MailTo</a> |
+                <a id="ActivityLog" href="#" onclick="ShowLog()" title="Click to View Activity Log">Activity Log</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#Option").modal('show');
+    //$('#option').on('shown.bs.modal', function () {
+    //    $('#ddCategory').focus();
+    //});
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function Go() {
+
+        var ddCategory = $('#ddCategory').val();
+        
+        $('#Option').modal('hide');
+      
+        OpenPage('\\LinkPowerBI\\Index?ddCategory=' + ddCategory + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]');
+         }
+</script>
+
+
+

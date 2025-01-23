@@ -1,0 +1,69 @@
+﻿@model IP.Areas.ListingReports.Models.SOReservationDetails
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    @*<tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.ProgramID, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>*@
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.custRef, new { @class = "col-4 col-form-lebel" })
+            <input type="text" class="form-control" id="custRef" name="custRef" autofocus onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#custRef').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        Go();
+
+    });
+
+    function Go() {
+
+        //var ProgramId = $('#ddProgram').val();
+        //var ProgramName = $("#ddProgram option:selected").text();
+        var custRef = $('#custRef').val();
+
+        $('#option').modal('hide');
+
+        OpenPage('\\ListingReports\\SOReservationDetails\\Index?&custRef=' + custRef + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+

@@ -1,0 +1,121 @@
+﻿@model IP.Areas.Meta.Models.MetaRepairPartConsumption
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        padding: 10px 2px 15px;
+    }
+
+    .disableanchor {
+        pointer-events: none;
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    
+</style>
+
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    @*<tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>*@
+
+
+    
+
+    <tr>
+        <td colspan="4" class="pad">
+            @*@Html.LabelFor(model => model.serialNo, new { @class = "col-4 col-form-label" })*@
+            <label class="col-4 col-form-label">Upload Serial No. File: (.csv Format)</label>
+
+            @*<input type="text" class="form-control" id="serialNo" name="serialNo" autofocus
+        onkeydown="GoOnEnter()" />*@
+            @*<input type="text" class="form-control" id="serialNo" name="serialNo" autofocus onkeydown="GoOnEnter()" />
+        <input type="text" class="form-control" id="serialNo" name="serialNo" autofocus onkeydown="GoOnEnter()" />*@
+            <input class="form-control" type="file" name="importFile" id="importFile" />
+            @*<div id="uploadModalMsg" style="text-align:left; margin-left:15px" class="optionMsg">*@
+            @*<td style="padding-left:25px;"><button type="button" class="button" id="btnUpload" style="background-color: #53bd5c; color: white;">Upload</button></td>*@
+            <button type="button" class="btn btn-primary" id="btnUpload" style="background-color: #53bd5c; margin-left: 12px; margin-top: 6px;">Upload</button>
+            <div id="uploadModalMsg" style="text-align:left; padding-top: 5px" class="optionMsg"></div>
+
+
+        </td>
+    </tr>
+
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#btnGo').addClass("disableanchor");
+    });
+
+    $('#importFile').on("change", function () {
+        $('#uploadModalMsg').empty();
+        $('#btnGo').addClass("disableanchor");
+
+    });
+    $("#btnUpload").click(function () {
+        $('#uploadModalMsg').empty();
+        var fileInput = $('#importFile')[0];
+
+        if (fileInput.files.length === 0) {
+            $('#uploadModalMsg').append('Please select a file');
+            //$('#btnGo').addClass("disableanchor");
+            //return false;
+        }
+        else {
+            var file = fileInput.files[0];
+            var fileExtension = file.name.split('.').pop().toLowerCase();
+            if (fileExtension !== "csv" || fileExtension == undefined) {
+                $('#uploadModalMsg').append('Please select .csv file');
+                fileInput.value = "";
+                //$('#btnGo').addClass("disableanchor");
+                //return false;
+            }
+            else {
+                //$("#btnGo").prop("disabled", false);
+                $('#btnGo').removeClass("disableanchor");
+                //return true;
+            }
+        }
+    });
+
+   
+
+   
+
+    function OptionsIsValid() {
+        return true;
+    }
+   
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+    function Go() {
+        OpenPage('\\Meta\\MetaRepairPartConsumption\\Index?menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>

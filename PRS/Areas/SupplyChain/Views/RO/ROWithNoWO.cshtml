@@ -1,0 +1,177 @@
+﻿@model IP.Areas.SupplyChain.Models.RO
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            @{
+                if (ViewBag.Option == "op")
+                {
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <input id="rptCode" type="hidden" value="001" />
+                }
+                else
+                {
+                    <button type="button" id="opp" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <input id="rptCode" type="hidden" value="001" />
+                    <input id="rptTitle" type="hidden" value="@ViewBag.ReportTitle" />
+                }
+            }
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle With No WO Units > </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP" style="height:90%">
+            <table id="lstROWithNoWO" class="table table-bordered table-striped text-sm table-hover" BORDER=1 CELLSPACING=0 CELLPADDING=0 width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+
+                </thead>
+                <tbody id="tblBody"></tbody>
+               
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+        //$('#lstSO').DataTable().clear();
+        //$('#lstSO').DataTable().destroy();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var custRef = $('#custRef').val();
+        var status = '@Request.QueryString["status"].ToString()';
+        var statusId = '@Request.QueryString["statusId"].ToString()';
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+
+
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/RO/GetROWithNoWO',
+            data: {
+               
+                custRef: custRef,
+                programId: _programId,
+                ProgramName: _ProgramName,
+                statusId: statusId,
+                status: status,
+                type:'@ViewBag.ReportTitle1'
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                //$('#lstSO').DataTable().clear();
+                //$('#lstSO').DataTable().destroy();
+
+                var columnDef = [
+                    { "data": "ID", "title": "ID", "width": "40px", "visible": false },
+                    { "data": "ProgramID", "title": "ID", "width": "40px", "visible": false },
+
+                    { "data": "Name", "title": "Program", "width": "70px" },
+
+                    {
+                        "data": "CustomerReference", "title": "Customer Reference",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\SupplyChain\\RO\\Detail?Id=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "PartNo", "title": "Part No.", "width": "80px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&Programid=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "HAS_SN", "title": "HAS_SN", "width": "70px", "visible": false },
+                    {
+                        "data": "SerialNo", "title": "Serial No.", "width": "80px",
+                        render: function (data, type, row) {       
+                            if (row["HAS_SN"] == 'N') {
+                                url = row["SerialNo"];
+                            }
+                            else {
+                                var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                            }
+                            return url;
+                        }
+                    },
+                    { "data": "Status", "title": "Status", "width": "70px" },
+                    { "data": "Username", "title": "Received By", "width": "110px" },
+                    {
+                        "data": "Received_On", "title": "Received On", "width": "90px", "className": "text-right",
+
+                    },
+                    {
+                        "data": "LastActivityDate", "title": "Last Activity On", "width": "90px", "className": "text-right",
+
+                    }
+                ]
+
+                ToggleDataList(true);
+                //For Displaying  Footer Sum
+                //var footerfunc = function () {
+                //    var api = this.api();
+                //    $(api.column(11).footer()).html(thousands_separators(api.column(11).data().sum()));
+                //    $(api.column(12).footer()).html(thousands_separators(api.column(12).data().sum()));
+
+                //}
+                MakeDataGrid('lstROWithNoWO', data.lstROWithNoWO, 0, columnDef, true, true, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+    $(document).ready(function () {
+
+        $("#opp").click(function () {
+
+
+            Navigate('option', '\\SupplyChain\\RO\\Option','001','Received Orders','Specd by: Abbas Arsiwala @@ Reconext &amp; Designed by: Mohsin Saleem @@ WinIT','mailto:kashif@winit.biz?cc=mohsin@winit.biz;Tahir@winit.biz&amp;subject=Received Order - Detail Report');
+
+        });
+
+    });
+</script>

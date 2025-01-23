@@ -1,0 +1,464 @@
+﻿@model IP.Areas.ListingReports.Models.PLUSGenericInformation
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+
+    string[] parameter = Model.Parameter.Split(',');
+    string[] _Value = new string[parameter.Length];
+    //string[] Contract = Model._lstProgram.Split(',');
+    //string[] _Contractlst = new string[Contract.Length];
+
+    string[] ctrlType = Model.CtrlType.Split(',');
+    string[] _ctrlType = new string[ctrlType.Length];
+
+    int RptId = Model.RptId;
+    bool RptHasProgramId = Model.HaveProgramId;
+    bool isDetail = Model.isDetail;
+    int arraylegnth = parameter.Length;
+}
+<style>
+    .col-centered {
+        float: none;
+        margin: 0 auto;
+    }
+
+    .modal-backdrop.in {
+        filter: alpha(opacity=0);
+        opacity: .0;
+    }
+
+    .modal-backdrop {
+        position: relative;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1040;
+        background-color: #000;
+    }
+</style>
+
+<div id="Options" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="modalHeader" class="modal-header bg-blue-gradient option-title">
+                @ViewBag.ReportTitle
+            </div>
+            <div id="modalBody" class="modal-body">
+                <table class="fullWidth">
+                    @{
+                        foreach (var _ctrltyp in ctrlType)
+                        {
+                            if (_ctrltyp == "DDL")
+                            {
+                                <tr>
+                                    <td class="pad" colspan="4">
+                                        @Html.LabelFor(model => model.Program, htmlAttributes: new { @class = "col-sm-4 col-form-lable" })
+                                        @Html.DropDownList("ddProgram", null, new { id = "ProgramID", @name = "ProgramID", @class = "form-control", @onchange = "loadWarehouses(this.value)", @onkeydown = "GoOnEnter()" })
+                                    </td>
+                                </tr>
+
+                            }
+                            else if (_ctrltyp == "RPT")
+                            {
+                                <tr>
+                                    <td class="pad" id="rptType" colspan="4">
+                                        <label>Report type:</label>
+                                        @Html.DropDownList("rptType", new List<SelectListItem>
+                                            {
+
+                                               new SelectListItem{ Text="Summary", Value = "Summary" },
+                                               new SelectListItem{ Text="Detail", Value = "Detail" }
+
+                                            }, new { @class = "form-control" })
+                                    </td>
+                                </tr>
+                            }
+                            else if (_ctrltyp == "DDLDataFeed")
+                            {
+                                <tr>
+                                    <td class="pad" id="DDLDataFeed" colspan="4">
+                                        <label>DataFeed:</label>
+                                        @Html.DropDownList("DDLDataFeed", new List<SelectListItem>
+                                            {
+
+                                               new SelectListItem{ Text="GoPro PostRefurbishTest E2E", Value = "GoPro PostRefurbishTest E2E" },
+                                                 new SelectListItem{ Text="GoPro Refurbish Test E2E", Value = "GoPro Refurbish Test E2E" },
+                                                   new SelectListItem{ Text="GoPro Inspection E2E", Value = "GoPro Inspection E2E" },
+                                                     new SelectListItem{ Text="GoPro Functional Test E2E", Value = "GoPro Functional Test E2E" },
+                                                       new SelectListItem{ Text="GoPro Disposition E2E", Value = "GoPro Disposition E2E" },
+                                               new SelectListItem{ Text="GoPro Reroutes E2E", Value = "GoPro Reroutes E2E" }
+
+                                            }, new { @class = "form-control" })
+                                    </td>
+                                </tr>
+                            }
+                            else if (_ctrltyp == "STATUS")
+                            {
+                                <tr>
+                                    <td colspan="4" class="pad">
+                                        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "col-4 col-form-lable" })
+                                        @Html.DropDownList("ddStatus", null, new { id = "status", @name = "status", @class = "form-control", @onkeydown = "GoOnEnter()" })
+                                    </td>
+                                </tr>
+                            }
+                            else if (_ctrltyp == "DDProcess") // For BOM Checker Merge report
+                            {
+                                <tr>
+                                    <td colspan="4" class="pad">
+                                        @Html.LabelFor(model => model.Process, htmlAttributes: new { @class = "col-4 col-form-lable" })
+                                        @Html.DropDownList("ddProcess", null, new { id = "ddProcess", @name = "ddProcess", @class = "form-control", @onkeydown = "GoOnEnter()" })
+                                    </td>
+                                </tr>
+
+                            }
+                            else if (_ctrltyp == "PSWarehouse")
+                            {
+                                <tr>
+                                    <td class="pad">
+                                        @Html.LabelFor(model => model.Warehouse, htmlAttributes: new { @class = "col-4 col-form-lable" })
+                                        @Html.DropDownList("ddWarehouseForPartSerialView", null, new { id = "PSWarehouse", @name = "ddWarehouseForPartSerialView", @class = "form-control", @onkeydown = "GoOnEnter()" })
+                                    </td>
+                                </tr>
+
+
+                            }
+                            else if (_ctrltyp == "DTP")
+                            {
+                                <tr>
+                                    <td class="pad">
+                                        <strong>From:</strong>
+                                        <div class='input-group date' id='_dtpFrom'>
+
+                                            @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control", @id = "_fromdt" })
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="pad">
+                                        <strong>To:</strong>
+                                        <div class='input-group date' id='dtpTo'>
+                                            @Html.TextBoxFor(model => model.toDt, htmlAttributes: new { @class = "form-control", @id = "_toDt" })
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            }
+                            else if (_ctrltyp == "CAD")
+                            {
+
+
+                                <tr>
+                                    <td class="pad">
+                                        <strong>From:</strong>
+                                        <div class='input-group date' id='_dtpFrom'>
+
+                                            @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control", @id = "_fromdt" })
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="pad">
+                                        <strong>To:</strong>
+                                        <div class='input-group date' id='dtpTo'>
+                                            @Html.TextBoxFor(model => model.toDt, htmlAttributes: new { @class = "form-control", @id = "_toDt" })
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="dateFont ">
+                                        <div>
+                                            <br />
+                                            <br />
+                                            <label for="_isAllDate" style="margin-left:0px">
+                                                <input type="checkbox" id="isAllDate" name="isAllDate" onclick="EnableDisableOrdCreat(this)" />
+                                                All
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else if (_ctrltyp == "TXT")
+                            {
+                                int paramCount = parameter.Count();
+                                int rowCount = (int)Math.Ceiling((double)paramCount / 2);
+                                int paramIndex = 0;
+
+                                for (int i = 0; i < rowCount; i++)
+                                {
+                                    <tr>
+                                        @for (int k = 0; k < 2 && paramIndex < paramCount; k++)
+                                        {
+                                            string param = "param" + paramIndex;
+
+                                            <td class="pad" colspan="4">
+                                                <label>@parameter[paramIndex]</label>
+                                                <input type="text" class="form-control textBox" id="@param" name="@param" autofocus onkeydown="GoOnEnter()" />
+                                            </td>
+
+                                            paramIndex++;
+                                        }
+                                    </tr>
+                                }
+                            }
+                        }
+                    }
+                </table>
+                <table width="100%">
+                    <tr>
+                        <td align="center">
+                            <div id="lblMsg" class="optionMsg">
+                            </div>
+                        </td>
+                        <td width="70" align="right">
+                            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+                        </td>
+                        <td width="100" align="center">
+                            <a id="btnCancel" data-dismiss="modal" class="cancel" href="~/Areas/SupplyChain/Views/WIP/GetWIP.cshtml">Cancel</a>
+                        </td>
+                    </tr>
+                </table>
+                <input id="rptCode" type="hidden" value='@Request.QueryString["RptId"]' />
+            </div>
+            <div id="modalFooter" class="modal-footer" style="color:gray; font-size:11px; text-align:center; ">
+                <span id="designedby">Specd by:  Alejandro Gomez Ruiz Reconext & Designed By - Huzaifa & Mohsin </span> | <a id="MailTo" href="" target="_blank" title="Click to report features and bugs">MailTo</a> |
+                <a id="ActivityLog" href="#" onclick="ShowLog()" title="Click to View Activity Log">Activity Log</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadWarehouses(programId) {
+        var RptName = '@ViewBag.ReportTitle';
+        if (RptName == "PartSerial") {
+
+        $.ajax({
+            url: '@Url.Action("GetWarehousesByProgram", "PLUSGenericInformation")',  // Update with your controller's name
+            type: 'GET',
+            data: { ProgramId: programId },
+            success: function (data) {
+                var warehouseDropdown = $('#PSWarehouse');
+                warehouseDropdown.empty(); // Clear existing options
+
+                // Populate the dropdown with the received data
+                $.each(data, function (index, item) {
+                    warehouseDropdown.append($('<option>', {
+                        value: item.Value,
+                        text : item.Text
+                    }));
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading warehouses:', error);
+            }
+        });
+        }
+    }
+    function EnableDisableOrdCreat(isAllDate) {
+
+        var isAllDate = $('#isAllDate').is(':checked');
+        document.getElementById("_fromdt").disabled = isAllDate;
+        var nodes1 = document.getElementById("_fromdt").getElementsByTagName('*');
+        document.getElementById("_toDt").disabled = isAllDate;
+        var nodes1 = document.getElementById("_toDt").getElementsByTagName('*');
+        for (var i = 0; i < nodes1.length; i++) {
+            nodes1[i].disabled = isAllDate;
+        }
+    };
+    function textBoxValidation() {
+        $('#lblMsg').empty();
+
+        var RptId = @RptId.ToString();
+        var RptName = '@ViewBag.ReportTitle';
+        var textValue = $(".textBox").val();
+
+        if ((RptName === "Serial Number History" || RptName === "Kitting Detail") && textValue.length < 4) {
+            $('#lblMsg').append('Please enter a Serial No.');
+            return false;
+        } else {
+            $('#lblMsg').empty();
+            return true;
+        }
+
+    }
+    $(document).ready(function () {
+
+        //to have your input focused every your modal open
+        $('#Options').on("shown.bs.modal", function () {
+            $('#keyword').focus();
+        });
+
+        //to open the modal when document is ready
+        $("#Options").modal('show');
+    });
+    //$('#Option').modal();
+
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+
+            var retValue = textBoxValidation();
+            if (retValue == true) {
+                Go();
+            }
+        }
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retValue = textBoxValidation();
+            if (retValue == true) {
+                Go();
+            }
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        var retValue = textBoxValidation();
+        if (retValue == true) {
+            Go();
+        }
+    });
+    $("#dtpTo, #_dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#dtpTo, #_dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    //For Date Picker
+    //Added null check condition because in some report
+    // there is not date filter so this line gives error on console.
+    if ($('#_fromdt').length !== 0) dateFrom();
+    if ($('#_toDt').length !== 0) dateTo();
+
+    function dateFrom() {
+
+        var RptName = '@ViewBag.ReportTitle';
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        //var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate;
+        if (RptName == "Image") {
+             dd = ('0' + newdate.getDate()).slice(-2);
+        }
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('_fromdt').value = someFormattedDate;
+    }
+    function dateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('_toDt').value = someFormattedDate;
+    }
+
+    $("#dtpTo, #_dtpFrom").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '-365d',
+        endDate: maxDate
+    });
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+
+    function Go() {
+
+        var ar = new Array(@arraylegnth);
+        for (var i = 0; i < @arraylegnth ; i++)
+        {
+            ar[i] = $('#param'+i).val();
+        }
+
+        var contract = $('#ProgramID option:selected').val();
+        var programName = $('#ProgramID option:selected').text();
+        var isAllDate = $('#isAllDate').is(':checked');
+        var fDate = $('#_fromdt').val();
+        var tDate = $('#_toDt').val();
+        var RptName = '@ViewBag.ReportTitle';
+        var RptId = '@ViewBag.RptId';
+        var RptHasProgramId = @RptHasProgramId.ToString().ToLower();
+        var RptHasOptionPage = true;
+        var statusId = $('#status option:selected').val();
+        var status = $('#status option:selected').val();
+        var rptType = $('#rptType option:selected').val();
+        var DDLDataFeed = $('#DDLDataFeed option:selected').val();
+        var CGStatusId = $('#CGStatus option:selected').val();
+        var CGStatus = $('#CGStatus option:selected').text();
+        var ddProcess = $('#ddProcess option:selected').val();
+        var ddProcess = $('#ddProcess option:selected').text();
+        var PSWarehouse = $('#PSWarehouse option:selected').val();
+        var isDetail = '@isDetail';
+
+        // Set data in localStorage
+        localStorage.setItem('arrayParams', JSON.stringify(ar));
+        localStorage.setItem('contract', contract);
+        localStorage.setItem('programName', programName);
+        localStorage.setItem('isAllDate', isAllDate);
+        localStorage.setItem('fDate', fDate);
+        localStorage.setItem('tDate', tDate);
+        localStorage.setItem('statusId', statusId);
+        localStorage.setItem('status', status);
+        localStorage.setItem('rptType', rptType);
+        localStorage.setItem('DDLDataFeed', DDLDataFeed);
+        localStorage.setItem('CGStatusId', CGStatusId);
+        localStorage.setItem('CGStatus', CGStatus);
+        localStorage.setItem('ddProcess', ddProcess);
+        localStorage.setItem('PSWarehouse', PSWarehouse);
+
+       $('#Option').modal('hide');
+        if (isDetail == 'True') {
+            OpenView('\\ListingReports\\PLUSGenericInformation\\DetailReports?param=' + ar + '&contract=' + contract + '&programName=' + programName + '&isAllDate=' + isAllDate + '&frmDt=' + fDate + ' &toDate=' + tDate + '&RptId=' + @RptId+ '&RptName=' + RptName + '&RptId=' + RptId + '&RptHasProgramId=' + RptHasProgramId + '&RptHasOptionPage=' + RptHasOptionPage + '&statusId=' + statusId + '&status=' + status + '&rptType=' + rptType + '&CGStatusId=' + CGStatusId + '&CGStatus=' + CGStatus + '&ddProcess=' + ddProcess + '&ddProcess=' + ddProcess + '&PSWarehouse=' + PSWarehouse + '&DDLDataFeed=' + DDLDataFeed  + '&menuTitle=' + $('.modal-header').html() + '&page=list' + '&rptCode=' + '@Request.QueryString["rptCode"]', 'rghtPanel');
+        }
+        else {
+            OpenView('\\ListingReports\\PLUSGenericInformation\\Detail?param=' + ar + '&contract=' + contract + '&programName=' + programName + '&isAllDate=' + isAllDate + '&frmDt=' + fDate + ' &toDate=' + tDate + '&RptId=' + @RptId+ '&RptName=' + RptName + '&RptId=' + RptId + '&RptHasProgramId=' + RptHasProgramId + '&RptHasOptionPage=' + RptHasOptionPage + '&statusId=' + statusId + '&status=' + status + '&rptType=' + rptType + '&CGStatusId=' + CGStatusId + '&CGStatus=' + CGStatus + '&ddProcess=' + ddProcess + '&ddProcess=' + ddProcess + '&PSWarehouse=' + PSWarehouse + '&DDLDataFeed=' + DDLDataFeed + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]' , 'rghtPanel');
+        }
+
+    }
+
+</script>
+<script>
+    (function () {
+        var forms = document.forms || [];
+        for (var i = 0; i < forms.length; i++) {
+            for (var j = 0; j < forms[i].length; j++) {
+                if (!forms[i][j].readonly != undefined && forms[i][j].type != "hidden" && forms[i][j].disabled != true && forms[i][j].style.display != 'none') {
+                    forms[i][j].focus();
+                    return;
+                }
+            }
+        }
+    })();
+</script>

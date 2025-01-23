@@ -1,0 +1,95 @@
+﻿@model IP.Areas.Biztalk.Models.OutboundTransactionDetail
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstOutboundTransactionDetail" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                                             
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var contract = $("#ddContract option:selected").val();
+        var MsgType = $('#ddMessageType option:selected').val();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+    
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/OutboundTransactionDetail/GetList',
+            data: {
+                contract: contract,
+                MsgType: MsgType,
+                frmDt: fDate,
+                toDt: tDate
+                
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                
+
+                var columnDef = [
+                    { "data": "Contract", "title": "Contract", "width": "50px" },
+                    { "data": "MessageType", "title": "Message Type"},                   
+                    { "data": "Processed", "title": "Processed", "width": "60px", "className": "text-center" },
+                    { "data": "ProcessDateTime", "title": "Process Date", "width": "120px", "className": "text-right" },
+                    {
+                        "data": "SequenceNo", "title": "Sequence No.", "width": "80px", "className": "text-right",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\Biztalk\\OutboundTransactionDetail\\Detail?contract=' + row["Contract"] + '&SequenceNo=' + row["SequenceNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "InsertDate", "title": "Insert Date", "width": "120px", "className": "text-right" }
+                  
+                ]
+
+
+                ToggleDataList(true);
+                MakeDataGrid('lstOutboundTransactionDetail', data.lstOutboundTransactionDetail, 0, columnDef, true, false, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+

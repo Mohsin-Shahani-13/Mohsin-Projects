@@ -1,0 +1,291 @@
+﻿@model IP.Models.MetaDiagDB
+
+@{
+    ViewBag.Title = "METACounterDB";
+    Layout = null;
+}
+<style>
+    div {
+        user-select: none;
+    }
+
+        div .section {
+            color: black;
+            border: 1px solid #202020;
+        }
+
+    .section {
+        /*border: 1px solid #ccc;*/
+        /*padding: 10px;*/
+        margin-bottom: 20px;
+        background-color: white;
+    }
+
+        .section h2 {
+            text-align: center;
+            font-size: 1.4em;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+    h6 {
+        text-align: center;
+        font-size: 1em;
+        margin-bottom: 10px;
+        color: #999;
+        font-weight: bold;
+    }
+
+    /*.box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 8px;
+        background-color: black;
+    }*/
+
+    /*    .box .label {
+            font-weight: bold;
+            font-size: 0.9em;
+        }*/
+
+    /*   .box .value {
+            font-size: 1.1em;
+            font-weight: bold;
+        }*/
+
+    span {
+        text-align: center;
+        font-size: 3em;
+        /*color: green;*/
+        font-weight: bold;
+    }
+
+    .col-sm-4 {
+        border: 1px solid #999;
+        padding: 10px;
+        margin-bottom: 6px;
+    }
+
+    .container-fluid {
+        overflow-y: auto;
+        /*overflow-x: scroll;*/
+    }
+</style>
+
+<div class="container-fluid" style="height:100%;">
+    <div class="row">
+        <div class="col-md-12">
+            <h6 id="DBTitle" style="font-size:30px; text-align:center;background-color:black; color:limegreen;"></h6>
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px;">
+        <div class="col-md-5" style="margin-right:57px; margin-left:118px;">
+            <!-- Receiving Section -->
+            <div id="receiving" class="section">
+                <h2>RECEIVING</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="diagnosis" class="section">
+                <h2>DIAGNOSIS</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="triage" class="section">
+                <h2>TRIAGE</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="datawipe" class="section">
+                <h2>DATAWIPE</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div id="gatekeeper" class="section">
+                <h2>GATEKEEPER</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="facos" class="section">
+                <h2>FACOS</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="finaltest" class="section">
+                <h2>FINALTEST</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="oba" class="section">
+                <h2>OBA</h2>
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Operators</h6>
+                        <span class="operators"></span>
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">qTotal</h6>
+                        <span class="qTotal"></span>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <h6 class="mb-1">Productivity</h6>
+                        <span class="productivity"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        setInterval(function () {
+            LoaData();
+        }, 300000);
+    });
+
+    ToggleDataList(false);
+    LoaData();
+
+    function LoaData() {
+
+        var selectedVal = '@Request.QueryString["selected"]';
+        var programId = '@Request.QueryString["programId"]';
+        var selectedText = '@Request.QueryString["selectedText"]';
+        var site = '@Request.QueryString["site"]';
+        var programName = '@Request.QueryString["programName"]';
+
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/MetaDiagDB/GetCounterDB',
+            data: {
+                selectedVal: selectedVal,
+                selectedText: selectedText,
+                programId: programId,
+                site: site,
+                programName: programName
+            },
+            datatype: JSON,
+            success: function (response) {
+                if (response.error) {
+                    console.error("Error:", response.error);
+                    return;
+                }
+
+                // Update HTML with DBTitle (optional)
+                $('#DBTitle').text(response.DBTitle);
+
+                // Populate HTML with data sections
+                $.each(response.Data, function (section, values) {
+                    $('#' + section.toLowerCase() + ' .operators').text(values.Operators);
+                    $('#' + section.toLowerCase() + ' .qTotal').text(values.qTotal);
+                    $('#' + section.toLowerCase() + ' .productivity').text(values.Productivity);
+                });
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>

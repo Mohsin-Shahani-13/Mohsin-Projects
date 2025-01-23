@@ -1,0 +1,214 @@
+﻿@model IP.Areas.Meta.Models.MetaReceivingVolume
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    /*tr {
+        white-space:nowrap;
+    }*/
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstMetaReceivingVolume" class="table table-bordered table-striped text-sm table-hover" @*width="100%"*@>
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @*<th></th>*@
+
+
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @*<th></th>*@
+
+
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var _SerialNo = $('#SerialNo').val();
+        //  var _PartNo = $('#PartNo').val();
+        // var _Transaction = $('#Transaction').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MetaReceivingVolume/GetList',
+            data: {
+
+                programId: _programId,
+                ProgramName: _ProgramName,
+                serialNo: _SerialNo
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "ProgramID", "width": "40px", "visible": false },
+                        { "data": "Name", "title": "Program", "width": "40px" },
+                        { "data": "OrderHeaderID", "title": "RoHeaderID", "width": "40px", "visible": false },
+                        { "data": "TRANSACTION_ID", "title": "Part Trans. Id", "width": "90px", "visible": false },
+                        { "data": "TRANSACTION", "title": " Transaction", "width": "70px" },
+                        { "data": "ORDER_NO", "title": "Order No.", "width": "70px" },
+                        {
+                            "data": "RMA_REF", "title": "Customer Ref.", "width": "90px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\SupplyChain\\RO\\Detail?Id=' + row["OrderHeaderID"] + '&custRef=' + row["RMA_REF"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "PART_NO", "title": "Part No.", "width": "90px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PART_NO"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "DESCRIPTION", "title": "Part Description", "width": "240px" },
+                        {
+                            "data": "SERIAL_NO", "title": "Serial No.", "width": "90px",
+                            render: function (data, type, row) {
+                                if (row["SERIAL_NO"] == "*" || row["HAS_SN"] == 'N') {
+                                    url = row["SERIAL_NO"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\\PartsSerial\\Detail?serialNo=' + row["SERIAL_NO"] + '&ProgramId=' + row["ProgramID"] + '&partNo=' + row["PART_NO"] + '&page=list" target=_blank > ' + data + '</a>';
+                                }
+                                return url;
+                            }
+
+                        },
+                        { "data": "QUANTITY", "title": "Qty", "width": "60px", "className": "text-right" },
+                        { "data": "WORK_TYPE_ID", "title": "Work Type Id", "width": "90px", "visible": false},
+
+                        { "data": "TYPE_DESIGNATION", "title": "Type Designation", "width": "120px" },
+                        { "data": "RECEIVED_BY", "title": "Received By", "width": "90px" },
+
+                        { "data": "DATE_TIME", "title": "Created On", "width": "110px", "className": "text-right" },
+                        { "data": "ORDER_TYPE", "title": "Order Type", "width": "90px" },
+
+                        { "data": "ACC_SERIAL", "title": "Acc Serial", "width": "90px", "visible": false },
+                        { "data": "ACC_PART_NO", "title": "Acc Part No.", "width": "90px", "visible": false },
+
+                        { "data": "ACC_SERIAL1", "title": "Acc Serial 1", "width": "90px" },
+                        { "data": "ACC_PART_NO1", "title": "Acc Part No. 1", "width": "90px" },
+
+                        { "data": "ACC_SERIAL2", "title": "Acc Serial 2", "width": "90px" },
+                        { "data": "ACC_PART_NO2", "title": "Acc Part No. 2", "width": "90px" },
+
+                        { "data": "ACC_SERIAL3", "title": "Acc Serial 3", "width": "90px" },
+                        { "data": "ACC_PART_NO3", "title": "Acc Part No. 3", "width": "90px" }
+
+                        //{ "data": "ACC_6", "title": "Acc 6", "width": "90px" },
+                        //{ "data": "ACC_SN6", "title": "Acc SN6", "width": "90px" }
+
+                    ];
+
+                    ToggleDataList(true);
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(10).footer()).html(thousands_separators(api.column(10, { search: 'applied' }).data().sum()));
+                        //  $(api.column(4).footer()).html(thousands_separators(api.column(4, { search: 'applied' }).data().sum()));
+
+                    }
+                    MakeDataGrid('lstMetaReceivingVolume', data.lstMetaReceivingVolume, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

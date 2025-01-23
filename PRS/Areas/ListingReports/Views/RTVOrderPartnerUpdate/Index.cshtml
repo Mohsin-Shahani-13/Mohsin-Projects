@@ -1,0 +1,110 @@
+﻿@model IP.Areas.ListingReports.Models.RTVOrderPartnerUpdate
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool">
+                @*title="Option Page" onclick="$('#option').modal('show');"*@
+                <span class="fa fa-list fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstRTVOrderPartnerUpdate" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        @*<th></th>*@
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <!--<tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>-->
+                        @*<th></th>*@
+                    <!--</tr>
+                </tfoot>-->
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        $('#tblBody').empty();
+
+        var isSingleRow = false;
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/RTVOrderPartnerUpdate/GetList',
+            data: {
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "Program ID", "width": "70px", "visible": false },
+                        { "data": "RTV_ORDER_NUMBER_ORDER", "title": "RTV Order No.", "width": "150px" },
+                        {
+                            "data": "PART_Number", "title": "Part No.",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PART_Number"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "Updated_Date", "title": "Updated Date", "width": "110px", "className": "text-right" },
+                        { "data": "REASON_CATEGORY", "title": "Reason Category", "width": "150px" },
+                        { "data": "ETA_Wk", "title": "ETA Week", "width": "150px" },
+                        { "data": "Shipping_Tracking_No", "title": "Shipping Tracking No.", "width": "150px" },
+                        { "data": "Remarks_Free_Text", "title": "Remarks Free Text", "width": "200px" }
+                    ];
+                    //For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //    $(api.column(5).footer()).html(thousands_separators(api.column(5).data().sum()));
+                    //}
+                    ToggleDataList(true);
+                    MakeDataGrid('lstRTVOrderPartnerUpdate', data.lstRTVOrderPartnerUpdate, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>
+
+
+

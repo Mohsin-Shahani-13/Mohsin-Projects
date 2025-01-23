@@ -1,0 +1,280 @@
+﻿@model IP.Areas.Jobs.Models.SSRS
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+    var lstUsr = Model.lstUsrAxs;
+}
+<style>
+    #parentDiv {
+        /*display: block;*/
+        overflow-x: auto;
+        /*white-space: nowrap;*/
+    }
+
+    #lstSSRS tr {
+        white-space: nowrap;
+    }
+
+    textarea {
+        resize: none !important;
+    }
+
+    .view-report {
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        text-align: center;
+        width: 30px;
+        height: 20px;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <input id="rptcode" type="hidden" value="021" />
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle > </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right" style="margin-top:2PX;">
+            </div>
+        </div>
+        <div class="box-body text-sm">
+            <table id="lstSSRS" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                <thead class="sorted-asc">
+                    <tr>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th class="notexport"></th>
+                        @*<th></th>*@
+                        @*<th></th>*@
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+
+        @*<div class="row section-color">
+                <div id="left_panel_Bottom" class="col-md-12 section-padding">
+                    <div id="leftsection" class="box panel panel-default leftsection" style="text-align: center;  height:54%; background-color: white; padding-top: 90px;">
+                        <h4>Click hyperlinks on above section to load data</h4>
+                    </div>
+                </div>
+            </div>*@
+    </div>
+
+</div>
+<script>
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "Status Description";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    $.fn.dataTable.render.ellipsisAdr2 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "Report Path";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    $.fn.dataTable.render.ellipsisAdr3 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|%|;|'|\/|")/gm, "");
+
+                var header = "Command";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+      
+        $('#tblBody').empty();
+        var ReportName = $('#ReportName').val();
+        var status = $('#ddlStatus option:selected').text();
+        //var statusid = $('#ddlStatus option:selected').val();
+        var ProgramId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var frequency = $('#frequency option:selected').val();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SSRS/GetList',
+            datatype: JSON,
+            data: {
+                ReportName: ReportName,
+                status: status,
+                ProgramId: ProgramId,
+                ProgramName: ProgramName,
+                frequency: frequency
+            },
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                       
+                        {
+                            "title": "", "width": "50px", "className": "text-center",
+                            render: function (data, type, row) {
+                               
+                                    var url = '';
+                                    if (row['HasAxs'] == "Y") {
+                                        url = '<span onclick="ExecuteSSRS(\'' + row['SubscriptionID'] + '\');" > ' +
+                                            '<button id="btnRUN" class="view-report">Run</button></span>'
+                                    }
+                                    else {
+
+                                    }
+
+                                    return url;
+                                }
+                        },
+                        { "data": "ServerName", "title": "Server Name", "width": "90px" },
+                        {
+                            "data": "Program", "title": "Program", "width": "70px",
+                            render: function (data, type, row) {
+
+                                var str = row["Program"].toString();
+                                str = str.slice(0, -2)
+                                return str;
+                            }
+                        },
+
+                        { "data": "ReportName", "title": "Report Name" },
+                        { "data": "SSRSPath", "title": "Report Path", "width": "100px", "render": $.fn.dataTable.render.ellipsisAdr2(15) },
+                        { "data": "SSRSPath", "title": "Report Path", "width": "100px", "visible": false },
+                        { "data": "ReportDesc", "title": "Report Description", "width": "120px" },
+                        {
+                            "data": "Status", "title": "Status", "width": "70px", "className": "text-center",
+                            render: function (data, type, row) {
+
+                                console.log(row["Status"])
+
+                                if (row["Status"] == 'Succeeded') {
+
+                                    var url = '<span style="color:green;font-weight:bolder">' + data + '</span>'
+
+                                }
+
+                                else if (row["Status"] == 'Running') {
+                                    var url = '<span style="color:blue;font-weight:bolder">' + data + '</span>'
+
+                                }
+
+                                else if (row["Status"] == 'Failed') {
+                                    var url = '<span style="color:red;font-weight:bolder">' + data + '</span>'
+
+                                }
+                                else if (row["Status"] == 'Disabled') {
+                                    var url = '<span style="color:#E69500;font-weight:bolder">' + data + '</span>'
+
+                                }
+                                else {
+                                    var url = '<span>' + data + '</span>'
+                                }
+                                return url;
+
+                            }
+                        },
+                        { "data": "statusDesc", "title": "Status Description", "width": "120px", "render": $.fn.dataTable.render.ellipsisAdr1(30) },
+                        { "data": "statusDesc", "title": "Status Description", "width": "120px", "visible": false },
+                        { "data": "LastRunOn", "title": "Last Run On", "width": "90px", "className": "text-right" },
+                        { "data": "NextRunOn", "title": "Next Run On", "width": "90px", "className": "text-right" },
+                        { "data": "last_run_duration", "title": "Run duration", "width": "70px", "className": "text-right" },
+                        { "data": "Frequency", "title": "Frequency", "width": "40px" },
+                        { "data": "Notify", "title": "Notify", "width": "60px" },
+                        { "data": "notifyOperator", "title": "Email Address", "width": "140px" },
+                        { "data": "SubscriptionID", "title": "Subscription Id", "width": "200px" },
+                        //{ "data": "JobStatus", "title": "Enabled", "width": "50px", "className": "text-center"  }
+
+                    ]
+                    //For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //    $(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                    //}
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstSSRS', data.lstSSRS, 0, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    function ExecuteSSRS(subscriptionID) {
+        if (confirm("Are you sure you want to continue?")) {
+            $.ajax({
+                url: "/SSRS/RunSSRS",
+                type: 'POST',
+                data: ({
+                    subscriptionID: subscriptionID
+                }),
+                datatype: "JSON",
+                success: function (data) {
+
+                }
+            });
+        }
+        else {
+
+        }
+    };
+</script>
+

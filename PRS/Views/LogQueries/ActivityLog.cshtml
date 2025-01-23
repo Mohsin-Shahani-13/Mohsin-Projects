@@ -1,0 +1,101 @@
+﻿@model IP.Models.LogQueries
+@{
+    Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery);
+}
+<div id="dataList" class="box panel panel-default">
+    <div class="box-header with-border bg-blue-gradient">
+        <button type="button" class="btn btn-box-tool">
+            <span class="fa fa-th-list fa-lg white"></span>
+        </button>
+        <h6 class="box-title" id="head_lstDetail"><strong>@ViewBag.ReportTitle</strong><strong id="filterString"></strong></h6>
+        <div id="buttons" class="box-tools pull-right">
+        </div>
+    </div>
+    <div class="box-body">
+        <table id="lstActivityLog" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tblBody"></tbody>
+        </table>
+    </div>
+</div>
+
+@{
+    if (Layout == null)
+    {
+        <script>
+      //ToggleDataList(false);
+   // var _lstActivityLog = @*@Html.Raw(Json.Encode(Model.lstActivityLog));*@
+            var _lstActivityLog =  @Html.Raw(Model.serializer.Serialize(Model.lstActivityLog));
+
+            var tableHeader = $('.table').innerHeight();
+            var topHeader = $('.box-header').innerHeight();
+            var browserHeight = window.innerHeight;
+            var gridHeight = browserHeight - tableHeader - topHeader - 8;
+
+    getData();
+   function getData () {
+
+       var columnWidth = [
+           { "title": "User Name", "width": "100px" },
+           { "title": "Remote Host", "width": "90px" },
+           { "title": "Report Url" },
+           { "title": "Last Run On", "width": "110px", "className": "text-right" },
+
+       ];
+
+             // ToggleDataList(true);
+         //       var h = getHeight(37);
+       ToggleDataList(true);
+       //MakeDataGrid('lstActivityLog', _lstActivityLog, 0, columnWidth, true, true, false, true, $('#head_lstDetail').text(), false);
+      // MakeFrameGrid('lstActivityLog', _lstActivityLog, gridHeight, columnWidth, 'buttons', true, true, false, false, $('#head_lstDetail').text(), false);
+       MakeDataGrid('lstActivityLog', _lstActivityLog, 0, columnWidth, true, false, false);
+       if (_lstActivityLog["ErrorMessage"] != null) {
+           $('.dataTables_empty > p').text(data["ErrorMessage"]);
+       }
+            };
+        </script>
+    }
+    else
+    {
+        @section js{
+            <script>
+      //ToggleDataList(false);
+   // var _lstActivityLog = @*@Html.Raw(Json.Encode(Model.lstActivityLog));*@
+    var _lstActivityLog =  @Html.Raw(Model.serializer.Serialize(Model.lstActivityLog));
+    getData();
+   function getData () {
+       var tableHeader = $('.table').innerHeight();
+       var topHeader = $('.box-header').innerHeight();
+       var browserHeight = window.innerHeight;
+       var gridHeight = browserHeight - tableHeader - topHeader - 8;
+
+       var columnWidth = [
+           { "title": "User Name", "width": "100px" },
+           { "title": "Remote Host", "width": "90px"},
+           { "title": "Report Url" },
+           { "title": "Last Run On", "width": "130px", "className": "text-right" },
+
+       ];
+
+             // ToggleDataList(true);
+            var h = getHeight(37);
+       ToggleDataList(true);
+       //MakeDataGrid('lstActivityLog', _lstActivityLog, 0, columnWidth, true, true, false, true, $('#head_lstDetail').text(), false);
+     //  MakeDataGrid('lstActivityLog', _lstActivityLog, 500, columnWidth, 'buttons', true, true, false, false, $('#head_lstDetail').text(), false);
+       MakeDataGrid('lstActivityLog', _lstActivityLog, 0, columnWidth, true, false, false);
+       //if (_lstActivityLog["ErrorMessage"] != null) {
+       //    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+       //}
+            };
+            </script>
+
+        }
+    }
+}

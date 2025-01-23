@@ -1,0 +1,512 @@
+﻿@model IP.Areas.ListingReports.Models.PLUSGenericInformation
+@{
+    ViewBag.Title = "Detail";
+    Layout = null;
+
+
+    string FilterString = Model.filterString;
+
+    bool RptHasProgramId = Model.HaveProgramId;
+    //bool isDetail = Model.isDetail;
+
+}
+<style>
+
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+
+    .leftsection {
+        text-align: center;
+        /*padding-top: 50px;*/
+    }
+
+    /*remove sql doc button added by mohsin*/
+    #showQuery {
+        visibility: hidden;
+        position: absolute;
+    }
+
+    .modal-backdrop.in {
+        filter: alpha(opacity=0);
+        opacity: .0;
+    }
+
+    .modal-backdrop {
+        position: relative;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1040;
+        background-color: #000;
+    }
+
+    textarea {
+        resize: none !important;
+    }
+
+    .notexport {
+        text-align: center;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="panel panel-default">
+        <input id="rptId" type="hidden" value='@Request.QueryString["RptId"]' />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool">
+                        @*title="Option Page" onclick="$('#option').modal('show');"*@
+                        <span class="fa fa-list fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right">
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="lstData" class="table table-bordered table-striped text-sm" width="100%">
+                        <thead>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function formatCamelCaseToWords(input) {
+        return input
+            .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space between lowercase and uppercase
+            .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Add space in consecutive uppercase to lowercase transitions
+            .trim(); // Remove any extra spaces
+    }
+
+$(document).ready(function() {
+
+    ToggleDataList(false);
+    LoadData();
+    //$('th').each(function () {
+    //    var originalText = $(this).text();
+    //    var formattedText = formatCamelCaseToWords(originalText);
+    //    $(this).html(formattedText);
+    //});
+      @using Newtonsoft.Json;
+
+    function LoadData() {
+        $('#dataList').css('display', '');
+
+            @using Newtonsoft.Json;
+
+
+        var _lstData = @Html.Raw(JsonConvert.SerializeObject(Model.lstData));
+        var _lstDataColumn = @Html.Raw(Json.Encode(Model.lstDataColumn)); // column headers
+        var _lstfilterString = @Html.Raw(Json.Encode(Model.filterString));
+        var _ErrorMessage = @Html.Raw(Json.Encode(Model.ErrorMessage));
+        if (_lstDataColumn != null) {
+
+        var th = '<tr>'; //create th for headers
+
+            $.each(_lstDataColumn, function(index, value) {
+
+            th += '<th id=idx' + index + '>' + value + ' </th>' ; // for table headers
+                });
+                th +='</tr>' ; // th end
+                $('#filterString').append(_lstfilterString);
+                $('#lstData > thead').append(th); // th header append to thead
+
+        let columnDef = [];
+            let regex = /Date|Qty|Price|Amount|Cost/i; // Match any of these keywords (case-insensitive)
+        // Dynamically determine column indices
+        var columnIndexes = {
+            SerialNo: _lstDataColumn.findIndex(col => col == ("SerialNo")),
+            PartNo: _lstDataColumn.findIndex(col => col == ("PartNo")),
+            ProgramID: _lstDataColumn.findIndex(col => col.includes("ProgramID")),
+            Date: _lstDataColumn.findIndex(col => col.includes("Date")),
+            SOHeaderId: _lstDataColumn.findIndex(col => col.includes("SOHeaderId")),
+            SOcustomerReference: _lstDataColumn.findIndex(col => col.includes("SOCustomerReference")),
+            ROHeaderId: _lstDataColumn.findIndex(col => col.includes("ROHeaderId")),
+            ROCustomerReference: _lstDataColumn.findIndex(col => col.includes("ROCustomerReference")),
+            WOHeaderId: _lstDataColumn.findIndex(col => col.includes("WOHeaderId")),
+            WOCustomerReference: _lstDataColumn.findIndex(col => col.includes("WOCustomerReference"))
+        };
+
+        // Loop through columns and configure definitions
+        for (let i = 0; i < _lstDataColumn.length; i++) {
+            var columnName = _lstDataColumn[i][0];
+
+            if (columnName == "SerialNo") {
+                columnDef.push({
+                    targets: i,
+                    width: "90px",
+                    render: function (data, type, row) {
+                        // Extract necessary data
+                        var serialNo = row[columnIndexes.SerialNo];
+                        var programId = row[columnIndexes.ProgramID];
+                        var partNo = row[columnIndexes.PartNo];
+
+                        // Validate the data - skip hyperlink if data is "*"
+                        if (data === "*" || !serialNo || !programId || !partNo) {
+                            return data; // Return the raw data without hyperlink
+                        }
+
+                        // Generate hyperlink for valid data
+                        return `<a href="/ListingReports/PartsSerial/Detail?serialNo=${serialNo}&ProgramId=${programId}&PartNo=${partNo}&page=list" target="_blank">${data}</a>`;
+                    }
+
+                });
+            }
+            else if (columnName == ("PartNo")) {
+                columnDef.push({
+                    targets: i,
+                    width: "90px",
+                    render: function (data, type, row) {
+                        var partNo = row[columnIndexes.PartNo];
+                        var programId = row[columnIndexes.ProgramID];
+                        return `<a href="/ListingReports/PartInquiry/Detail?partNo=${partNo}&ProgramId=${programId}&page=list" target="_blank">${data}</a>`;
+                    }
+                });
+            }
+            else if (columnName.includes("SOCustomerReference")) {
+                columnDef.push({
+                    targets: i,
+                    width: "90px",
+                    render: function (data, type, row) {
+                        var SoHeaderId = row[columnIndexes.SOHeaderId];
+                        var SOcustomerReference = row[columnIndexes.SOcustomerReference];
+
+                        return `<a href="/SupplyChain/SO/Detail?ID=${SoHeaderId}&custRef=${SOcustomerReference}&page=list" target="_blank">${data}</a>`;
+
+                    }
+                });
+            }
+            else if (columnName.includes("WOCustomerReference")) {
+                columnDef.push({
+                    targets: i,
+                    width: "90px",
+                    render: function (data, type, row) {
+                        var WOHeaderId = row[columnIndexes.WOHeaderId];
+                        var WOCustomerReference = row[columnIndexes.WOCustomerReference];
+
+                        return `<a href="/SupplyChain/WO/Detail?ID=${WOHeaderId}&custRef=${WOCustomerReference}&page=list" target="_blank">${data}</a>`;
+
+                    }
+                });
+            }
+            else if (columnName.includes("ROCustomerReference")) {
+                columnDef.push({
+                    targets: i,
+                    width: "90px",
+                    render: function (data, type, row) {
+                        var ROHeaderId = row[columnIndexes.ROHeaderId];
+                        var ROCustomerReference = row[columnIndexes.ROCustomerReference];
+
+                        return `<a href="/SupplyChain/RO/Detail?ID=${ROHeaderId}&custRef=${ROCustomerReference}&page=list" target="_blank">${data}</a>`;
+
+                    }
+                });
+            }
+
+            else if (regex.test(columnName)) {
+                columnDef.push({
+                    targets: i,
+                    className: "text-right",
+                    width: "90px"
+                });
+            } else {
+                columnDef.push({
+                    targets: i,
+                    //className: "text-left",
+                    width: "100px"
+                });
+            }
+        }
+
+
+                ToggleDataList(true);
+                //  var h = getHeight(88);
+                MakeDynamicGrid('lstData', _lstData, 0, columnDef, true, true, false);
+        }
+        else {
+            if (_ErrorMessage != null) {
+                $('#lstData > tbody').text(_ErrorMessage);
+                $('#lstData > tbody').addClass('dataTables_empty')
+            }
+        }
+    }
+
+                });
+
+
+
+function MakeDynamicGrid(tableId, data, tableHeight, columns, search, isScrollX, footerFunction, detailed, reportTitleId, rowSelection, lstHeight) {
+                var startTime = performance.now();
+                var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+                var isDetailed = detailed === undefined ? false : true;
+                var reportTitle = '';
+
+                if (reportTitleId === undefined)
+                reportTitle = $('.box-title').text();
+                else
+                reportTitle = reportTitleId;
+
+                var gridHeight = 0;
+
+                isScrollX = isScrollX === undefined ? false : true;
+                if (search === undefined) {
+                search = true;
+                }
+
+                var gridButtonsClass = '';
+                var gridSearchBoxClass = '';
+                if (isDetailed === true) {
+                gridButtonsClass = 'btn-header btn-box-tool';
+                gridSearchBoxClass = 'bg-white  txtSearch';
+                gridButtonSize = 20;
+                } else {
+                gridButtonsClass = 'btn-header btn-box-tool';
+                gridSearchBoxClass = 'btn-box-tool bg-white txtSearch';
+                gridButtonSize = 20;
+                }
+
+                if (search === true) {
+                var boxtool = '<input class="' + gridSearchBoxClass + '" id="txtSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;">';
+                $('#buttons').append(boxtool);
+                }
+                   
+                var rptArray = ["Inventory Detailed v2", "Arlo - Aging Report v2", "ASN - Detail ARLO"] //This array holds report names which data will be exported in zip file
+                var RptName = '@ViewBag.ReportTitle';
+                var rptExist = rptArray.includes(RptName);
+
+                var excelButton;
+
+                if (rptExist) {
+                    // Customized Excel button
+                    excelButton = {
+                        text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                        titleAttr: 'Export to excel',
+                        action: function (e, dt, node, config) {
+                            var RptHasProgramId = @RptHasProgramId.ToString().ToLower();
+                            var RptId = '@ViewBag.RptId';
+                            var RptHasOptionPage = true;
+                            var ar = JSON.parse(localStorage.getItem('arrayParams') || '[]');
+
+                            var contract = localStorage.getItem('contract');
+                            var programName = localStorage.getItem('programName');
+                            var isAllDate = localStorage.getItem('isAllDate') === 'true'; // Convert back to boolean
+                            var fDate = localStorage.getItem('fDate');
+                            var tDate = localStorage.getItem('tDate');
+                            var statusId = localStorage.getItem('statusId');
+                            var status = localStorage.getItem('status');
+                            var rptType = localStorage.getItem('rptType');
+                            var DDLDataFeed = localStorage.getItem('DDLDataFeed');
+                            var CGStatusId = localStorage.getItem('CGStatusId');
+                            var CGStatus = localStorage.getItem('CGStatus');
+                            var ddProcess = localStorage.getItem('ddProcess');
+                            var PSWarehouse = localStorage.getItem('PSWarehouse');
+
+                            // Construct URL
+                            var url = '/PLUSGenericInformation/DownloadExcel?rptId=' + encodeURIComponent(RptId) +
+                                '&rptName=' + encodeURIComponent(RptName) +
+                                '&param=' + encodeURIComponent(ar) +
+                                '&contract=' + encodeURIComponent(contract) +
+                                '&programName=' + encodeURIComponent(programName) +
+                                '&isAllDate=' + encodeURIComponent(isAllDate) +
+                                '&frmDt=' + encodeURIComponent(fDate) +
+                                '&toDate=' + encodeURIComponent(tDate) +
+                                '&RptHasProgramId=' + encodeURIComponent(RptHasProgramId) +
+                                '&RptHasOptionPage=' + encodeURIComponent(RptHasOptionPage) +
+                                '&statusId=' + encodeURIComponent(statusId) +
+                                '&status=' + encodeURIComponent(status) +
+                                '&rptType=' + encodeURIComponent(rptType) +
+                                '&DDLDataFeed=' + encodeURIComponent(DDLDataFeed) +
+                                '&CGStatusId=' + encodeURIComponent(CGStatusId) +
+                                '&CGStatus=' + encodeURIComponent(CGStatus) +
+                                '&ddProcess=' + encodeURIComponent(ddProcess) +
+                                '&PSWarehouse=' + encodeURIComponent(PSWarehouse) +
+                                '&isDetail=N';
+
+                            // Trigger download by navigating to the URL
+                            window.location.href = url;
+                        }
+                    };
+                } else {
+                    // Default Excel button
+                    excelButton = {
+                        extend: 'excelHtml5',
+                        footer: true,
+                        text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                        titleAttr: 'Export to excel',
+                        title: RptName,
+                        filename: 'DataExport',
+                        exportOptions: {
+                            columns: 'th:not(.notexport)'
+                        }
+                    };
+                }
+
+                var table = $('#' + tableId).DataTable({
+                order: [],
+                createdRow: rowSelection, // add Parameter for row selection in PO Detail // Added By Tahir
+                data: data,
+                columns: columns,
+                paging: true,
+                ordering: true,
+                searching: search,
+                deferRender: true,
+                destroy: true,
+                pagingType: 'full',
+                pageLength: 100,
+                scrollCollapse: false,
+                scrollX: isScrollX,
+                //scrollY: gridHeight,
+
+                footerCallback: footerFunction,
+                language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                oPaginate: {
+                sNext: '<i class="fa fa-forward"></i>',
+                sPrevious: '<i class="fa fa-backward"></i>',
+                sFirst: '<i class="fa fa-step-backward"></i>',
+                sLast: '<i class="fa fa-step-forward"></i>'
+                }
+                },
+                "dom": "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-3'i><'#designedBy.col-sm-7'><'col-sm-2'p>>",
+
+                    buttons: [
+                        {
+                            extend: 'copyHtml5',
+                            footer: true,
+                            text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                            titleAttr: 'Copy',
+                            title: reportTitle,
+                            filename: 'DataExport',
+                            exportOptions: {
+                                columns: 'th:not(.notexport)' // Exclude columns with class 'notexport'
+                            }
+                        },
+
+                        excelButton,
+
+                        {
+                            extend: 'print',
+                            footer: true,
+                            text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                            titleAttr: 'Print',
+                            title: '',
+                            messageTop: function () {
+                                return '<h4>' + reportTitle + '</h4>';
+                            },
+                            exportOptions: {
+                                columns: 'th:not(.notexport)'
+                            }
+                        },
+                        {
+                            text: '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>',
+                            titleAttr: 'How they do that',
+                            action: function (e, dt, node, config) {
+                                // Construct SQL doc URL
+                                var rptId = '@ViewBag.RptId';
+
+                                var rptTitle = '@ViewBag.ReportTitle';
+                                if (!rptId || !rptTitle) {
+                                    alert("Report Code or Title is missing.");
+                                    return;
+                                }
+                                var sqlDocUrl = '\\SqlDocs\\Index?rptCode=' + encodeURIComponent(rptId) + '&rptTitle=' + encodeURIComponent(rptTitle) + '&isDetail=N';
+                                window.open(sqlDocUrl, '_blank'); // Open in new tab
+                            }
+                        }
+                    ],
+                initComplete: function() {
+                $('#txtSearch').focus();
+                },
+                select: true
+                });
+                table.buttons().container()
+                .appendTo('#buttons');
+
+                table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+                table.button(0).nodes().addClass(gridButtonsClass);
+
+                table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+                table.button(1).nodes().addClass(gridButtonsClass);
+
+                table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+                table.button(2).nodes().addClass(gridButtonsClass);
+
+                table.button(3).nodes().removeClass('btn btn-default');
+                table.button(3).nodes().addClass(gridButtonsClass);
+
+                var dsgndby = $('.modal-footer > #designedby ').html();
+
+                if (dsgndby === "") {
+                $('#designedBy').html($('.desgndBy').html());
+                }
+
+                var layoutHeader = $('nav').innerHeight();
+                var cardHeader = $('.box-header').innerHeight();
+                var tableHeader = $('.dataTables_scrollHead').innerHeight();
+                var tableFooter = 0;
+                var cardFooterH = 30;
+
+                if (isFooter === true)
+                tableFooter = $('.dataTables_scrollFoot').innerHeight();
+
+
+                var parentHeight = $('#' + lstHeight).innerHeight();
+                if (parentHeight == undefined)
+                parentHeight = window.innerHeight;
+                else
+                parentHeight = $('#' + lstHeight).innerHeight();
+
+                var browserHeight = parentHeight;
+                if (tableHeight === 0) {
+                if (layoutHeader === undefined)
+                gridHeight = browserHeight - (cardHeader + tableHeader + tableFooter + cardFooterH);
+                else
+                gridHeight = browserHeight - (layoutHeader + cardHeader + tableHeader + tableFooter + cardFooterH);
+                } else {
+                gridHeight = tableHeight;
+                }
+
+                var topHeader = $('#topHeader').innerHeight();
+                if (topHeader > 0)
+                gridHeight = gridHeight - (topHeader + 1);
+
+                $('.dataTables_scrollBody').css('height', gridHeight + 'px');
+                table.columns.adjust().draw();
+
+                $('.dataTables_filter').hide();
+                $('#txtSearch').on('keyup change', function() {
+                table.search(this.value).draw();
+                });
+
+                var endTime = performance.now();
+                var elapsedTimeInSeconds = (endTime - startTime) / 1000;
+
+                $.ajax({
+                cache: false,
+                type: 'POST',
+                url: '/Home/SaveLog',
+                data: {
+                gridExecutionTime: elapsedTimeInSeconds
+                },
+                success: function() {
+                //console.log('Value sent to controller!');
+                },
+                error: function() {
+                //console.log('Error sending value to controller!');
+                }
+                }); //Added by Huzaifa
+
+
+                return table;
+                }
+</script>

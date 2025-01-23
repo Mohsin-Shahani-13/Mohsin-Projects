@@ -1,0 +1,149 @@
+﻿@model IP.Areas.ListingReports.Models.SOReservationDetails
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstSOReserveDetails" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th> Total: </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    ToggleDataList(false);
+    LoadData();
+    function LoadData()
+    {
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+
+        //var _ProgramId = $('#ddProgram').val();
+        //var _ProgramName = $("#ddProgram option:selected").text();
+        var _custRef = $('#custRef').val();
+
+        $.ajax
+        ({
+            cache: false,
+            type: 'GET',
+            url: '/SOReservationDetails/GetList',
+            data:
+            {
+                //ProgramID: _ProgramId,
+                //ProgramName: _ProgramName,
+                custRef: _custRef
+            },
+            datatype: JSON,
+            success: function (data)
+            {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow)
+                {
+                    var columnDef = [
+
+                        { "data": "ProgramID", "title": "ProgramID", "width": "40px", "visible": false },
+                        { "data": "soHeaderId", "title": "soHeaderId", "width": "40px", "visible": false },
+                        { "data": "programName", "title": "Program", "width": "50px"},
+                        {
+                            "data": "CustomerReference", "title": "Customer Ref.",
+                            render: function (data, type, row) {
+                                url = '<a href= "\\SupplyChain\\SO\\Detail?SOHeaderId=' + row["soHeaderId"] + '&custRef=' + row["CustomerReference"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "SerialNo", "title": "Serial No.", "width": "110px",
+                            render: function (data, type, row) {
+
+                                var d = data.toString();
+
+                                 if (row["SerialNo"] == "*")
+                                 {
+                                     url = row["SerialNo"];
+                                 }
+                                 else
+                                 {
+
+                                     var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + encodeURIComponent(row["PartNo"]) + '&page=list" target=_blank > ' + d + '</a>';
+                                }
+                                return url;
+                            }
+
+
+                        },
+                       
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "110px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "qtyreserved", "title": "Qty Reserved", "width": "40px", "className": "text-right" },
+                        { "data": "Cartonid", "title": "Carton Id", "width": "130px" },
+                        { "data": "FromPalletBoxNo", "title": "From Pallet Box No.", "width": "120px" },
+                        { "data": "LocationNo", "title": "Location No.", "width": "140px" },
+                        { "data": "Status", "title": "Status", "width": "70px" }
+                    ];
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(6).footer()).html(thousands_separators(api.column(6).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstSOReserveDetails', data.lstSOReserveDetails, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+

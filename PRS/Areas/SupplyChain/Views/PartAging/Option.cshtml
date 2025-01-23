@@ -1,0 +1,89 @@
+﻿
+@model IP.Areas.SupplyChain.Models.PartAging
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.IdleOver, new { @class = "col-4 col-form-label" })
+            <input type="number" class="form-control" id="IdleOver" name="IdleOver" autofocus min="1" max="90" value="1"
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#IdleOver').focus();
+    });
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+    function OptionsIsValid() {
+        $('#lblMsg').empty();
+        var IdleOver = $('#IdleOver').val();
+
+            if (IdleOver == 0 || IdleOver == "" ) {
+                $('#lblMsg').empty();
+                $('#lblMsg').append('Please Specify Days.');
+                return false;
+            }
+            else if (IdleOver < 1 || IdleOver > 100) {
+                $('#lblMsg').empty();
+                $('#lblMsg').append('Please Specify Valid No.');
+                return false;
+        }
+            else {
+                $('#lblMsg').empty();
+                return true;
+            }
+
+
+    }
+    function Go() {
+        var IdleOver = $('#IdleOver').val();
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+
+        $('#option').modal('hide');
+        OpenPage('\\SupplyChain\\PartAging\\Index?IdleOver=' + IdleOver + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+

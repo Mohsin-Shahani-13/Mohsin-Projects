@@ -1,0 +1,163 @@
+﻿@model IP.Areas.SupplyChain.Models.PartsBackLog
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td class="pad" colspan="4">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="Summary", Value = "Summary",  },
+                   new SelectListItem{ Text="Detail", Value = "Detail" },
+
+
+                }, new { @class = "form-control" })
+        </td>
+    </tr>
+
+    <tr>
+        @*<td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>*@
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.PalletBoxNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="PalletBoxNo" name="PalletBoxNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+
+    </tr>
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.LocationNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="LocationNo" name="LocationNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+
+    </tr>
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.PartNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="PartNo" name="PartNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+
+    </tr>
+  
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+
+</table>
+
+
+<script>
+
+
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+  
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    function OptionsIsValid() {
+       
+        var PalletBoxNo = $('#PalletBoxNo').val();
+        var LocationNo = $('#LocationNo').val();
+        var PartNo = $('#PartNo').val();
+        $('#lblMsg').empty();
+  
+        if (PalletBoxNo == "" && LocationNo == "" && PartNo == "") {
+            $('#lblMsg').append('Please input any one of the above');
+
+            return false;
+        }
+        
+        if (PalletBoxNo != "" || LocationNo == "" && PartNo == ""  ){
+            $('#lblMsg').empty();
+            return true;
+        }
+        if (PalletBoxNo == "" || LocationNo != "" && PartNo == "") {
+            $('#lblMsg').empty();
+            return true;
+        }
+        //if (PalletBoxNo == "" || LocationNo == "" || PartNo != "") {
+        //    $('#lblMsg').empty();
+        //    return true;
+        //}
+       
+        //else {
+        //    $('#lblMsg').empty();
+        //    return true;
+        //}
+    }
+
+    function Go() {
+   
+        var rptName = $("#rptType option:selected").val();
+        var PalletBoxNo = $('#PalletBoxNo').val();
+        var LocationNo = $('#LocationNo').val();
+        var PartNo = $('#PartNo').val();
+
+       var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+
+        $('#option').modal('hide');
+
+        if (rptName == 'Summary')
+        {
+            OpenPage('\\SupplyChain\\PartsBackLog\\Index?PalletBoxNo=' + PalletBoxNo + '&rptName=' + rptName + ' &LocationNo=' + LocationNo + ' &PartNo=' + PartNo + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        }
+        else if (rptName == 'Detail')
+        {
+            OpenPage('\\SupplyChain\\PartsBackLog\\GetDetail?PalletBoxNo=' + PalletBoxNo + '&rptName=' + rptName + ' &LocationNo=' + LocationNo + ' &PartNo=' + PartNo + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        }
+    }
+</script>

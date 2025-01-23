@@ -1,0 +1,203 @@
+﻿@model IP.Areas.BRT.Models.CycleCount
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            @{
+                if (ViewBag.Option == "op")
+                {
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <input id="rptCode" type="hidden" value="107" />
+                }
+                else
+                {
+                    <button type="button" id="opp" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <input id="rptCode" type="hidden" value="107" />
+                    <input id="rptTitle" type="hidden" value="@ViewBag.ReportTitle" />
+
+                }
+            }
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstCycleCount" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        @*<div id="right_panel" class="col-md-2">
+                <div id="rightsection" class="" style="margin-top:50%; margin-left:10px; padding-right:10px;">
+                    <h4>Click Qty hyperlinks on left section to load data</h4>
+                </div>
+            </div>*@
+    </div>
+</div>
+
+<script>
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var _partNo = $('#partNo').val();
+        var _iteration = $('#iteration option:selected').text();
+        var _Warehouse = $('#Warehouse').val();
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/CycleCount/GetList',
+            data: {
+                partNo: _partNo,
+                iteration: _iteration,
+                Warehouse: _Warehouse,
+                programId: _programId,
+                ProgramName: _ProgramName,
+                frmDt: fDate,
+                toDate: tDate,
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "ProgramID", "width": "60px", "visible": false },
+                        { "data": "Program", "title": "Program", "width": "60px" },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "90px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "Description", "title": "Description" },
+                        { "data": "Warehouse", "title": "Warehouse", "width": "120px" },
+                        { "data": "LocationNo", "title": "Location No.", "width": "160px" },
+                        { "data": "Iteration", "title": "Iteration", "width": "50px" },
+                        {
+                            "data": "AvailableInventoryQty", "title": "Qty", "width": "50px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "CycleCountQty", "title": "Counted", "width": "50px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        { "data": "Delta", "title": "Delta", "width": "30px", "className": "text-right" },
+                        {
+                            "data": "IRA", "title": "IRA", "width": "30px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                                return val;
+                            }
+                        },
+                        { "data": "ERROR", "title": "Error", "width": "30px", "className": "text-center" },
+                        { "data": "ID", "title": "Id", "width": "20px" },
+                        { "data": "Username", "title": "Created By", "width": "100px" },
+                        { "data": "LastActivityDate", "title": "Last Activity On", "width": "90px", "className": "text-right" }
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(7).footer()).html(thousands_separators(api.column(7, { search: 'applied' }).data().sum()));
+                        $(api.column(8).footer()).html(thousands_separators(api.column(8, { search: 'applied' }).data().sum()));
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9, { search: 'applied' }).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstCycleCount', data.lstCycleCount, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

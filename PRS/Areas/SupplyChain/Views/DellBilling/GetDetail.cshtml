@@ -1,0 +1,999 @@
+﻿@model IP.Areas.SupplyChain.Models.DellBilling
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.0/dist/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        /*margin: 0;*/
+        /*padding: 20px;*/
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /*.header, .invoice-details, .invoice-meta, .invoice-shipping, .invoice-items {
+        padding: 10px;*/
+    /*margin-bottom: 10px;*/
+    /*}*/
+
+    /* .header {
+        text-align: center;
+    }*/
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 7px;
+    }
+
+    .col-6, .col-12 {
+        padding: 110px;
+        border: 1px solid #000;
+    }
+
+
+    .col-6 {
+        width: 48%;
+        padding: 0px;
+    }
+
+    .col-4 {
+        width: 30%;
+    }
+
+    .col-12 {
+        width: 100%;
+    }
+
+    .form-group .col-2 {
+        width: 100%;
+        margin-bottom: 10px;
+        border: 1px solid #000;
+        /*text-align: center;*/
+        height: 80px;
+    }
+
+    .form-group .form-control label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-group .form-control span {
+        width: 100%;
+        /*padding: 8px;*/
+        /*box-sizing: border-box;*/
+        /*border: 0px solid #000;*/
+    }
+
+    .col-1 {
+        display: block;
+        /*border: 1px solid black;*/
+    }
+
+    table {
+        width: 100%;
+    }
+
+        table th, td {
+            padding: 8px;
+            text-align: left;
+            /* border: 1px solid;
+            border-color: black;*/
+        }
+
+        table thead th {
+            border-bottom: 2px solid;
+            border-color: black;
+        }
+
+    /*table tbody td {
+            border-top: 1px solid;
+            border-color: black;
+        }*/
+
+    .generate-button {
+        text-align: center;
+    }
+
+        .generate-button button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            .generate-button button:hover {
+                background-color: #218838;
+            }
+
+    /* Second Modal CSS */
+    .second-modal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .second-modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 5px;
+    }
+
+    .second-modal-close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .second-modal-close:hover,
+        .second-modal-close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .fa-check-circle {
+        color: green;
+    }
+
+    .fa-times-circle {
+        color: red;
+    }
+
+    .extraLinesTable {
+        display: none;
+    }
+
+    #extraLinesTable {
+        width: 100%;
+    }
+
+    /*#extraLinesTable thead,
+        #extraLinesTable tbody {
+            display: block;
+        }*/
+
+    #extraLinesTableBody {
+        overflow-y: scroll;
+        overflow-x: scroll;
+    }
+
+    .box-body > .table {
+        margin-bottom: 20px;
+    }
+
+    #extraLinesTable tbody td {
+        vertical-align: unset;
+    }
+
+    #invoiceButton {
+        background-color: black;
+        color: white;
+        border: none;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-radius: 4px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+        text-align: right;
+    }
+
+    .close {
+        color: black !important;
+    }
+
+    #addExtraLinesBtn {
+        border: none;
+        color: dodgerblue;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+        #addExtraLinesBtn:hover {
+            color: steelblue;
+        }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <button id="invoiceButton" onclick="Invoice('@ViewBag.programID', '@ViewBag.trackingNo')" title="Click to Open Invoice....">
+                <i class="fas fa-file-invoice"></i> Invoice
+            </button>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstDellBillingDetail" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        @*<th class="notexport"></th>*@
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th ></th>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                @*<tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+
+                            <th>Total:</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>*@
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal" id="Invoice">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <button type="button" class="close full-opacity-hover" data-dismiss="modal">&times;</button>
+                <div class="container-fluid" style="margin-top: 15px;">
+                    <div class="row">
+                        <div class="col-10" style="margin-right:239px;">
+                            <strong id="CompanyDesc"></strong>
+                            <p id="CompanyAddress">
+                            </p>
+                            <p id="CompanyContact">
+                            </p>
+                        </div>
+                        <div class="col-1 date date-picker">
+                            <label for="date">DATE</label>
+                            <div class="input-group date date-picker">
+                                <input id="currentDt" type="text" class="form-control" max="getCurrentDate()" placeholder="Select Date" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            <!--<div class="form-control no-border">-->
+                            @*<input id="currentDt" type="text" name="date" />*@
+                            <!--</div>-->
+                        </div>
+                        @*<div class='input-group date date-picker' id='dtpTo'>
+                                <input type='text' name='Planned Release Date' value='${data}' class='form-control' />
+                                <span class='input-group-addon'>
+                                    <span class='glyphicon glyphicon-calendar'></span>
+                                </span>
+                            </div>*@
+                        <div class="col-1">
+                            <div class="input-group no-border">
+                                <label for="invoiceNumber">INVOICE #</label>
+                                <input class="form-control" id="invNo" type="text" name="invoice" />
+                            </div>
+                            <div id="lblMsg" class="optionMsg">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row box-body">
+                        <div class="col-6">
+                            <stong style="font-weight:bold; border:1px solid; display:block; padding-left:5px;">BILL TO</stong>
+                            <div style="padding-left:10px;">
+                                <p id="BillToDesc"></p>
+                                <p id="BillToAddress"></p>
+                                <p id="BillToContact"></p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label style="font-weight:bold; border:1px solid; display:block; padding-left:5px;">SHIP TO</label>
+                            <div style="padding-left:10px;">
+                                <p id="ShipToDesc"></p>
+                                <p id="ShipToAddress"></p>
+                                <p id="ShipToContact"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-2 form-control" style="border: 1px solid; padding: 10px; width:30%;">
+                            <label for="poNumber">PO NUMBER</label>
+                            <span id="poNumber"></span>
+                        </div>
+                        <div class="col-2 form-control" style="border: 1px solid; width:10%;">
+                            <label for="terms">TERMS</label>
+                            <span id="terms"></span>
+                        </div>
+                        <div class="col-2 form-control" style="border: 1px solid; padding: 10px;width:15%;">
+                            <label for="shipDate">SHIP</label>
+                            <span id="shipDate"></span>
+                        </div>
+                        <div class="col-2 form-control" style="border: 1px solid;width:45%; overflow:auto;">
+                            <label for="tracking">TRACKING</label>
+                            <span id="tracking"></span>
+                        </div>
+                    </div>
+
+                    <div class="box-body" id="lstP">
+                        <div style="height: 150px; overflow-y: auto;">
+                            <table id="invoice_table" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                                <thead class="sorted-asc">
+                                    <tr>
+                                        <th>QTY</th>
+                                        <th>COMMODITY</th>
+                                        <th>WARRANTY CODE</th>
+                                        <th>SHIP TYPE</th>
+                                        <th>COST</th>
+                                        <th>AMOUNT</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceItemsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="extraLineDiv" class="box-body">
+                        <!-- Placeholder for the new grid -->
+                        <div style="height: 150px; overflow-y: auto;">
+                            <table id="extraLinesTable" class="table table-bordered table-striped text-sm table-hover extraLinesTable" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                        <th>QTY</th>
+                                        <th>Part Number</th>
+                                        <th>Description</th>
+                                        <th>Cost</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="extraLinesTableBody">
+                                    <!-- Dynamic rows will be appended here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a class="primary text" href="#" id="addExtraLinesBtn" style="font-size: 15px;">
+                    <i class="fas fa-plus"></i>
+                    Add Extra Lines
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Second Modal -->
+
+<script>
+    $(document).ready(function () {
+
+
+        // Add the modal HTML to the DOM
+        addSecondModal();
+
+        // Focus on partNumber input when the second modal is shown
+        $('.second-modal-content').on('shown.bs.modal', function () {
+            $('#partNumber').focus();
+        });
+
+        // Clear the extraLinesTableBody when the Invoice modal is hidden
+        $('#Invoice').on('hidden.bs.modal', function () {
+            $('#extraLinesTableBody').empty();
+            $('#extraLinesTable').addClass('extraLinesTable');
+        });
+
+        // Initialize date pickers
+        $('.date-picker').each(function () {
+            $(this).datepicker({
+                format: 'mm/dd/yyyy', // Adjust format as needed
+                autoclose: true
+                // Add any other options here if needed
+            });
+        });
+
+        // Load initial data
+        ToggleDataList(false);
+        LoadData();
+
+        //$('#generateInvoice').click(function () {
+        //    alert('working');
+        //    saveExtraLines();
+        //});
+
+        // Clear extra lines table when cancelInv button is clicked
+        $('#cancelInv').click(function () {
+            $('#extraLinesTableBody').empty();
+            $('#extraLinesTable').addClass('extraLinesTable');
+        });
+    });
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var _programId = $('#ddProgram').val();
+        var _programName = $("#ddProgram option:selected").text();
+        var _trackingNo = $('#trackingNo').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DellBilling/GetDetailList',
+            data: {
+                programId: _programId,
+                programName: _programName,
+                trackingNo: _trackingNo
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [
+                    { "data": "ProgramID", "title": "ProgramID", "width": "50px", "visible": false },
+                    { "data": "Program", "title": "Program", "width": "50px", "visible": false },
+                    { "data": "Ship Order", "title": "SO", "width": "50px" },
+                    { "data": "Tracking Number", "title": "Tracking No.", "width": "150px" },
+                    { "data": "ShipmentDate", "title": "Shipment Date", "width": "80px", "className": "text-right" },
+                    { "data": "Carrier", "title": "Carrier", "width": "60px" },
+                    { "data": "Commodity", "title": "Commodity", "width": "130px" },
+                    { "data": "Dell Charge Code", "title": "Dell Charge Code", "width": "120px", "visible": false },
+                    { "data": "SHIP TYPE", "title": "Ship Type", "width": "60px" },
+                    { "data": "Brand", "title": "Brand", "width": "60px" },
+                    { "data": "Model", "title": "Model", "width": "60px" },
+                    { "data": "Receive Order", "title": "RO", "width": "60px" },
+                    // { "data": "QTY", "title": "Qty", "width": "60px", "className": "text-right" },
+                    {
+                        "data": "Serial Number", "title": "Serial No.", "width": "120px",
+                        render: function (data, type, row) {
+                            var d = data.toString();
+                            var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["Serial Number"] + '&Programid=' + row["ProgramID"] + '&partno=' + row["Model"] + '&page=list" target=_blank > ' + d + '</a>';
+
+                            return url;
+                        }
+                    },
+                    { "data": "Charge Type", "title": "Charge Type", "width": "80px" },
+                    { "data": "Reference", "title": "Reference", "width": "200px" },
+                    { "data": "Bill Description", "title": "Bill Description", "width": "450px" },
+                    { "data": "Price", "title": "Price", "width": "70px", "className": "text-right" },
+                    { "data": "BillDate", "title": "Bill Date", "width": "70px", "className": "text-right", "visible": false },
+                    { "data": "Wty Code", "title": "Wty. Code", "width": "80px" },
+                    // { "data": "Inv Number", "title": "Inv. No.", "width": "100px", "visible": false },
+                    { "data": "Revenue Date", "title": "Revenue Date", "width": "80px", "className": "text-right" },
+                    //{
+                    //    "data": "Invoice",
+                    //    "title": "Invoice",
+                    //    "className": "text-center notexport",
+                    //    "width": "50px",
+                    //    "render": function (data, type, row) {
+                    //        var programID = row["ProgramID"];
+                    //        var trackingNumber = row["Tracking Number"];
+                    //        var url = '<button class="btn btn-secondary btn-xs" onclick="Invoice(\'' + programID + '\', \'' + trackingNumber + '\')"><i class="fas fa-file-invoice" style="font-size: 18px; color: crimson"></i></button>';
+                    //        return url;
+                    //    }
+                    //}
+                ];
+                ToggleDataList(true);
+
+                //For Displaying  Footer Sum
+                //var footerfunc = function () {
+                //    var api = this.api();
+                //    $(api.column(11).footer()).html(thousands_separators(api.column(11, { search: 'applied' }).data().sum()));
+                //}
+                MakeDataGrid('lstDellBillingDetail', data.lstDellBillingReport, 0, columnDef, true, true, false);
+
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    // Function to insert the modal HTML into the DOM
+    function addSecondModal() {
+        var modalHtml = `
+    <div id="secondModal" class="second-modal">
+        <div class="second-modal-content">
+            <span class="second-modal-close" style="margin-bottom:-2px">&times;</span>
+            <form id="addExtraLinesForm">
+                <h4 style="text-align:center;">Add Extra Lines</h4>
+                <div class="form-group row">
+                    <label for="partNumber" class="col-sm-3 col-form-label">Part Number:</label>
+                    <div class="col-sm-9" style="">
+                        <input type="text" class="form-control" id="partNumber" name="partNumber">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="quantity" class="col-sm-3 col-form-label">Quantity:</label>
+                    <div class="col-sm-3">
+                        <input type="number" class="form-control" id="quantity" name="quantity">
+                    </div>
+                    <label for="cost" class="col-sm-3 col-form-label" style="text-align:center;">Cost:</label>
+                    <div class="col-sm-3">
+                        <input type="number" class="form-control" id="cost" name="cost">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="description" class="col-sm-3 col-form-label">Description:</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-12 text-right">
+                        <button type="button" class="btn btn-primary" id="saveExtraLineBtn">Add line</button>
+                    </div>
+                </div>
+                <div id="messageContainer" class="form-group row" style="display:none;">
+                    <div class="col-sm-12">
+                        <div id="message" class="alert"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    `;
+
+        // Append the modal HTML to the body
+        $('#Invoice').append(modalHtml);
+
+        // Add event listeners
+        $('#addExtraLinesBtn').click(function () {
+            $('#secondModal').show();
+            // Clear the modal fields when opening
+            $('#partNumber').val('');
+            $('#quantity').val('');
+            $('#cost').val('');
+            $('#description').val('');
+            $('#saveExtraLineBtn').data('editMode', false); // Set to add mode
+        });
+
+        $('.second-modal-close').click(function () {
+            $('#secondModal').hide();
+        });
+
+        $('#saveExtraLineBtn').click(function () {
+            var partNumber = $('#partNumber').val().trim();
+            var quantity = $('#quantity').val().trim();
+            var cost = $('#cost').val().trim();
+            var description = $('#description').val().trim();
+            var editMode = $(this).data('editMode');
+            var editIndex = $(this).data('editIndex');
+
+            // Validate the inputs
+            if (partNumber == "" || quantity == "" || description == "") {
+                showMessage("All fields are required.", "error");
+                return;
+            }
+
+            if (editMode) {
+                // Update existing row
+                updateExtraLine(editIndex, partNumber, quantity, cost, description);
+            } else {
+                $('#extraLinesTable').removeClass('extraLinesTable');
+                // Add new row
+                addExtraLine(partNumber, quantity, cost, description);
+            }
+
+            // Close the modal
+            $('#secondModal').hide();
+        });
+    }
+
+    // Function to add a new row to the extra lines table
+    function addExtraLine(partNumber, quantity, cost, description) {
+        var amount = quantity * cost;
+        var formattedAmount = formatNumberWithThousandSeparator(amount);
+
+        var newRow = `
+    <tr>
+        <td style="width:0px;">
+            <a type="button" class="btn btn-secondary btn-sm editBtn"><i class="fas fa-edit"></i></a>
+        </td>
+         <td style="width:0px;">
+            <a type="button" class="btn btn-secondary btn-sm deleteBtn" style="color:#b22222;"><i class="fas fa-trash"></i></a>
+        </td>
+        <td style="width:6px; text-align:right;">${quantity}</td>
+        <td>${partNumber}</td>
+        <td>${description}</td>
+        <td style="width:5px;text-align:right;">${cost}</td>
+        <td class="hidden" style="width:5px;text-align:right;">${amount}</td>
+        <td style="width:5px;text-align:right;">${formattedAmount}</td>
+    </tr>
+    `;
+        $('#extraLinesTableBody').append(newRow);
+    }
+
+    // Delegate the click event for the edit button
+    $('#extraLinesTableBody').on('click', '.editBtn', function () {
+        var row = $(this).closest('tr');
+        var index = row.index();
+        var quantity = row.find('td').eq(2).text();
+        var partNumber = row.find('td').eq(3).text();
+        var description = row.find('td').eq(4).text();
+        var cost = row.find('td').eq(5).text();
+
+
+        // Populate the modal with the row data
+        $('#quantity').val(quantity);
+        $('#partNumber').val(partNumber);
+        $('#description').val(description);
+        $('#cost').val(cost);
+
+        // Show the modal
+        $('#secondModal').show();
+
+
+        // Set the save button to edit mode
+        $('#saveExtraLineBtn').data('editMode', true);
+        $('#saveExtraLineBtn').data('editIndex', index);
+    });
+
+    // Delegate the click event for the delete button
+    $('#extraLinesTableBody').on('click', '.deleteBtn', function () {
+        var row = $(this).closest('tr');
+
+        // Remove the row from the table
+        row.remove();
+    });
+    // Function to update an existing row in the extra lines table
+    function updateExtraLine(index, partNumber, quantity, cost, description) {
+        var row = $('#extraLinesTableBody').find('tr').eq(index);
+        row.find('td').eq(2).text(quantity);
+        row.find('td').eq(3).text(partNumber);
+        row.find('td').eq(4).text(description);
+        row.find('td').eq(5).text(cost);
+        row.find('td').eq(7).text(cost * quantity);
+    }
+
+
+    function saveExtraLines() {
+        var invNo = $('#invNo').val();
+        var invDate = $('#currentDt').val();
+        var _trackingNo = $('#trackingNo').val();
+        var _programId = $('#ddProgram').val();
+
+        if (invNo == '' || invNo == null) {
+
+            $('#lblMsg').empty();
+            $('#lblMsg').append("Please enter invoice no.");
+            return false;
+        }
+
+        validateInvNo(invNo, function (isValid) {
+            if (!isValid) {
+
+                $('#lblMsg').empty();
+                $('#lblMsg').append("This invoice is already exist");
+                return false;
+            }
+
+            else {
+                $('#lblMsg').empty();
+                var extraLinesData = [];
+
+                // Loop through each row of the table
+                $('#extraLinesTableBody tr').each(function () {
+                    var row = $(this);
+                    var lineData = {
+
+                        partNumber: row.find('td').eq(3).text(),
+                        quantity: row.find('td').eq(2).text(),
+                        description: row.find('td').eq(4).text(),
+                        extraLineCost: row.find('td').eq(5).text(),
+                        extraLineAmount: row.find('td').eq(6).text()
+                    };
+                    extraLinesData.push(lineData);
+                });
+
+                $.ajax({
+                    cache: false,
+                    type: 'POST',
+                    url: '/DellBilling/SaveExtraLine',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        InvNo: invNo,
+                        InvDate: invDate,
+                        programId: _programId,
+                        trackingNo: _trackingNo,
+                        ExtraLinesData: extraLinesData
+                    }),
+                    dataType: 'json',
+                    success: function (data) {
+                        if (!data.ErrorMessage) {
+                            showMessage("Line added successfully!", "success");
+                            window.location.href = '/DellBilling/ExportToExcel?programId=' + _programId + '&trackingNo=' + _trackingNo;
+                            $('#Invoice').modal('hide');
+                        } else {
+                            showMessage("Error adding line.", "error");
+                        }
+                    },
+                    onerror: function (r) { r },
+                    failure: function (r) { r }
+                });
+            }
+        })
+
+
+
+    }
+
+    function Invoice(programID, trackingNo) {
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DellBilling/GetBillingInfo',
+            data: {
+
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                // Populate dynamic fields
+                $('#CompanyDesc').html(data.CompanyDesc);
+                $('#CompanyAddress').html(data.CompanyAddress);
+                $('#CompanyContact').html(data.CompanyContact);
+                $('#BillToDesc').html(data.BillToDesc);
+                $('#BillToAddress').html(data.BillToAddress);
+                $('#BillToContact').html(data.BillToContact);
+                $('#ShipToDesc').html(data.ShipToDesc);
+                $('#ShipToAddress').html(data.ShipToAddress);
+                $('#ShipToContact').html(data.ShipToContact);
+                     }
+        });
+
+        $('#Invoice .modal-footer .modalBtn').empty();
+
+        var modalButton =
+            `<div class="modalBtn">
+                        <div style="float:left;">
+
+                            <button onClick="saveExtraLines()" id="generateInvoice" class="btn btn-success btn-sm mr-2" title="Click to generate Invoice...">
+                                Generate Invoice
+                            </button>
+                            <button class="btn btn-default btn-sm" data-dismiss="modal" id="cancelInv">Cancel</button>
+                        </div>
+                    </div>`;
+
+        // Initialize the modal with static backdrop and keyboard options
+        $('#Invoice').modal({
+
+            backdrop: 'static',
+            keyboard: false
+        });
+        $('#Invoice .modal-footer').prepend(modalButton);
+        $('#Invoice').modal('show')
+
+        var date = getCurrentDate(); // Current timestamp in milliseconds
+        var randomNumber = Math.floor(Math.random() + "433453" * Math.random());
+        $('#currentDt').val(date);
+        $('#invNo').val(randomNumber);
+
+       @*var programID = '@ViewBag.programID';
+        var trackingNo = '@ViewBag.trackingNo';*@
+        var trackingNo = $('#trackingNo').val();
+        var programID = $('#ddProgram').val();
+
+        if (trackingNo != '') {
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/DellBilling/GetInvoice',
+            data:
+            {
+                programID: programID,
+                trackingNo: trackingNo
+            },
+
+            datatype: JSON,
+            success: function (data) {
+
+
+
+
+
+                var staticFields = data.model;
+                // Populate static fields
+                $('#poNumber').html(staticFields.PO_NUMBER);
+                $('#terms').html(staticFields.TERMS);
+                $('#shipDate').html(staticFields.SHIP);
+                $('#tracking').html(staticFields.TRACKING);
+
+                // Populate invoice items
+                var items = data.item; // Assuming Items is an array of objects
+                //console.log(data)
+                //console.log(items)
+
+                var html = '';
+                var totalAmount = 0;
+                var totalQty = 0;
+
+                $.each(items, function (index, item) {
+                    // Access the properties using the correct capitalization
+                    var qty = parseFloat(item.Qty) || 0;
+                    var commodity = item.Commodity;
+                    var warrantyCode = item.WarrantyCode;
+                    var shipType = item.ShipType;
+                    var cost = parseFloat(item.Cost) || 0;
+                    var amount = parseFloat(item.Amount) || 0;
+                    var formattedAmount = formatNumberWithThousandSeparator(amount);
+
+                    html += '<tr>';
+                    html += '<td style="text-align:right;">' + qty + '</td>';
+                    html += '<td>' + commodity + '</td>';
+                    html += '<td>' + warrantyCode + '</td>';
+                    html += '<td>' + shipType + '</td>';
+                    html += '<td style="text-align:right;">' + cost.toFixed(2) + '</td>';
+                    html += '<td style="text-align:right;">' + formattedAmount + '</td>';
+                    html += '</tr>';
+
+                    totalQty += qty;
+                    totalAmount += amount;
+                });
+                //console.log(totalAmount)
+                var formattedtotalAmount = formatNumberWithThousandSeparator(totalAmount.toFixed(2))
+                // Append rows to table body
+                $('#invoiceItemsBody').html(html);
+
+                /// Create the total row dynamically with a thick border
+                var totalRow = '<tr id="totalRow" style="border: 2px black; font-weight:bold;">';
+
+                totalRow += '<td colspan="5" style="text-align: right;">Total:</td>';
+                totalRow += '<td style="text-align: right;">$' + formattedtotalAmount + '</td>'; // Total Amount aligned under Amount column
+                totalRow += '</tr>';
+
+                // Append the total row to the table body
+                $('#invoiceItemsBody').append(totalRow);
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+        }
+    }
+    function getCurrentDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(today.getDate()).padStart(2, '0');
+
+        return `${month}/${day}/${year}`;
+    }
+    function showMessage(message, type) {
+        var messageContainer = $('#messageContainer');
+        var messageBox = $('#message');
+        messageBox.text(message);
+        messageBox.removeClass().addClass('alert alert-' + (type === 'error' ? 'danger' : 'success'));
+        messageContainer.show();
+        setTimeout(function () {
+            messageContainer.hide();
+        }, 3000);
+    }
+    function formatNumberWithThousandSeparator(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    function validateInvNo(invoiceNo, callback) {
+
+        var _invNo = invoiceNo
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/DellBilling/ValidateInvNo',
+            data: {
+                invNo: _invNo
+            },
+            datatype: JSON,
+            success: function (data) {
+                console.log(data.response)
+                if (data.response === false) {
+                    callback(false);
+                } else {
+                    callback(true);
+                }
+            },
+            onerror: function (r) { callback(false); },
+            failure: function (r) { callback(false); }
+        });
+    }
+    function ExportExcel(programID, trackingNo) {
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/DellBilling/ExportToExcel',
+            data: {
+                programId: programID,
+                trackingNo: trackingNo
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (!data.ErrorMessage) {
+                    showMessage("Line added successfully!", "success");
+                } else {
+                    showMessage("Error adding line.", "error");
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>
+
+
+

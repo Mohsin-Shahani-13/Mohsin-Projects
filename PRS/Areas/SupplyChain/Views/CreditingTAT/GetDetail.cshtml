@@ -1,0 +1,81 @@
+﻿@model IP.Areas.SupplyChain.Models.CreditingTAT
+@{
+    ViewBag.Title = "Get Detail";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="199-1" />
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+        
+            <h6 class="box-title" id="head_lstUnitLst"><strong>@ViewBag.ReportTitle</strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body">
+            <table id="lstDetail" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+        $(document).ready(function () {
+      ToggleDataList(false);
+            var lstDetail = @Html.Raw(Model.serializer.Serialize(Model.lstDetail));
+
+            var columnDef = [
+                { "data": "ProgramID", "title": "ProgramID", "width": "120px", "visible": false },
+                { "data": "ROHeaderID", "title": "RO Header ID", "width": "90px" },
+                {
+                    "data": "CustomerReference", "title": "Customer Reference", "width": "120px",
+                    render: function (data, type, row) {
+                        var url = '<a href= "\\SupplyChain\\RO\\Detail?Id=' + row["ROHeaderID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                        return url;
+                    }
+                },
+               
+                { "data": "ReturnReason", "title": "Return Reason", "width": "80px" },
+                { "data": "CustName", "title": "Customer Name" },
+                { "data": "TotalHours", "title": "Total Hours", "width": "70px" },
+                { "data": "PercentageWithin48Hours", "title": "PercentageWithin48Hours", "width": "90px" }
+            ]
+            
+
+            ToggleDataList(true);
+            var h = getHeight(83);
+            //MakeFrameGrid('lstDetail', lstDetail, 0, columnDef, 'buttons', true, false, false, false, $('#head_lstUnitLst').text(), true);
+            MakeDataGrid('lstDetail', lstDetail, 0, columnDef, true, true, false);
+        });
+
+    
+</script>
+
+

@@ -1,0 +1,408 @@
+﻿@model IP.Areas.Biztalk.Models.OutboundTransactionDetail
+@{
+    ViewBag.Title = "Detail";
+    Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery);
+}
+@{
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var jsonModel = serializer.Serialize(Model.lstDetail);
+}
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="156" />
+    <div id="datalist" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            @{
+                // if (Layout == "~/Views/Shared/_LayoutInner.cshtml")
+                if (Layout == null)
+                {
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-box-tool">
+                        <span class="fa fa-th-list fa-lg white"></span>
+                    </button>
+                }
+            }
+            <h6 class="box-title"><strong>Outbound Transaction Detail > Contract = '@Request.QueryString["contract"]' | Sequence No. = '@Request.QueryString["SequenceNo"]'</strong></h6>
+            <div id="button" class="box-tools pull-right" style="margin-top:2PX;">
+            </div>
+        </div>
+        <div id="topHeader" class="box-body row text-sm">
+            <div class="col-md-12 text-sm">
+                <table id="tblheader" class="table text-sm" style="margin-bottom:-5px; width:100%">
+                    <tr>
+                        <td style="width: 30px;"><strong>@Html.DisplayNameFor(m => m.ProgramId)</strong></td>
+                        <td style="width: 150px;" class="bg-gray-light">@Html.DisplayFor(m => m.ProgramId)</td>
+
+                        <td style="width: 30px;"><strong>@Html.DisplayNameFor(m => m.MsgType)</strong></td>
+                        <td style="width: 150px;" class="bg-gray-light">@Html.DisplayFor(m => m.MsgType)</td>
+
+                        <td style="width: 30px;"><strong>@Html.DisplayNameFor(m => m.Processed)</strong></td>
+                        <td style="width: 150px;" class="bg-gray-light">@Html.DisplayFor(m => m.Processed)</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;"><strong>@Html.DisplayNameFor(m => m.ProcessDateTime)</strong></td>
+                        <td style="width: 150px;" class="bg-gray-light">@Html.DisplayFor(m => m.ProcessDateTime)</td>
+
+                        <td style="width: 30px;"><strong>@Html.DisplayNameFor(m => m.SequenceNo)</strong></td>
+                        <td style="width: 150px;" class="bg-gray-light">@Html.DisplayFor(m => m.SequenceNo)</td>
+
+                        <td style="width: 30px;"><strong>@Html.DisplayNameFor(m => m.InsertDate)</strong></td>
+                        <td style="width: 150px;" class="bg-gray-light">@Html.DisplayFor(m => m.InsertDate)</td>
+
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">      
+            <div class="box-header with-border bg-blue-gradient">
+                <h6 class="box-title " id="partTran"><strong>Outbound Transaction Detail @*> Contract = '@Request.QueryString["contract"]' | Sequence No. = '@Request.QueryString["SequenceNo"]'*@</strong></h6>
+                <div id="buttons" class="box-tools pull-right">
+
+                </div>
+            </div>
+            <div class="box-body" id="lstP">
+                <table id="lstDetail" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                    <thead class="sorted-asc">
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>                         
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>                           
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+    </div>
+</div>
+@{
+    if (Layout == null)
+    {
+        <script type="text/javascript">
+            $('#button').empty();
+            var qrytool = '<a id="showQuery" class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=156' + '&rptTitle=Outbound Transaction' + '&isDetail=Y' + '" title="How they do that" target="_blank">';
+            qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            qrytool += '</a>';
+            $('#button').append(qrytool);
+
+            $(document).ready(function ()
+            {             
+                ToggleDataList(false);
+               var _lstDetail = @Html.Raw(Json.Encode(Model.lstDetail));
+                var Detail = [
+                    { "data": "TransactionId", "title": "Transaction Id", "width": "80px" },
+                    { "data": "MessageType", "title": "Message Type", "width": "80px" },
+                    { "data": "CustomerReference", "title": "Customer Ref.", "width": "90px" },
+                    { "data": "PartNo", "title": "Part No.", "width": "80px" },
+                    { "data": "SerialNo", "title": "Serial No.", "width": "50px" },
+                    { "data": "Qty", "title": "Qty", "width": "50px", "className": "text-right" },
+                    { "data": "ProcessDateTime", "title": "Process Date Time", "width": "100px", "className": "text-right" },
+                    { "data": "SequenceNo", "title": "Sequence No.", "width": "80px" },
+                    {
+                        "data": "Message", "title": "Message",
+                        render: function (data, type, row) {
+
+                            var escapedData = $('<div>').text(data).html();
+                            var url = '<a href="\\Biztalk\\OutboundTransactionDetail\\GetMessage?TransactionId=' + row["TransactionId"] + '" target=_blank rel=noonpener nonreferrer > ' + escapedData.substring(0, 86) + (escapedData.length > 86 ? '....' : '') + '</a>';
+
+                            return url;
+                        }
+                    },
+                    { "data": "Processed", "title": "Processed", "width": "50px", "className": "text-center" },
+                    { "data": "InsertDate", "title": "Insert Date", "width": "90px", "className": "text-right" }
+
+                ]          
+               
+         //For Displaying  Footer Sum
+     var footerfunc = function () {
+         var api = this.api();
+         $(api.column(5).footer()).html(thousands_separators(api.column(5, { search: 'applied' }).data().reduce(function (a, b) {
+             return Number(a) + Number(b);
+         }, 0)));
+         
+     }
+     ToggleDataList(true);
+         var h = getHeight(130);
+         var i = getHeight(150);
+
+                MakeFrameGrid('lstDetail', _lstDetail, 0, Detail, 'button_DT', false, $('#Detail').text(), footerfunc);
+            });
+        </script>
+    }
+    else
+    {
+
+        @section js{
+            <script type="text/javascript">
+                $('#button').empty();
+                var qrytool = '<a id="showQuery" class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=156' + '&rptTitle=Outbound Transaction' + '&isDetail=Y' + '" title="How they do that" target="_blank">';
+                qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+                qrytool += '</a>';
+                $('#button').append(qrytool);
+                $(document).ready(function ()
+                {                    
+                    ToggleDataList(false);
+
+                    var _lstDetail = @Html.Raw(Json.Encode(Model.lstDetail));
+                    
+                  var Detail = [
+                       { "data": "TransactionId", "title": "Transaction Id", "width": "80px" },
+                       { "data": "MessageType", "title": "Message Type", "width": "80px" },
+                       { "data": "CustomerReference", "title": "Customer Ref.", "width": "90px" },
+                       { "data": "PartNo", "title": "Part No.", "width": "80px" },
+                       { "data": "SerialNo", "title": "Serial No.", "width": "50px" },
+                       { "data": "Qty", "title": "Qty", "width": "50px", "className": "text-right"  },
+                       { "data": "ProcessDateTime", "title": "Process Date Time", "width": "100px", "className": "text-right" },
+                       { "data": "SequenceNo", "title": "Sequence No.", "width": "80px" },
+                       {
+                          "data": "Message", "title": "Message",
+                          render: function (data, type, row) {
+                              
+                              var escapedData = $('<div>').text(data).html();
+                              var url = '<a href="\\Biztalk\\OutboundTransactionDetail\\GetMessage?TransactionId=' + row["TransactionId"] + '" target=_blank rel=noonpener nonreferrer > ' + escapedData.substring(0, 86) + (escapedData.length > 86 ? '....' : '') + '</a>';
+
+                              return url;
+                          }                        
+                       },                                         
+                       { "data": "Processed", "title": "Processed", "width": "50px", "className": "text-center" },
+                       { "data": "InsertDate", "title": "Insert Date", "width": "90px", "className": "text-right" }
+
+                    ]
+                    
+        
+            //For Displaying  Footer Sum
+        var footerfunc = function () {
+            var api = this.api();
+            $(api.column(5).footer()).html(thousands_separators(api.column(5, { search: 'applied' }).data().reduce(function (a, b)
+            {
+                return Number(a) + Number(b);
+            }, 0))); }
+                    ToggleDataList(true);
+                   
+                    MakeFrameGrid('lstDetail', _lstDetail, 0, Detail, 'button_DT', false, $('#Detail').text(), footerfunc);
+                });
+                function MakeFrameGrid(tableId, data, tableHeight, columns, buttonId, search, isScrollX, footerFunction, isFramed, reportTitle, isSqlDoc, showPaging)
+                {
+                    var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+                    isFramed = isFramed === undefined || isFramed === false ? false : true;
+                    isScrollX = isScrollX === undefined ? false : true;
+                    if (search === undefined) { search = true; }
+                    reportTitle = reportTitle === undefined ? $('.box-title').text() : reportTitle;
+                showPaging = showPaging === undefined ? true : false;
+
+                var gridHeight = 0;
+                var gridButtonsClass = '';
+                //var gridButtonSize = 0;
+                gridButtonsClass = 'btn-header btn-box-tool';
+                gridSearchBoxClass = 'bg-white';
+                gridButtonSize = 20;
+                //var layoutHeader = $('nav').innerHeight();
+                var topHeader = $('#topHeader').innerHeight();
+                var cardHeader = $('.box-header').innerHeight();
+                // var canvas = $('.canvas').innerHeight();
+                //var tableHeader = $('#' + tableId + ' > thead').innerHeight();
+             
+                var tableFooter = 40;
+                var cardFooterH = 40;
+
+                if (showPaging)
+                    cardFooterH = 50;
+
+                //if (isFooter === true)
+                //    tableFooter = 24;
+
+
+                var browserHeight = window.innerHeight;
+                tableFooter = tableFooter === undefined ? 0 : tableFooter;
+                gridHeight = browserHeight - (topHeader + cardHeader + cardHeader + tableFooter + cardFooterH);
+
+
+                //For SQL Documentation
+                var boxtool;
+                if (search === true)
+                {
+                    if (isFramed)
+                    {
+                            $('#trHeadSearch').empty();
+                        boxtool = '<input class="txtSearch-frame" id="txtFrameSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                            $('#trHeadSearch').append(boxtool);
+                    }
+                    else
+                    {
+                            $('#' + buttonId).empty();
+                        if (isSqlDoc === true)
+                            AddSqlDoc(buttonId);
+                        boxtool = '<input class="txtSearch-frame" id="txtFrameSearch' + tableId + '" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                            $('#' + buttonId).append(boxtool);
+                    }
+                }
+                else
+                {
+                    if (isFramed)
+                    {
+                            $('#trHeadSearch').empty();
+                        boxtool = '<input class="txtSearch-frame" id="txtFrameSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                            $('#trHeadSearch').append(boxtool);
+                    }
+                    else
+                    {
+                            $('#' + buttonId).empty();
+                        if (isSqlDoc === true)
+                            AddSqlDoc(buttonId);
+                    }
+                }
+
+                var table = $('#' + tableId).DataTable({
+                order:[],
+                        data: data,
+                        destroy: true,
+                        columns: columns,
+                        bInfo: showPaging,
+                        paging: showPaging,
+                        ordering: true,
+                        searching: search,
+                        deferRender: true,
+                        pagingType: 'full',
+                        pageLength: 100,
+                        scrollCollapse: false,
+                        scrollX: isScrollX,
+                        scrollY: gridHeight,
+                        footerCallback: footerFunction,
+                        language:
+                    {
+                    emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                            zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                            oPaginate:
+                        {
+                        sNext: '<i class="fa fa-forward"></i>',
+                                sPrevious: '<i class="fa fa-backward"></i>',
+                                sFirst: '<i class="fa fa-step-backward"></i>',
+                                sLast: '<i class="fa fa-step-forward"></i>'
+                            }
+                    },
+                        "dom": "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-5'i><'#designedBy.col-sm-3'><'col-sm-4'p>>", // Added By Tahir
+                        buttons:
+                    [
+                            {
+                    extend: 'copyHtml5',
+                                footer: true,
+                                text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                                titleAttr: 'Copy',
+                                title: reportTitle,
+                                filename: 'DataExport',
+                                exportOptions:
+                        {
+                        columns: 'th:not(.notexport)'
+                                }
+                    },
+                            {
+                    extend: 'excelHtml5',
+                                footer: true,
+                                text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                                titleAttr: 'Export to excel',
+                                title: reportTitle,
+                                filename: 'DataExport',
+                                exportOptions:
+                        {
+                        columns: 'th:not(.notexport)'
+                                },
+                                customize: function(xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            var excelColumns = [];
+
+                            header = $("row[r=2]", sheet);
+
+                            cols = header.find("c");
+                            cols.each(function() {
+                                t = $(this).find("t").text();
+                                if (t.includes("Serial") || t.includes("Customer Ref."))
+                                    excelColumns.push($(this).attr("r"));
+                            });
+                                    $(excelColumns).each(function() {
+                                var cell = this.substring(0, 1);
+                                        $('row:gt(1) c[r^="' + cell + '"]', sheet).each(function() {
+                                            $(this).removeAttr('s');
+                                            $(this).attr('t', 'inlineStr');
+                                            $(this).find('v').replaceWith('<is><t>' + $(this).text() + '</t></is>');
+                                });
+                            });
+
+                        }
+                    },
+                            {
+                    extend: 'print',
+                                footer: true,
+                                text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                                titleAttr: 'Print',
+                                title: '',
+                                messageTop: function() { return '<h4>' + reportTitle + '</h4>'; },
+                                filename: 'DataExport',
+                                exportOptions:
+                        {
+                        columns: 'th:not(.notexport)'
+                                }
+                    }
+
+                        ],
+                        select: true
+                                        });
+
+                table.buttons().container()
+                    .appendTo('#' + buttonId);
+
+                table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+                table.button(0).nodes().addClass(gridButtonsClass);
+
+                table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+                table.button(1).nodes().addClass(gridButtonsClass);
+
+                table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+                table.button(2).nodes().addClass(gridButtonsClass);
+
+                    $('#txtFrameSearch' + tableId).on('keyup change', function() {
+                    table.search(this.value).draw();
+                });
+                    $('.dataTables_filter').hide();
+                table.columns.adjust().draw();
+
+            }
+
+            </script>
+
+
+        }
+    }
+}

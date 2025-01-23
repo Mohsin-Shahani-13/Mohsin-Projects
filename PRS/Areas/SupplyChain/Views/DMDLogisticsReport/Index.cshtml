@@ -1,0 +1,135 @@
+﻿@model IP.Areas.SupplyChain.Models.DMDLogisticsReport
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstDMDLogisticsReport" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            
+                        </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var custRef = $('#custRef').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DMDLogisticsReport/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                custRef: custRef,
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+
+                        { "data": "CaseNumber", "title": "Case Number", "width": "100px" },
+                        { "data": "PickupOption", "title": "Pickup Option", "width": "100px" },
+                        { "data": "RequestDate", "title": "Request On", "width": "100px", "className": "text-center" },
+                        { "data": "ProgramID", "title": "Program Id", "width": "80px" },
+                        { "data": "Country", "title": "Country", "width": "100px" },
+                        { "data": "TrackingNo", "title": "Tracking No", "width": "100px" },
+                        { "data": "trackingType", "title": "Tracking Type", "width": "100px" },
+                        { "data": "ShipmentStatus", "title": "Shipment Status", "width": "120px" },
+                        { "data": "PrimaryCommodity", "title": "Primary Commodity", "width": "120px" },
+                        { "data": "PartNo", "title": "Part No.", "width": "100px", "visible": false },
+                        {
+                            "data": "SerialNo", "title": "Serial No.", "width": "80px",
+                            render: function (data, type, row) {
+                                var d = data.toString();
+                                if (row["HAS_SN"] == 'N' || row["serialno"] == "*") {
+                                    url = row["serialno"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + d + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "Qty", "title": "Quantity", "width": "80px" }
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(12).footer()).html(thousands_separators(api.column(12).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstDMDLogisticsReport', data.lstDMDLogisticsReport, 0, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+
+
+

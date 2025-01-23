@@ -1,0 +1,152 @@
+﻿@model IP.Areas.SupplyChain.Models.SOTAT
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstSOTAT" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+               
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var programId = '@Request.QueryString["programId"].ToString()';
+        var programName = '@Request.QueryString["programName"].ToString()';
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SOTAT/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: programId,
+                programName: programName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ID", "title": "SO Id", "width": "60px", "visible": false },
+                        { "data": "ProgramID", "title": "ProgramID", "width": "60px", "visible": false },
+                        {
+                            "data": "CustomerReference", "title": "SO",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\SupplyChain\\SO\\Detail?SOHeaderId=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "TrackingNo", "title": "Tracking Number", "width": "120px",
+                            render: function (data, type, row) {
+                                var url;
+                                if (row["Carrier"] == "DHL") {
+
+                                    url = '<a href="http://www.dhl.com/en/express/tracking.html?AWB=' + row["TrackingNo"] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+                                }
+                                else if (row["Carrier"] == "FEDEX") {
+                                    url = '<a href="https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=' + row["TrackingNo"] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                else if (row["Carrier"] == "UPS") {
+                                    url = '<a href="https://www.ups.com/track?loc=en_US&tracknum=' + row["TrackingNo"] + '&requester=ST/trackdetails' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                else if (row["Carrier"] == "USPS") {
+                                    url = '<a href="https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=' + row["TrackingNo"] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                //else if (row["Carrier"] == "SAGAWA") {
+                                //    url = '<a href="https://k2k.sagawa-exp.co.jp/p/sagawa/web/okurijoinput.jsp?okurijoNo=' + row["TrackingNo"] + '" target=_blank > ' + data + '</a>';
+
+                                //}
+                                //else if (row["Carrier"] == "STARTRACK") {
+                                //    url = '<a href="https://startrack.com.au/track/search?trackingIds=' + row["TrackingNo"] + '" target=_blank > ' + data + '</a>';
+
+                                //}
+                                else {
+                                    url = data;
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "Carrier", "title": "Courier", "width": "100px" },
+                        { "data": "City", "title": "City", "width": "140px" },
+                        { "data": "Zip", "title": "Zip Code", "width": "80px" },
+                        { "data": "State", "title": "State", "width": "90px" },
+                        { "data": "Country", "title": "Country", "width": "90px", "className": "text-center"  },
+                        { "data": "shipdate", "title": "Date Shipped", "width": "100px", "className": "text-right" },
+                        { "data": "deliverdate", "title": "Date Delivered", "width": "110px", "className": "text-right" },
+                        {
+                            "data": "TAT", "title": "TAT Working Days", "width": "110px", "className": "text-center",
+                            render: function (data, type, row) {
+                                    var colorData = '<span style="color:green;font-weight:bolder">' + data + '</span>'
+                                
+                                return colorData;
+                            }
+                        }
+                       
+
+                    ]
+                
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstSOTAT', data.lstSOTAT, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

@@ -1,0 +1,211 @@
+﻿@model IP.Areas.SupplyChain.Models.RepeatReturn
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstRepeatReturn" class="table table-bordered table-striped text-sm table-hover" >
+                <thead class="sorted-asc">
+                    <tr>
+                        <th rowspan="2" class="notexport"></th>
+                        <th rowspan="2" class="notexport"></th>
+                        <th rowspan="2" class="notexport"></th>
+                        <th rowspan="2" class="notexport"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+
+
+
+
+                        <th colspan="3" style="border-bottom-width:0px; border-right-width:1px;">Days </th>
+
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th colspan="2" style="border-bottom-width:0px; border-right-width:1px;">Fail Code </th>
+
+                        <th colspan="2" class="notexport" style="border-bottom-width:0px; border-right-width:1px;">Repeat Reason</th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2"></th>
+
+                        <th rowspan="2"></th>
+                    </tr>
+
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @*<th></th>*@
+                        <th class="notexport"> </th>
+                        <th class="notexport"></th>
+                        <th class="notexport"> </th>
+                        <th class="notexport" style="border-right-width:1px;"></th>
+
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        @*<th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>*@
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        @*<div id="right_panel" class="col-md-2">
+                <div id="rightsection" class="" style="margin-top:50%; margin-left:10px; padding-right:10px;">
+                    <h4>Click Qty hyperlinks on left section to load data</h4>
+                </div>
+            </div>*@
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var isAllDate = $('#isAllDate').is(':checked');
+        var programId = '@Request.QueryString["programId"].ToString()';
+        var programName = '@Request.QueryString["programName"].ToString()';
+        var serialNo = $('#serialNo').val();
+        var hasRepaired = $('#hasRepaired').val();
+        var hasRepairedText = $("#hasRepaired option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/RepeatReturn/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                isAllDate: isAllDate,
+                programId: programId,
+                programName: programName,
+                serialNo: serialNo,
+                hasRepaired: hasRepaired,
+                hasRepairedText: hasRepairedText
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                //$.each(data.lstPartsInventory, function (index, row) {
+
+                //if (data.lstPartsInventory.length == 1) {
+                //    isSingleRow = true;
+                //    MenuHide();
+                //    OpenPage('\\ListingReports\\PartInquiry\\Detail?partNo=' + row["partno"] + '&page=detailed');
+                //}
+                //});
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "Recnum", "title": "Recnum", "width": "40px", "visible": false },
+                        { "data": "TranId", "title": "TranId", "width": "40px", "visible": false },
+                        { "data": "ProgramId", "title": "ProgramId", "width": "40px", "visible": false },
+                        { "data": "PartNo", "title": "Part No.", "width": "60px", "visible": false },
+                        { "data": "ProgramName", "title": "Program", "width": "60px" },
+                        {
+                            "data": "SerialNo", "title": "Serial No.",
+                            render: function (data, type, row) {                   
+                                if (row["SerialNo"] == '*' || row["HAS_SN"] == 'N') {
+                                    url = row["SerialNo"];
+                                }
+                                else {
+                                    var url = '<a href= \\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramId"] + '&PartNo=' + row["PartNo"] +'&page=list" target=_blank > ' + data + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "LastPrvWorkStation", "title": " Last Prev. Workstation", "width": "140px" },
+                        { "data": "CustomerReference", "title": "Customer Ref.", "width": "90px" },
+                        { "data": "ShippedOn", "title": "Last Shipped On", "width": "100px", "className": "text-right" },
+                        { "data": "RcvdOn", "title": "Last Rcvd On", "width": "100px", "className": "text-right" },
+                        { "data": "Days", "title": "Days", "width": "50px", "className": "text-right" },
+                        { "data": "Under30", "title": "< 30", "width": "50px", "className": "text-center" },
+                        { "data": "Under60", "title": "< 60", "width": "40px", "className": "text-center" },
+                        { "data": "Under90", "title": "< 90", "width": "50px", "className": "text-center" },
+                        { "data": "PrevFailCode", "title": "Previous Fail Code  ", "width": "100px", "visible": false },
+                        { "data": "CrntFailCode", "title": "Current Fail Code", "width": "90px", "visible": false },
+                        { "data": "PrevRetReason", "title": "Previous Return Reason ", "width": "150px", "visible": false },
+                        { "data": "CrnRetReason", "title": "Current Return Reason ", "width": "150px", "visible": false },
+                        { "data": "PrevFailCode", "title": "Previous ", "width": "100px" },
+                        { "data": "CrntFailCode", "title": "Current", "width": "90px" },
+                        { "data": "PrevRetReason", "title": "Previous ", "width": "150px" },
+                        { "data": "CrnRetReason", "title": "Current ", "width": "150px" },
+                        { "data": "PreviousROType", "title": "Previous RO Type", "width": "100px" },
+                        { "data": "RepeatReturnCategory", "title": "Repeat Return Category ", "width": "150px" },
+                        { "data": "SameFailure", "title": "Same Failure", "width": "60px" },
+                        { "data": "ShipTimes", "title": "MROC", "width": "40px", "className": "text-right"},
+                        { "data": "RepairedBy", "title": "Repaired By", "width": "90px" },
+                        { "data": "RepairedOn", "title": "Repaired On", "width": "90px", "className": "text-right" }
+
+                      
+                        //{ "data": "MinOrderId", "title": "Min Order Id", "width": "100px" },
+                        //{ "data": "MaxOrderId", "title": "Max Order Id", "width": "100px" },
+
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                    //    var api = this.api();
+                    //    $(api.column(10).footer()).html(thousands_separators(api.column(10).data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstRepeatReturn', data.lstRepeatReturn, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

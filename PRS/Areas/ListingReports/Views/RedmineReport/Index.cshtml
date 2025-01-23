@@ -1,0 +1,1094 @@
+﻿@model IP.Areas.ListingReports.Models.RedmineReport
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    /* Reduce padding for table cells */
+    #lstRedmineReport td {
+        padding: 0px; /* Adjust the padding value as needed */
+    }
+
+    textarea.form-control {
+        resize: none;
+    }
+
+    #remarksModalLabel {
+        display: contents;
+    }
+
+    .remarks-button {
+        width: 100%;
+        padding: 5px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+        .remarks-button i {
+            color: dimgray;
+            transition: color 0.1s;
+        }
+
+        .remarks-button:hover i {
+            color: dodgerblue;
+        }
+
+    .field {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px; /* Add some space between fields if needed */
+    }
+
+        .field label {
+            margin-right: 10px; /* Space between label and input/p */
+        }
+
+    #title {
+        margin-top: 5px;
+    }
+
+    .yes-no-dropdown-Grpvn {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 12px;
+        background-color: #f8f9fa;
+    }
+
+        .yes-no-dropdown-Grpvn:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+    .yes-no-dropdown-Prg {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 12px;
+        background-color: #f8f9fa;
+    }
+
+        .yes-no-dropdown-Prg:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+    .yes-no-dropdown-Aus {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 12px;
+        background-color: #f8f9fa;
+    }
+
+        .yes-no-dropdown-Aus:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+    .yes-no-dropdown-Jpn {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 12px;
+        background-color: #f8f9fa;
+    }
+
+        .yes-no-dropdown-Jpn:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+    .priority-dropdown .Status-dropdown {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 11px;
+        background-color: #f8f9fa;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .priority-dropdown:focus .Status-dropdown:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+    }
+
+    .DevDueDate {
+        width: 90px;
+        height: 22px;
+        font-size: 12px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+        .DevDueDate:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+    .closed-date {
+        width: 90px;
+        height: 22px;
+        font-size: 12px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+        .closed-date:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+    .released-date {
+        width: 100px;
+        height: 22px;
+        font-size: 12px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+        .released-date:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+    /*.jira-input {
+        width: 60px;
+        height: 25px;
+        border: 1px solid #808080;
+        border-radius: 4px;
+    }
+
+        .jira-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }*/
+
+    .CurrentOwner-input {
+        width: 100px;
+        height: 25px;
+        border: 1px solid #808080;
+        border-radius: 4px;
+        color: green;
+        font-weight: bold;
+        text-align: center;
+    }
+
+        .CurrentOwner-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+            <button type="button" class="btn btn-success btn-sm" id="saveData">Save changes</button>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstRedmineReport" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @*<th></th>
+                            <th></th>*@
+                        @*<th></th>
+                            <th></th>*@
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('#lstRedmineReport').on('click', '.remarks-button', function () {
+            var table = $('#lstRedmineReport').DataTable(); // Get the DataTable instance
+            var $row = $(this).closest('tr'); // Get the closest row to the button
+            var rowData = table.row($row).data(); // Get the data for the closest row
+
+            var remarks = $(this).data('remarks'); // Get remarks from data-remarks attribute
+            var redmineId = $(this).data('redmine'); // Get Redmine value from the row data
+            var title = $(this).data('title'); // Get Title value from the row data
+
+            showRemarksPopup(redmineId, remarks, title); // Call the popup function
+        });
+        // Disable save button by default
+        $('#saveData').prop('disabled', true);
+
+        // Function to enable save button on change events
+        // Function to enable save button on change events and mark row as edited
+        function markRowAsEdited(element) {
+            var row = $(element).closest('tr');
+            row.addClass('edited');
+            $('#saveData').prop('disabled', false);
+        }
+
+
+        // Attach change event listeners to inputs
+        $(document).on('change', '.priority-dropdown, .status-dropdown, #currOwner, .DevDueDate, .released-date, .closed-date, .yes-no-dropdown-Grpvn, .yes-no-dropdown-Prg, .yes-no-dropdown-Aus, .yes-no-dropdown-Jpn', function () {
+            markRowAsEdited(this);
+        });
+        // Attach change event listeners to inputs
+        $(document).on('click', '.remarks-button', function () {
+            markRowAsEdited(this);
+        });
+
+        // Function to show the remarks popup
+        function showRemarksPopup(redmineId, initialValue, title) {
+            // You can use any modal or custom popup implementation here
+            // For example, using Bootstrap modal
+
+            // Clear any existing modal content or initialize a new modal
+            $('#remarksModal').remove(); // Remove if exists to ensure clean state
+            //$('#title').html(title)
+            var modalHtml = `
+            <div class="modal fade " id="remarksModal" tabindex="-1" role="dialog" aria-labelledby="remarksModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-blue-gradient">
+                            <h5 class="modal-title d-content" id="remarksModalLabel">Remarks</h5>
+                            <button type="button" class="close d-math" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                        <div class="field">
+                        <label>Redmine: </label>
+                        <input type="text" class="" disabled value="${redmineId}">
+                        </div>
+                        <div class="field">
+                            <label>Title: </label>
+                            <p id="title"></p>
+                        </div>
+                            <textarea id="remarksTextarea" class="form-control" rows="5" placeholder="Enter Remarks...">${initialValue}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="saveRemarksBtn">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+            $('body').append(modalHtml); // Append modal HTML to body
+            document.getElementById('title').innerText = title;
+
+            // Show the modal
+            $('#remarksModal').modal('show');
+
+            //// Handle save button click
+            $('#saveRemarksBtn').click(function () {
+
+                //var redmineId = $('#redmineId').val();
+                var remarks = $('#remarksTextarea').val()
+                //console.log(redmineId)
+                saveRemarks(redmineId, remarks);
+
+                // You can update the remarks in your data structure or wherever needed
+                //console.log('Updated Remarks:', updatedRemarks);
+
+                // Close the modal
+                $('#remarksModal').modal('hide');
+            });
+
+            // Cleanup on modal close
+            $('#remarksModal').on('hidden.bs.modal', function () {
+                $('#remarksModal').remove(); // Remove modal from DOM
+            });
+        }
+
+        ToggleDataList(false);
+        $('.dateCalendar').datepicker({
+            format: 'yyyy.mm.dd',
+            autoclose: true,
+            startDate: '-180d',
+            endDate: maxDate,
+            readonlyDatepicker: true
+        });
+        LoadData();
+    });
+
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+
+        var _programId = $('#ddProgram').val();
+        var _programName = $("#ddProgram option:selected").text();
+        //var _fDate = $('#fromDt').val();
+        //var _tDate = $('#toDt').val();
+        //var _venType = $('#venType').val();
+        var _status = $("#ddStatus option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/RedmineReport/GetList',
+            data: {
+                program: _programId,
+                status: _status
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').empty();
+                $('#filterString').append(data.filterString);
+                var lstStatus = data.lstStatus;
+
+                var columnDef = [
+                    {
+                        "data": "Priority",
+                        "title": "Priority",
+                        "width": "50px",
+                        "visible": true,
+                        "className": "text-center",
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                var options = [
+                                    { "value": "Medium", "label": "Medium" },
+                                    { "value": "High", "label": "High" },
+                                    { "value": "VeryHigh", "label": "VeryHigh" }
+                                ];
+                                var select = '<select class="priority-dropdown" style="width: 70px; height: 25px;">';
+                                options.forEach(function (option) {
+                                    var selected = (data === option.value || (!data && option.value === "Medium")) ? 'selected' : '';
+                                    select += '<option value="' + option.value + '" ' + selected + '>' + option.label + '</option>';
+                                });
+                                select += '</select>';
+                                return select;
+                            }
+                            return data;
+                        }
+                    },
+                    { "data": "Site", "title": "Site", "width": "70px", "visible": true },
+                    {
+                        "data": "Jira",
+                        "title": "Cust. Case",
+                        "width": "150px",
+                        "visible": true
+
+                    },
+                    {
+                        "data": "Redmine", "title": "Redmine", "width": "40px", "visible": true,
+                        render: function (data, type, row) {
+
+                            var d = data.toString();
+                            var url = '<a href="https://tracking.reconext.com/issues/' + row["Redmine"] + '" target=_blank > ' + d + '</a>';
+
+                            return url;
+                        }
+                    },
+                    { "data": "Type", "title": "Type", "width": "60px", "visible": true },
+                    { "data": "Title", "title": "Title", "visible": true },
+                    {
+                        "data": "CreateDate",
+                        "title": "Created On",
+                        "width": "70px",
+                        "visible": true,
+                        "className": "text-right"
+                        //"render": function (data, type, row, meta) {
+                        //    if (type === 'display') {
+                        //        return '<input type="text" style="width: 100%;" value="' + data + '">';
+                        //    }
+                        //    return data;
+                        //}
+                    },
+                    {
+                        "data": "DevDueDate",
+                        "title": "Dev. Due Date",
+                        "width": "70px",
+                        "visible": true,
+                        "render": function (data, type, row, meta) {
+                            return `
+                                <div class='input-group date date-picker' id='dtpTo'>
+                                    <input type='text' placeholder='Select Date' name='Dev Due Date' value='${data}' class='DevDueDate' />
+                                  <span class="input-group-addon" style="padding: 5px;">
+                                    <i class="fas fa-calendar-alt" style="font-size: 14px;"></i>
+                                </span>
+                                </div>
+                            `;
+                        }
+                    },
+                    {
+                        "data": "PlannedReleaseDate",
+                        "title": "Planned Release Date",
+                        "width": "60px",
+                        "visible": true,
+                        "render": function (data, type, row, meta) {
+                            return `
+                                <div class='input-group date date-picker' id='dtpTo'>
+                                    <input type='text' placeholder='Select Date' name='Planned Release Date' value='${data}' class='released-date' />
+                                    <span class="input-group-addon" style="padding: 5px;">
+                                        <i class="fas fa-calendar-alt" style="font-size: 14px;"></i>
+                                    </span>
+                                </div>
+                            `;
+                        }
+                    },
+                    {
+                        "data": "ClosedDate",
+                        "title": "Closed On",
+                        "width": "60px",
+                        "visible": true,
+                        "render": function (data, type, row, meta) {
+                            return `
+                                <div class='input-group date date-picker' id='dtpTo'>
+                                    <input type='text' placeholder='Select Date' name='Closed Date' value='${data}' class='closed-date' />
+                                    <span class="input-group-addon" style="padding: 5px;">
+                                        <i class="fas fa-calendar-alt" style="font-size: 14px;"></i>
+                                    </span>
+                                </div>
+                            `;
+                        }
+                    },
+                    //{ "data": "CurrentStatus", "title": "Current Status", "width": "110px", "visible": true, "className": "text-center", },
+                    {
+                        "data": "CurrentStatus", // Use CurrentStatus as the data field for display
+                        "title": "Current Status",
+                        "width": "210px",
+                        "className": "text-center",
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                // Dynamically create the dropdown options using lstStatus array
+                                var options = '';
+                                lstStatus.forEach(function (status) {
+                                    var selected = (status.CurrentStatus === data) ? 'selected' : ''; // Check if current row status matches
+                                    options += '<option value="' + status.CurrentStatusId + '" ' + selected + '>' + status.CurrentStatus + '</option>';
+                                });
+
+                                return '<select class="status-dropdown" style="width: 210px; height: 25px; text-align:center;">' + options + '</select>';
+                            }
+                            return data; // For types other than 'display', return the original data
+                        }
+                    },
+                    {
+                        "data": "CurrentOwner",
+                        "title": "Current Owner",
+                        "width": "100px",
+                        "visible": true,
+                        "className": "text-center",
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return '<input type="text" id="currOwner" class="CurrentOwner-input" value="' + data + '" readonly>';
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "Remarks",
+                        "title": "Remarks",
+                        "width": "40px",
+                        "visible": true,
+                        "className": "text-center",
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return '<button class="remarks-button" data-remarks="' + data + '" data-redmine="' + row["Redmine"] + '" data-title="' + row["Title"] + '"><i class="fas fa-pencil-alt" title="Click to Enter Remarks..." style="font-size:15px"></i></button>';
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "Grpvn",
+                        "title": "Grpvn",
+                        "width": "30px",
+                        "visible": true,
+                        "className": "text-center",
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                var options = [
+                                    { "value": "Yes", "label": "Yes" },
+                                    { "value": "No", "label": "No" }
+                                ];
+                                // Check if data is null or undefined, set default to "Yes"
+                                var selectedValue = (data === "Yes" || data === null || data === undefined) ? "Yes" : "No";
+
+                                var select = '<select class="yes-no-dropdown-Grpvn" style="width: 50px; height: 25px;">';
+                                options.forEach(function (option) {
+                                    var selected = (selectedValue === option.value) ? 'selected' : '';
+                                    select += '<option value="' + option.value + '" ' + selected + '>' + option.label + '</option>';
+                                });
+                                select += '</select>';
+                                return select;
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "Prg",
+                        "title": "Prg",
+                        "width": "30px",
+                        "className": "text-center",
+                        "visible": true,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                var options = [
+                                    { "value": "Yes", "label": "Yes" },
+                                    { "value": "No", "label": "No" }
+                                ];
+                                // Check if data is null or undefined, set default to "Yes"
+                                var selectedValue = (data === "Yes" || data === null || data === undefined) ? "Yes" : "No";
+
+                                var select = '<select class="yes-no-dropdown-Prg" style="width: 50px; height: 25px;">';
+                                options.forEach(function (option) {
+                                    var selected = (selectedValue === option.value) ? 'selected' : '';
+                                    select += '<option value="' + option.value + '" ' + selected + '>' + option.label + '</option>';
+                                });
+                                select += '</select>';
+                                return select;
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "Aus",
+                        "title": "Aus",
+                        "width": "30px",
+                        "className": "text-center",
+                        "visible": true,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                var options = [
+                                    { "value": "Yes", "label": "Yes" },
+                                    { "value": "No", "label": "No" }
+                                ];
+                                // Check if data is null or undefined, set default to "Yes"
+                                var selectedValue = (data === "Yes" || data === null || data === undefined) ? "Yes" : "No";
+
+                                var select = '<select class="yes-no-dropdown-Aus" style="width: 50px; height: 25px;">';
+                                options.forEach(function (option) {
+                                    var selected = (selectedValue === option.value) ? 'selected' : '';
+                                    select += '<option value="' + option.value + '" ' + selected + '>' + option.label + '</option>';
+                                });
+                                select += '</select>';
+                                return select;
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "Jpn",
+                        "title": "Jpn",
+                        "width": "30px",
+                        "visible": true,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                var options = [
+                                    { "value": "Yes", "label": "Yes" },
+                                    { "value": "No", "label": "No" }
+                                ];
+                                // Check if data is null or undefined, set default to "Yes"
+                                var selectedValue = (data === "Yes" || data === null || data === undefined) ? "Yes" : "No";
+
+                                var select = '<select class="yes-no-dropdown-Jpn" style="width: 50px; height: 25px;">';
+                                options.forEach(function (option) {
+                                    var selected = (selectedValue === option.value) ? 'selected' : '';
+                                    select += '<option value="' + option.value + '" ' + selected + '>' + option.label + '</option>';
+                                });
+                                select += '</select>';
+                                return select;
+                            }
+                            return data;
+                        }
+                    },
+                    //{ "data": "InsertedBy", "title": "Inserted By", "width": "90px", "visible": false },
+                    //{ "data": "InsertedOn", "title": "Inserted On", "width": "100px", "className": "text-right" },
+                    //{ "data": "ModifiedBy", "title": "Modified By", "width": "90px", "visible": false },
+                    //{ "data": "ModifiedOn", "title": "Modified On", "width": "100px", "className": "text-right" },
+                ];
+
+                ToggleDataList(true);
+                CustomizedGrid('lstRedmineReport', data.lstRedmineReport, 0, columnDef, true, true, false);
+
+                // Apply date picker to specific columns
+                $('.date-picker').each(function () {
+                    $(this).datepicker({
+                        format: 'yyyy-mm-dd', // Adjust format as needed
+                        autoclose: true
+                        // Add any other options here if needed
+                    });
+                });
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function saveDataToDatabase() {
+        var table = $('#lstRedmineReport').DataTable(); // Assuming 'lstRedmineReport' is your table ID
+        var data = [];
+        var issueUpdates = [];
+
+        table.rows('.edited').every(function (rowIdx, tableLoop, rowLoop) {
+            var rowData = this.data();
+           
+            // Extract values from dropdowns and textboxes
+            var redmineId = rowData.Redmine; // Assuming 'Redmine' is the column name in rowData
+
+            var priority = $(this.node()).find('.priority-dropdown').val();
+            //var jira = $(this.node()).find('#jira').val();
+            var currentOwner = $(this.node()).find('#currOwner').val();
+            //var remark = $(this.node()).find('.remarks-button').val();
+            var devDueDate = $(this.node()).find('.DevDueDate').val();
+            var plannedReleaseDate = $(this.node()).find('.released-date').val();
+            var closedDate = $(this.node()).find('.closed-date').val();
+            var CurrStatus = $(this.node()).find('.status-dropdown option:selected').text();
+            var statusId = $(this.node()).find('.status-dropdown').val();
+            var grpvn = $(this.node()).find('.yes-no-dropdown-Grpvn').val();
+            var prg = $(this.node()).find('.yes-no-dropdown-Prg').val();
+            var aus = $(this.node()).find('.yes-no-dropdown-Aus').val();
+            var jpn = $(this.node()).find('.yes-no-dropdown-Jpn').val();
+
+            // Update rowData with extracted values
+            rowData.Priority = priority;
+            //rowData.jira = jira;
+
+            rowData.CurrentStatus = CurrStatus;
+            rowData.CurrentStatusId = statusId;
+
+            rowData.CurrentOwner = currentOwner;
+            //rowData.Remark = remark;
+            rowData.DevDueDate = devDueDate;
+            rowData.PlannedReleaseDate = plannedReleaseDate;
+            rowData.ClosedDate = closedDate;
+            rowData.Grpvn = grpvn;
+            rowData.Prg = prg;
+            rowData.Aus = aus;
+            rowData.Jpn = jpn;
+
+            data.push(rowData);
+            issueUpdates.push({ issueId: redmineId , statusId: statusId})
+        });
+
+        // Prepare the data to send
+        var postData = {
+            dataList: data
+        };
+        //console.log(issueUpdates)
+        // Perform AJAX call to save data
+        $.ajax({
+            type: 'POST',
+            url: '/RedmineReport/UpdateMultipleStatuses', // Replace with your server endpoint
+            contentType: 'application/json',
+            data: JSON.stringify(issueUpdates),
+            success: function (response) {
+
+                // Remove 'edited' class from rows
+                table.rows('.edited').nodes().to$().removeClass('edited');
+                UpdateToDB(postData);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error saving data:', error);
+            }
+        });
+
+    }
+
+    function UpdateToDB(data) {
+        
+        // Perform AJAX call to save data
+        $.ajax({
+            type: 'POST',
+            url: '/RedmineReport/SaveData', // Replace with your server endpoint
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                // Handle success, if needed
+                //console.log('Data saved successfully:', response);
+                // Refresh DataTable with the latest data
+                $('#saveData').prop('disabled', true);
+                LoadData();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Updated successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                // Remove 'edited' class from rows
+                //table.rows('.edited').nodes().to$().removeClass('edited');
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error saving data:', error);
+            }
+        });
+    }
+    // Usage for saving table data
+    $('#saveData').click(function () {
+        saveDataToDatabase();
+    });
+
+    // Save remarks separately
+    function saveRemarks(rowId, newRemarks) {
+        var postData = {
+            id: rowId,
+            remarks: newRemarks
+        };
+
+        // Perform AJAX call to save remarks
+        $.ajax({
+            type: 'POST',
+            url: '/RedmineReport/SaveRemarks', // Replace with your server endpoint
+            contentType: 'application/json',
+            data: JSON.stringify(postData),
+            success: function (response) {
+
+                if (response.success) {
+                    // Access the DataTable instance
+                    var table = $('#lstRedmineReport').DataTable();
+                    // Find the index of the 'Redmine' column
+                    var redmineColumnIndex = table.columns().header().toArray().findIndex(function (header) {
+                        return $(header).text().trim() == 'Redmine';
+                    });
+                    // Find the row with the matching Redmine value
+                    var rowIndex = table.rows().eq(0).filter(function (idx) {
+                        return table.cell(idx, redmineColumnIndex).data() == rowId;
+                    });
+
+
+                    // Check if the rowIndex is valid
+                    if (rowIndex.length > 0) {
+                        // Get the actual row data
+                        var row = table.row(rowIndex[0]).data();
+
+                        if (row) {
+                            // Update the remarks in the row data
+                            row.Remarks = newRemarks;
+
+                            // Update the row in the table
+                            table.row(rowIndex[0]).data(row).draw();
+                            
+                        }
+                    } else {
+                        
+                    }
+                } else {
+                    console.error('Remarks not updated on table');
+                }
+            },
+
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error saving remarks:', error);
+            }
+        });
+    }
+
+    function CustomizedGrid(tableId, data, tableHeight, columns, search, isScrollX, footerFunction, detailed, reportTitleId, rowSelection, lstHeight) {
+
+        var startTime = performance.now();
+        var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+        var isDetailed = detailed === undefined ? false : true;
+        var reportTitle = '';
+
+        if (reportTitleId === undefined)
+            reportTitle = $('.box-title').text();
+        else
+            reportTitle = reportTitleId;
+
+        var gridHeight = 0;
+
+        isScrollX = isScrollX === undefined ? false : true;
+        if (search === undefined) { search = true; }
+
+        var gridButtonsClass = '';
+        var gridSearchBoxClass = '';
+        if (isDetailed === true) {
+            gridButtonsClass = 'btn-header btn-box-tool';
+            gridSearchBoxClass = 'bg-white  txtSearch';
+            gridButtonSize = 20;
+        }
+        else {
+            gridButtonsClass = 'btn-header btn-box-tool';
+            gridSearchBoxClass = 'btn-box-tool bg-white txtSearch';
+            gridButtonSize = 20;
+        }
+
+        //For SQL Documentation
+
+        var rptDtlCode, rptDtlTitle, qrytool;
+        if (isDetailed === true) {
+            rptDtlCode = $('#rptcode').val();
+            rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+            if (rptDtlTitle === "")
+                rptDtlTitle = reportTitle;
+
+            qrytool = '<a id="showQuery" class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '&isDetail=Y' + '" title="How they do that" target="_blank">';
+            qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            qrytool += '</a>';
+
+            $('#buttons').empty();
+            $('#buttons').append(qrytool);
+        }
+        else {
+            var rptCode = $('#rptCode').val(); // for sql docs.
+            var rptTitle = $('#rptTitle').val(); // for sql docs.
+            if (rptCode === undefined) {
+                rptDtlCode = $('#rptcode').val();
+                rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+                qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '&isDetail=N' + '" title="How they do that" target="_blank">';
+                qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+                qrytool += '</a>';
+
+                $('#buttons').empty();
+                $('#buttons').append(qrytool);
+            }
+            else {
+                qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptCode + '&rptTitle=' + rptTitle + '&isDetail=N' + '" title="How they do that" target="_blank">';
+                qrytool += '<span class="fa-stack sqlDoc"><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+                qrytool += '</a>';
+
+                $('#buttons').empty();
+                $('#buttons').append(qrytool);
+            }
+        }
+
+        if (search === true) {
+            var boxtool = '<input class="' + gridSearchBoxClass + '" id="txtSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+            $('#buttons').append(boxtool);
+        }
+
+        var table = $('#' + tableId).DataTable({
+            order: [],
+            createdRow: rowSelection,         // add Parameter for row selection in PO Detail // Added By Tahir
+            data: data,
+            columns: columns,
+            paging: true,
+            ordering: true,
+            searching: search,
+            deferRender: true,
+            destroy: true,
+            pagingType: 'full',
+            pageLength: 100,
+            scrollCollapse: false,
+            scrollX: isScrollX,
+            //scrollY: gridHeight,
+
+            footerCallback: footerFunction,
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                oPaginate: {
+                    sNext: '<i class="fa fa-forward"></i>',
+                    sPrevious: '<i class="fa fa-backward"></i>',
+                    sFirst: '<i class="fa fa-step-backward"></i>',
+                    sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            },
+            "dom": "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-3'i><'#designedBy.col-sm-7'><'col-sm-2'p>>",
+            buttons: [
+                {
+                    extend: 'copyHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Copy',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        //columns: ':visible'
+                        columns: 'th:not(.notexport)' // Excluding columns while exporting
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Export to excel',
+                    title: reportTitle,
+                    filename: 'DataExport', //Added By Tahir
+                    exportOptions: {
+                        columns: ':visible', // export all visible columns
+                        format: {
+                            body: function (data, row, column, node) {
+                                // Define the indexes of columns containing dropdowns
+                                const dropdownColumns = [0, 13, 14, 15, 16];
+
+                                // Check if the column is a dropdown
+                                if (dropdownColumns.includes(column)) {
+                                    return $(data).find('option:selected').text();
+                                }
+
+                                // Handle input elements
+                                if (column === 11) { // Indexes for Jira and Current Owner columns
+                                    return $(data).find('remarks-input').val();
+                                }
+
+                                // Handle button elements in Remarks column
+                                if (column === 12) { // Index for Remarks column
+                                    return $(data).attr('data-remarks');
+                                }
+
+                                // Handle date pickers
+                                if (column === 7 || column === 8 || column === 9) { // Indexes for date columns
+                                    return $(data).find('input').val();
+                                }
+
+                                return data;
+                            }
+                        }
+                    },
+
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        var excelColumns = [];
+
+                        header = $("row[r=2]", sheet);
+
+                        cols = header.find("c");
+                        cols.each(function () {
+                            t = $(this).find("t").text();
+                            if (t.includes("Serial") || t.includes("Customer Ref."))
+                                excelColumns.push($(this).attr("r"));
+                        });
+                        $(excelColumns).each(function () {
+                            var cell = this.substring(0, 1);
+                            $('row:gt(1) c[r^="' + cell + '"]', sheet).each(function () {
+                                $(this).removeAttr('s');
+                                $(this).attr('t', 'inlineStr');
+                                $(this).find('v').replaceWith('<is><t>' + $(this).text() + '</t></is>');
+                            });
+                        });
+
+                    }
+                },
+                {
+                    extend: 'print',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Print',
+                    title: '',
+                    messageTop: function () { return '<h4>' + reportTitle + '</h4>'; },
+                    filename: 'DataExport',
+                    exportOptions: {
+                        // columns: ':visible'
+                        columns: 'th:not(.notexport)'
+
+                    }
+                }
+
+            ],
+            initComplete: function () {
+                $('#txtSearch').focus();
+            },
+            select: true
+        });
+        table.buttons().container()
+            .appendTo('#buttons');
+
+        table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+        table.button(0).nodes().addClass(gridButtonsClass);
+
+        table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(1).nodes().addClass(gridButtonsClass);
+
+        table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(2).nodes().addClass(gridButtonsClass);
+
+        var dsgndby = $('.modal-footer > #designedby ').html();
+
+        if (dsgndby === "") {
+            $('#designedBy').html($('.desgndBy').html());
+        }
+
+        var layoutHeader = $('nav').innerHeight();
+        var cardHeader = $('.box-header').innerHeight();
+        var tableHeader = $('.dataTables_scrollHead').innerHeight();
+        var tableFooter = 0;
+        var cardFooterH = 30;
+
+        if (isFooter === true)
+            tableFooter = $('.dataTables_scrollFoot').innerHeight();
+
+
+        var parentHeight = $('#' + lstHeight).innerHeight();
+        if (parentHeight == undefined)
+            parentHeight = window.innerHeight;
+        else
+            parentHeight = $('#' + lstHeight).innerHeight();
+
+        var browserHeight = parentHeight;
+        if (tableHeight === 0) {
+            if (layoutHeader === undefined)
+                gridHeight = browserHeight - (cardHeader + tableHeader + tableFooter + cardFooterH);
+            else
+                gridHeight = browserHeight - (layoutHeader + cardHeader + tableHeader + tableFooter + cardFooterH);
+        }
+        else { gridHeight = tableHeight; }
+
+        var topHeader = $('#topHeader').innerHeight();
+        if (topHeader > 0)
+            gridHeight = gridHeight - (topHeader + 1);
+
+        $('.dataTables_scrollBody').css('height', gridHeight + 'px');
+        table.columns.adjust().draw();
+
+        $('.dataTables_filter').hide();
+        $('#txtSearch').on('keyup change', function () {
+            table.search(this.value).draw();
+        });
+
+        var endTime = performance.now();
+        var elapsedTimeInSeconds = (endTime - startTime) / 1000;
+
+        $.ajax({
+            cache: false,
+            type: 'POST',
+            url: '/Home/SaveLog',
+            data: {
+                gridExecutionTime: elapsedTimeInSeconds
+            },
+            success: function () {
+                //console.log('Value sent to controller!');
+            },
+            error: function () {
+                //console.log('Error sending value to controller!');
+            }
+        }); //Added by Huzaifa
+        return table;
+
+    }
+
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+

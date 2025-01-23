@@ -1,0 +1,278 @@
+﻿@model IP.Areas.Biztalk.Models.Inbound
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+    textarea {
+        resize: none !important;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstInbound" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|'|)/gm, "");
+
+                var header = "Message";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    //$.fn.dataTable.render.ellipsisAdr2 = function (cutoff) {
+    //    return function (data, type, row) {
+    //        if (type === 'display') {
+    //            var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+    //            var header = "Notes1";
+    //            return str.length < cutoff ?
+    //                str :
+    //                str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> More</a>';
+    //        }
+    //        // Search, order and type can use the original data
+    //        return data;
+    //    };
+    //};
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var contract = $("#ddContract option:selected").val();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        //var custordertype = $('#custordertype').val();
+        var orderNo = $('#orderNo').val();
+        var serialNo = $('#serialNo').val();
+        var InMsgType = $('#lstInMsgType option:selected').text();
+        var isFail = $('.radio-option1:checked').val();
+        var isSuccessed = $('.radio-option2:checked').val();
+        var isUnprocessed = $('.radio-option3:checked').val();
+
+        var InMsgType = '';
+        if (selectedParts == "All") {
+            InMsgType = "All";
+        }
+        else {
+            $('#lstInMsgType :selected').each(function (i, sel) {
+                
+                if (i == 0) {
+                    InMsgType = "'" + ($(sel).val()) + "'";
+                    InMsgType = "'" + ($(sel).text()) + "'";
+                }
+                else {
+                    InMsgType += "," + "'" + ($(sel).val()) + "'";
+                    //OutMsgType = "Multiple";
+                }
+            });
+        }
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/Inbound/GetList',
+            data: {
+                contract: contract,
+                frmDt: fDate,
+                toDt: tDate,
+                orderNo: orderNo,
+                InMsgType: InMsgType,
+                isFail: isFail,
+                isSuccessed: isSuccessed,
+                isUnprocessed: isUnprocessed,
+                serialNo: serialNo
+                
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                var columnDef = [
+                    {
+                        "data": "Inmessage_Hdr_Id", "title": "Msg. Id", "width": "50px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\Biztalk\\Inbound\\Detail?hdrId=' + row["Inmessage_Hdr_Id"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "Message_Type", "title": "Msg. Type", "width": "80px" },
+                    { "data": "Message_Sub_Type", "title": "Msg. Sub Type", "width": "80px" },
+                    { "data": "Customer_order_No", "title": "Customer Order No.", "width": "110px" },
+                    { "data": "Processed", "title": "Processed", "width": "60px", "className": "text-center", "visible": false },
+                    //{ "data": "Message", "title": "Message", "width": "100px"},
+                    { "data": "Message", "title": "Message", "render": $.fn.dataTable.render.ellipsisAdr1(60), "width": "160px"},
+                    { "data": "CommentTextForExport", "title": "Message", "visible": false },
+                    { "data": "Insert_Date", "title": "Insert Date", "width": "90px", "className": "text-right", "visible": false  },
+                    { "data": "Processed_Date", "title": "Processed Date", "width": "90px", "className": "text-right", "visible": false },
+                    { "data": "Response_Date", "title": "Response Date", "width": "90px", "className": "text-right", "visible": false },
+                    { "data": "Destination", "title": "Destination", "width": "80px" },
+                    { "data": "RetryCount", "title": "Retry Count", "width": "120px" },
+                    { "data": "SourceMsgName", "title": "Src. Msg. Name", "width": "100px" },
+                    { "data": "SourceMsgType", "title": "Src. Msg. Type", "width": "80px" },
+                    { "data": "AllowDuplicate", "title": "Allow Dupe.", "width": "60px", "className": "text-center", "visible": false },
+                    { "data": "Sender_Id", "title": "Sender Id", "width": "120px" },
+                    { "data": "Customer_Message_Id", "title": "Cust. Msg. Id", "width": "120px" },
+                    { "data": "Contract", "title": "Contract", "width": "60px", "visible": false },
+                    { "data": "Customer_Prev_order_No", "title": "Cust. Prev. Order No.", "width": "120px"  },
+                    { "data": "Customer_Order_type", "title": "Cust. Order Type", "width": "110px" },
+                    { "data": "Order_Date", "title": "Order Date", "width": "90px", "className": "text-right" },
+                    { "data": "Company", "title": "Company", "width": "90px" },
+                    { "data": "Customer_Id", "title": "Cust. Id", "width": "50px" },
+                    { "data": "Guid", "title": "GUID", "width": "240px", "visible": false },
+                    { "data": "CO_Number", "title": "CO No.", "width": "90px"},
+                    { "data": "C01", "title": "C01", "width": "60px" },
+                    { "data": "C02", "title": "C02", "width": "60px"},
+                    { "data": "C03", "title": "C03", "width": "140px", "visible": false  },
+                    { "data": "C04", "title": "C04", "width": "90px" },
+                    { "data": "C05", "title": "C05", "width": "110px" },
+                    { "data": "C06", "title": "C06", "width": "120px" },
+                    { "data": "C07", "title": "C07", "width": "90px" },
+                    { "data": "C08", "title": "C08", "width": "50px" },
+                    { "data": "C09", "title": "C09", "width": "60px" },
+                    { "data": "C10", "title": "C10", "width": "90px" },
+                    { "data": "C11", "title": "C11", "width": "60px" },
+                    { "data": "Notes1", "title": "Notes1", "width": "90px", "visible": false },
+                    //{ "data": "Notes1", "title": "Notes1", "render": $.fn.dataTable.render.ellipsisAdr2(15), "visible": false},
+                    //{ "data": "CommentTextForExport", "title": "Notes1", "visible": false },
+                    { "data": "Notes2", "title": "Notes2", "width": "200px" },
+                    { "data": "Notes3", "title": "Notes3", "width": "150px"},
+                    { "data": "Notes4", "title": "Notes4", "width": "150px" },
+                    { "data": "Reference_No1", "title": "Ref. No.1", "width": "120px" },
+                    { "data": "N01", "title": "N01", "width": "90px", "className": "text-right" },
+                    { "data": "N02", "title": "N02", "width": "50px"},
+                    { "data": "D01", "title": "D01", "width": "60px", "className": "text-right" },
+                    { "data": "D02", "title": "D02", "width": "60px", "className": "text-right" },
+                    { "data": "To_Org_Code", "title": "To Org Code", "width": "80px" },
+                    { "data": "From_Org_Code", "title": "From Org Code", "width": "90px", "className": "text-center" },
+                    { "data": "Carrier_Name", "title": "Carrier Name", "width": "120px" },
+                    { "data": "Waybill", "title": "Waybill", "width": "100px"},
+                    { "data": "Carrier_Code", "title": "Carrier Code", "width": "100px" },
+                    { "data": "Shipment_Date", "title": "Shipment Date", "width": "120px", "className": "text-right" },
+                    { "data": "Supplier_Code", "title": "Supplier Code", "width": "90px" },
+                    { "data": "ship_addr_no", "title": "Ship Addr No.", "width": "100px" },
+                    { "data": "Incoterms", "title": "In CO Terms", "width": "120px" },
+                    { "data": "Agreement", "title": "Agreement", "width": "120px" },
+                    
+
+                ]
+
+
+                ToggleDataList(true);
+                MakeDataGrid('lstInbound', data.lstInbound, 0, columnDef, true, false, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+</script>

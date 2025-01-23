@@ -1,0 +1,171 @@
+﻿@model IP.Areas.SupplyChain.Models.FaultCodeTest2Station
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstFaultCodeTest2Station" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                @*<tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th style="text-align:left">Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>*@
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var SerialNo = $('#SerialNo').val();
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/FaultCodeTest2Station/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                SerialNo: SerialNo,
+                programId: _programId,
+                ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+               
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "ProgramID", "width": "70px" , "visible": false  },
+                        { "data": "Name", "title": "Program", "width": "70px" },
+                        { "data": "woheaderid", "title": "WO Header ID", "width": "80px" },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "70px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?PartNo=' + row["PartNo"] + '&Programid=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "serialno", "title": "Serial No.", "width": "110px",
+                            render: function (data, type, row) {
+                                var d = data.toString();
+                                if (row["HAS_SN"] == 'N') {
+                                    url = row["serialno"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialno=' + row["serialno"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + d + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "ispass", "title": "Is Pass", "width": "40px", "className": "text-center"},
+                        { "data": "iteration", "title": "Iteration", "width": "50px"  },
+                        { "data": "Workstation", "title": "Work Station", "width": "70px" },
+                        { "data": "FaultCode", "title": "Fault Code", "width": "200px" },
+                        { "data": "stationUser", "title": "Station User", "width": "70px" },
+                        { "data": "FaultCodeUser", "title": "Fault Code User", "width": "100px" },
+                        { "data": "FaultCodeDate", "title": "Fault Code On", "width": "90px", "className": "text-right" },
+                        { "data": "Day", "title": "Day", "width": "60px", "className": "text-right" },
+                        { "data": "Time", "title": "Time", "width": "60px", "className": "text-right" },
+                        { "data": "createdate", "title": "Created On", "width": "90px", "className": "text-right" },
+                        { "data": "lastactivitydate", "title": "Last Activity On", "width": "100px", "className": "text-right" }
+
+                    ];
+
+                    //For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //   // $(api.column(8).footer()).html(thousands_separators(api.column(8, { search: 'applied' }).data().sum()));
+
+                    //    $(api.column(8).footer()).html(thousands_separators(api.column(8, { search: 'applied' }).data().reduce(function (a, b) {
+                    //        a = parseInt(a, 10);
+                    //        if (isNaN(a)) { a = 0; }
+
+                    //        b = parseInt(b, 10);
+                    //        if (isNaN(b)) { b = 0; }
+
+                    //        return a + b;
+                    //    }, 0)));
+
+
+                    //}
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstFaultCodeTest2Station', data.lstFaultCodeTest2Station, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

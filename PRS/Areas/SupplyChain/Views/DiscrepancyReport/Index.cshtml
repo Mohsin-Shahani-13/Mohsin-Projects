@@ -1,0 +1,268 @@
+﻿@model IP.Areas.SupplyChain.Models.DiscrepancyReport
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstDiscrepancyReport" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>*@
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+    $.fn.dataTable.render.ellipsisAdr = function (cutoff, header) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                //var header = "Reported Problem";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var custRef = $('#custRef').val();
+        var status = '@Request.QueryString["status"].ToString()';
+        var type = '@Request.QueryString["type"].ToString()';
+      
+        var assignedTo = $("#ddlassignedTo option:selected").text();
+        var OpenWO = $('#OpenWO').is(':checked');
+
+        //For Multiple Status
+
+       
+        var status = '';
+        if (selectedPartsOne == "All") {
+            status = "All";
+        }
+        else {
+            $('#lstStatus :selected').each(function (i, sel) {
+                if (i == 0) {
+                    status = "'" + ($(sel).text()) + "'";
+                    status = "'" + ($(sel).text()) + "'";
+                }
+                else {
+                    status += "," + "'" + ($(sel).text()) + "'";
+                    //OutMsgType = "Multiple";
+                }
+            });
+        }
+
+
+        //For Multiple type
+
+       
+        var type = '';
+        if (selectedParts == "All") {
+            type = "All";
+        }
+        else {
+            $('#lstType :selected').each(function (i, sel) {
+                if (i == 0) {
+                    type = "'" + ($(sel).text()) + "'";
+                    type = "'" + ($(sel).text()) + "'";
+                }
+                else {
+                    type += "," + "'" + ($(sel).text()) + "'";
+                    //OutMsgType = "Multiple";
+                }
+            });
+        }
+
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DiscrepancyReport/GetList',
+            data: {
+
+                programId: _programId,
+                ProgramName: _ProgramName,
+                frmDt: fDate,
+                toDate: tDate,
+                custRef: custRef,
+                status: status,
+                type: type,
+                assignedTo: assignedTo,
+                OpenWO: OpenWO
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "Program ID", "width": "60px", "visible": false },
+                        { "data": "Case_ID", "title": "Case ID", "width": "60px" },
+                        { "data": "Type", "title": "Type", "width": "60px" },
+                        { "data": "Subject", "title": "Subject", "width": "180px" },
+                        { "data": "Description", "title": "Description", "width": "180px", "render": $.fn.dataTable.render.ellipsisAdr(24, "Description") },
+                        { "data": "Description", "title": "Description", "width": "260px", "visible": false   },
+                        {
+                            "data": "CustomerReference", "title": "Customer Reference", "width": "120px",
+                            render: function(data, type, row) {
+                                if (row["OrderType"] === 'RO') {
+                                    var url = '<a href= "\\SupplyChain\\RO\\Detail?Id=' + row["OrderHeaderID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                                else if (row["OrderType"] === 'SO') {
+                                    var url = '<a href= "\\SupplyChain\\SO\\Detail?SOHeaderId=' + row["OrderHeaderID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                                else if (row["OrderType"] === 'WO') {
+                                    var url = '<a href= "\\SupplyChain\\WO\\Detail?Id=' + row["OrderHeaderID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                                else {
+                                    return data;
+                                }
+                            }
+                        },
+                        { "data": "OrderHeaderID", "title": "OrderHeaderID", "visible": false },
+
+                        {
+                            "data": "OrderType", "title": "Order Type", "width": "100px"
+                        },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "SerialNo", "title": "Serial No.", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "Reason", "title": "Reason", "width": "220px" },
+                        { "data": "Status", "title": "Status", "width": "120px" },
+                        { "data": "Priority", "title": "Priority", "width": "100px" },
+                        { "data": "Assigned_to", "title": "Assigned To", "width": "100px" },
+                        { "data": "OWNER", "title": "Owner", "width": "80px" },
+                        { "data": "Created_By", "title": "Created By", "width": "120px" },
+                        { "data": "TRACKING_NUMBER", "title": "Tracking No.", "width": "100px" },
+                        { "data": "COUNTRY", "title": "Country", "width": "100px" },
+                        { "data": "CUSTOMER_NAME", "title": "Customer Name", "width": "100px" },
+                        { "data": "LABEL_REFERENCE_2", "title": "Label_Reference #2", "width": "130px" },
+                        { "data": "NEW_ORDER_NO", "title": "New Order No.", "width": "100px" },
+                        { "data": "DISPOSITION", "title": "Disposition", "width": "100px" },
+                        { "data": "CreateDate", "title": "Created On", "width": "90px", "className": "text-right" },
+                        { "data": "LastActivityDate", "title": "Last Activity On", "width": "90px", "className": "text-right" },
+                    ]
+                    ////For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //    $(api.column(13).footer()).html(thousands_separators(api.column(13, { search: 'applied' }).data().sum()));
+
+                    //}
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstDiscrepancyReport', data.lstDiscrepancyReport, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

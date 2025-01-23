@@ -1,0 +1,139 @@
+﻿@model IP.Areas.SupplyChain.Models.WIPAgingNSN
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstWIPAgingNSN" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+
+
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<script>
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === "0" ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var _programId = $('#ddProgram').val();
+        var _ProgramName = $("#ddProgram option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/WIPAgingNSN/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+
+                columnDef = [
+                    { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+                    {
+                        "data": "SerialNo", "title": "Serial No.",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "PartNo", "title": "Part No.", "width": "110px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "ModelNo", "title": "Model", "width": "110px" },
+                    { "data": "Status", "title": "Status", "width": "110px" },
+                    { "data": "RODate", "title": "RO Date", "width": "90px", "className": "text-right" },
+                    {
+                        "data": "Aging", "title": "Aging", "width": "50px", "className": "text-right",
+
+                        render: function (data, type, row) {
+
+                            var val = COLUMN_FORMAT.formatNumberForZero(data);
+                            return val;
+                        }
+                    }
+
+
+                ]
+
+
+
+              
+
+                ToggleDataList(true);
+                MakeDataGridCSV('lstWIPAgingNSN', data.lstWIPAgingNSN, 0, columnDef, true, true);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+

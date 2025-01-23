@@ -1,0 +1,316 @@
+﻿@model IP.Areas.ListingReports.Models.Rptyield
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+
+    .leftsection {
+        text-align: center;
+        padding-top: 90px;
+        height: 42%;
+    }
+
+
+
+
+    .box-body {
+        padding-bottom: 10px !important;
+    }
+
+    .text_decoration {
+        color: #0089db;
+        text-align: right;
+        text-decoration: underline;
+    }
+
+    .text_decoration_footer {
+        color: #0089db;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div class="row section-color">
+        <div class="col-md-12">
+            <div id="dataList" class="box panel panel-default">
+                <input id="rptcode" type="hidden" value="012" />
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle > </strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right" style="margin-top:2PX;">
+                    </div>
+                </div>
+                <div class="box-body text-sm" >
+                    <table id="lstyield" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th class="notexport"></th>
+                                <th></th>
+                                @if (@ViewBag.ischecked == true)
+                                {
+                                    <th></th>
+                                }
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot style="background-color:white;">
+                            <tr>
+                                <th></th>
+                                <th>Total :</th>
+                                @if (@ViewBag.ischecked == true)
+                                {
+                                    <th></th>
+                                }
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="row section-color">
+                    <div id="left_panel_Bottom" class="col-md-12 section-padding">
+                        <div id="leftsection" class="box panel panel-default leftsection" style="text-align: center;  height:54%; background-color: white; padding-top: 90px;">
+                            <h4>Click hyperlinks on above section to load data</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoaData();
+    function LoaData() {
+        $('#tblBody').empty();
+        $('#option').modal('hide');
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var partNo = $('#partNo').val();
+        var iteration = $('#iteration option:selected').text();
+        var ischecked = $('#yes').is(':checked');
+       
+        
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/Rptyield/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: programId,
+                ProgramName: _ProgramName,
+                partNo: partNo,
+                iteration: iteration,
+                ischecked: ischecked
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+                if (ischecked == true) { 
+                    var columnDef = [
+                        { "data": "ProgramId", "title": "Program Id", "visible": false },
+                        //{
+                        //    "data": "PartNo", "title": "Part No.", "width": "100px"
+                        //},
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&Programid=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "WONo", "title": "WO No.", "width": "80px" },
+                        { "data": "WorkStationId", "title": "Work Station Id.", "width": "150px", "visible": false },
+                        { "data": "WorkStationCode", "title": "Work Station" },
+                        { "data": "Iteration", "title": "Iteration", "width": "40px" },
+                        {
+                            "data": "Inspected", "title": "Insp.", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+                              
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&woNo=' + row["WONo"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Insp.' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) +  '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "Passed", "title": "Pass", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&woNo=' + row["WONo"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Pass' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "Failed", "title": "Fail", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&woNo=' + row["WONo"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Fail' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "Defected", "title": "Defects", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&woNo=' + row["WONo"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Defects' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "YieldCost", "title": "Yield %", "width": "40px", "className": "text-right",
+
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                                return val;
+                            }
+                        }
+                    ];
+
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(6).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Insp.' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(6).data().sum()) + '</a>');
+                        $(api.column(7).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Pass' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(7).data().sum()) + '</a>');
+                        $(api.column(8).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Fail' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(8).data().sum()) + '</a>');
+                        $(api.column(9).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Defects' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(9).data().sum()) + '</a>');
+                        //$(api.column(10).footer()).html(COLUMN_FORMAT.formatTwoDecimal(api.column(7).data().sum() / api.column(6).data().sum() * 100));
+                    }
+
+                }
+
+                else { 
+                    var columnDef = [
+                        { "data": "ProgramId", "title": "Program Id", "visible": false },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&Programid=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "WorkStationId", "title": "Work Station Id.", "width": "150px", "visible": false },
+                        { "data": "WorkStationCode", "title": "Work Station" },
+                        { "data": "Iteration", "title": "Iteration", "width": "40px" },
+                        {
+                            "data": "Inspected", "title": "Insp.", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Insp.' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                                return url;
+                            }
+                        },
+                        { 
+                            "data": "Passed", "title": "Pass", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Pass' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                                return url;
+                            }
+                        },
+
+                        {
+                            "data": "Failed", "title": "Fail", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Fail' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "Defected", "title": "Defects", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + row["ProgramId"] + '&workStationId=' + row["WorkStationId"] + '&Iteration=' + row["Iteration"] + '&workStation=' + row["WorkStationCode"] + '&partNo=' + row["PartNo"] + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Defects' + '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "YieldCost", "title": "Yield %", "width": "40px", "className": "text-right",
+
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                                return val;
+                            }
+                        }
+                    ];
+
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(5).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Insp.' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(5).data().sum()) + '</a>');
+                        $(api.column(6).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Pass' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(6).data().sum()) + '</a>');
+                        $(api.column(7).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Fail' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(7).data().sum()) + '</a>');
+                        $(api.column(8).footer()).html('<a href="#" class="text_decoration_footer" onclick="OpenView(\'\\\\ListingReports\\\\Rptyield\\\\GetDetail?programId=' + programId + '&frmDate=' + fDate + '&toDate=' + tDate + '&type=Defects' + '&Iteration=' + iteration + '\',\'left_panel_Bottom\')">' + thousands_separators(api.column(8).data().sum()) + '</a>');
+                        //$(api.column(9).footer()).html(COLUMN_FORMAT.formatTwoDecimal(api.column(7).data().sum() / api.column(6).data().sum() * 100));
+
+                    }
+                }
+               
+                
+
+                ToggleDataList(true);
+
+                var h = getHeight(50);
+                //MakeFrameGrid('lstyield', data.lstyield, h, columnDef, 'buttons', true, true, footerfunc, false, $('#YieldbyStation').text(), true);
+
+                MakeDataGrid('lstyield', data.lstyield, 270, columnDef, true, true, footerfunc);
+              
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+  
+</script>

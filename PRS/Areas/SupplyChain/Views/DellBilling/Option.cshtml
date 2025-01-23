@@ -1,0 +1,158 @@
+﻿@model IP.Areas.SupplyChain.Models.DellBilling
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td class="pad" colspan="4" id="rptType">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="Summary", Value = "Invoice" },
+                   new SelectListItem{ Text="Generated Invoices", Value = "Report" }
+
+                }, new { @class = "form-control" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr id="trackNum">
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.TrackingNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="trackingNo" placeholder="Enter Tracking Number(s), separated by commas" name="trackingNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    @*<tr id="InvNumber" class="hidden">
+            <td colspan="4" class="pad">
+                @Html.LabelFor(model => model.InvNumber, new { @class = "col-4 col-form-label" })
+                <input type="text" class="form-control" id="InvNumber"  name="InvNumber" autofocus
+                       onkeydown="GoOnEnter()" />
+            </td>
+        </tr>*@
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#trackingNo').focus();
+    });
+    $(document).ready(function () {
+        $('#rptType').change(function () {
+            $('#lblMsg').empty();
+            var rptType = $('#rptType option:selected').val();
+
+            if (rptType == "Report") {
+                $('#InvNumber').removeClass('hidden');
+                $('#trackNum').addClass('hidden');
+            }
+            else {
+                $('#InvNumber').addClass('hidden');
+                $('#trackNum').removeClass('hidden');
+            }
+        });
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            //var retVal = OptionsIsValid();
+            //if (retVal == true && retValue == true) {
+                Go();
+            //}
+        }
+    }
+    $('#btnGo').click(function () {
+        //var retVal = OptionsIsValid();
+        //if (retVal == true) {
+            Go();
+        //}
+    });
+
+    function textBoxValidation() {
+        $('#myValidationMessage').empty();
+        if ($('#isAllDate').is(':checked') && $('#serialNo').val() === '') {
+
+            $('#myValidationMessage').append('Please Enter Serial No.');
+            return false;
+        } else {
+
+            $('#myValidationMessage').empty();
+            return true;
+        }
+    }
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+
+        var trackingNo = $('#trackingNo').val();
+        var rptType = $('#rptType option:selected').val();
+
+        if (rptType == "Invoice") {
+
+            if (trackingNo.length < 3) {
+                $('#lblMsg').text('Please Enter Tracking No.');
+                //$("#lblMsg").css("color", 'red');
+                return false;
+            }
+            else {
+                $('#lblMsg').empty();
+                return true;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+
+    function Go() {
+
+        var programId = $('#ddProgram').val();
+        var programName = $("#ddProgram option:selected").text();
+        var rptType = $('#rptType option:selected').val();
+        var rptName = $("#rptType option:selected").text();
+        var trackingNo = $('#trackingNo').val();
+        var InvNumber = $('#InvNumber').val();
+
+
+        $('#option').modal('hide');
+        if (rptType == "Invoice") {
+
+            OpenPage('\\SupplyChain\\DellBilling\\GetDetail?programID=' + programId + '&programName=' + programName + '&trackingNo=' + trackingNo + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        }
+        else {
+            OpenPage('\\SupplyChain\\DellBilling\\Index?programID=' + programId + '&programName=' + programName + '&trackingNo=' + trackingNo + '&InvNumber=' + InvNumber + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        }
+    }
+</script>
+
+
+
+

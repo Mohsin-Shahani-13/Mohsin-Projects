@@ -1,0 +1,168 @@
+﻿@model IP.Areas.ListingReports.Models.SNInvNotShipped
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>
+    <tr>
+        <td class="pad" colspan="4">
+            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "form-label" })
+            <select id="lstStatus" multiple="multiple" class="multiselect form-control" name="options[]">
+                @{
+                    if (Model != null)
+                    {
+                        foreach (var item in Model.lstStatus)
+                        {
+                            <option value="@item[0]">@item[1]</option>
+                        }
+                    }
+                }
+            </select>
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    
+    // For Multiple Status
+    selectedParts = '';
+
+    $('#lstStatus').multiselect({
+        includeSelectAllOption: true,
+        selectAllText: 'All',
+        buttonWidth: '100%',
+        maxHeight: 300,
+        enableFiltering: true,
+        enableCaseInsensitiveFiltering: true,
+        filterPlaceholder: 'Search',
+        numberDisplayed: 4,
+        templates: {
+            ul: '<ul class="multiselect-container dropdown-menu" style="-ms-overflow-x: hidden; -ms-overflow-y: auto; max-height: 300px; width:100%;">"'
+        },
+
+        buttonText: function (options, select) {
+            if (options.length == 0) {
+                return 'select from list';
+            }
+            else {
+                if (options.prevObject.length == options.length) {
+                    selectedParts = 'All';
+                } else {
+                    selectedParts = '';
+                    options.each(function () {
+                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
+                        selectedParts += "'" + label + "', ";
+                    });
+                    selectedParts = selectedParts.substr(0, selectedParts.length - 2);
+                }
+
+
+
+                if (options.length > this.numberDisplayed) {
+                    return options.length + ' ' + this.nSelectedText;
+                }
+                else {
+                    var selected = '';
+                    options.each(function () {
+                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
+                        selected += label + ", ";
+                    });
+                    return selected.substr(0, selected.length - 2);
+                }
+            }
+        }
+    });
+
+
+
+    $('#lstStatus').multiselect('selectAll', false);
+    $("#lstStatus").multiselect('updateButtonText');
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var status = $('#lstStatus option:selected').text();
+        if (status == "" ) {
+            $('#lblMsg').append('Please select status from list');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+        //for status
+        if (status == null) {
+            $('#lblMsg').empty();
+            $('#lblMsg').append('Something went wrong! Reopen Option Page');
+            return false;
+        }
+        if (status == 'No Data Available') {
+            $('#lblMsg').empty();
+            $('#lblMsg').append('Select Status ');
+            return false;
+        }
+
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    function Go() {
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+
+
+         var status = $('#lstStatus option:selected').text();
+        var statusId = $('#lstStatus option:selected').val();
+        $('#option').modal('hide');
+        OpenPage('\\ListingReports\\SNInvNotShipped\\Index?statusId=' + statusId + '&status=' + status + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+        
+
+</script>
+
+

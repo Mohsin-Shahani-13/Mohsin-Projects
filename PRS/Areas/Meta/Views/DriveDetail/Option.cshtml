@@ -1,0 +1,319 @@
+﻿@model IP.Areas.Meta.Models.DriveDetail
+
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    @*<tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>*@
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.serialNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="Serial_No" name="serialNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+        <td class="pad">
+            @Html.LabelFor(model => model.referNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="Reference_No" name="referNo"
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.boxId, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="Box_ID" name="boxId" 
+                   onkeydown="GoOnEnter()" />
+        </td>
+        <td class="pad">
+            @Html.LabelFor(model => model.currInventoryLocation, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="CurrentInventoryLocation" name="currInventoryLocation" 
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.RFCNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="RFC_No" name="RFCNo"
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+            <strong>Rec. From:</strong>
+            <div class='input-group date' id='receiveFromDate'>
+                @Html.TextBoxFor(model => model.RecfromDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="pad">
+            <strong>Rec. To:</strong>
+            <div class='input-group date' id='receiveToDate'>
+                @Html.TextBoxFor(model => model.RectoDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+
+        <td class="dateFont ">
+            <div>
+                <br />
+                <br />
+                <label for="_ReceivedAllDate" style="margin-left:0px">
+                    <input type="checkbox" id="ReceivedAllDate" name="ReceivedAllDate" onclick="EnableDisableOrdCreat_1(this)" />
+                    All
+                </label>
+            </div>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="pad">
+            <strong>Dock Log Rec. From:</strong>
+            <div class='input-group date' id='dockLogFromDate'>
+                @Html.TextBoxFor(model => model.dLogfromDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="pad">
+            <strong>Dock Log Rec. To:</strong>
+            <div class='input-group date' id='dockLogToDate'>
+                @Html.TextBoxFor(model => model.dLogtoDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+
+        <td class="dateFont ">
+            <div>
+                <br />
+                <br />
+                <label for="_DockAllDate" style="margin-left:0px">
+                    <input type="checkbox" id="DockAllDate" name="DockAllDate" onclick="EnableDisableOrdCreat_2(this)" />
+                    All
+                </label>
+            </div>
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right" class="pad">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center" class="pad">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value="@Request.QueryString["rptCode"]" />
+
+<script>
+    function EnableDisableOrdCreat_1(recIsAllDate) {
+
+        var recIsAllDate = $('#ReceivedAllDate').is(':checked');
+        document.getElementById("RecfromDt").disabled = recIsAllDate;
+        var nodes1 = document.getElementById("RecfromDt").getElementsByTagName('*');
+        document.getElementById("RectoDt").disabled = recIsAllDate;
+        var nodes1 = document.getElementById("RectoDt").getElementsByTagName('*');
+        for (var i = 0; i < nodes1.length; i++)
+        {
+            nodes1[i].disabled = recIsAllDate;
+        }
+    };
+
+    function EnableDisableOrdCreat_2(dockIsAllDate) {
+        var dockIsAllDate = $('#DockAllDate').is(':checked');
+        document.getElementById("dLogfromDt").disabled = dockIsAllDate;
+        var nodes1 = document.getElementById("dLogfromDt").getElementsByTagName('*');
+        document.getElementById("dLogtoDt").disabled = dockIsAllDate;
+        var nodes1 = document.getElementById("dLogtoDt").getElementsByTagName('*');
+        for (var i = 0; i < nodes1.length; i++) {
+            nodes1[i].disabled = dockIsAllDate;
+        }
+    };
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    $("#receiveFromDate, #receiveToDate, #dockLogFromDate, #dockLogToDate ").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#receiveFromDate, #receiveToDate, #dockLogFromDate, #dockLogToDate ").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    ReceiveDateFrom();
+    ReceiveDateTo();
+    DockLogDateFrom();
+    DockLogDateTo();
+
+    function ReceiveDateFrom() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        //var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('RecfromDt').value = someFormattedDate;
+    }
+    function ReceiveDateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('RectoDt').value = someFormattedDate;
+    }
+    function DockLogDateFrom() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        //var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('dLogfromDt').value = someFormattedDate;
+    }
+    function DockLogDateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('dLogtoDt').value = someFormattedDate;
+    }
+
+    $("#receiveFromDate, #receiveToDate, #dockLogFromDate, #dockLogToDate ").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '-365d',
+        endDate: maxDate
+    });
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var recFromDate = $('#RecfromDt').val();
+        var recToDate = $('#RectoDt').val();
+        var dockLogFrmDt = $('#dLogfromDt').val();
+        var dockLogToDt = $('#dLogtoDt').val();
+
+        if (recFromDate.length <= 0 || recToDate.length <= 0 || !isDate(recFromDate) || !isDate(recToDate) || recFromDate > recToDate) {
+            $('#lblMsg').append('Enter a valid Receiving date');
+            return false;
+        }
+        else if (dockLogFrmDt.length <= 0 || dockLogToDt.length <= 0 || !isDate(dockLogFrmDt) || !isDate(dockLogToDt) || dockLogFrmDt > dockLogToDt)
+        {
+            $('#lblMsg').append('Enter a valid Dock Log date');
+            return false;
+        }
+
+        else {
+
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function Go() {
+
+        var receiveAllDate = $('#ReceivedAllDate').is(':checked');
+        var dockAllDate = $('#DockAllDate').is(':checked');
+        var programId = $('#ddProgram').val();
+        var ProgramName = $('#ddProgram option:selected').text();
+        var recFromDate = $('#RecfromDt').val();
+        var recToDate = $('#RectoDt').val();
+        var dockLogFromDate = $('#dLogfromDt').val();
+        var dockLogToDate = $('#dLogtoDt').val();
+        var serial_no = $('#Serial_No').val();
+        var refer_no = $('#Reference_No').val();
+        var RFC_no = $('#RFC_No').val();
+        var box_id = $('#Box_ID').val();
+        var curr_inventory_location = $('#CurrentInventoryLocation').val();
+
+        $('#option').modal('hide');
+        OpenPage('\\Meta\\DriveDetail\\Index?recFDate=' + recFromDate + ' &recTDate=' + recToDate + '&dockLogFrmDt=' + dockLogFromDate + '&dockLogToDt =' + dockLogToDate + '&recAllDate=' + receiveAllDate + '&dLogAllDate=' + dockAllDate + '&serialNo=' + serial_no + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&RfcNo=' + RFC_no+ '&boxID=' + box_id + '&currentInventoryLocation=' + curr_inventory_location + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+
+</script>

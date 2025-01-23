@@ -1,0 +1,248 @@
+﻿@model IP.Areas.ListingReports.Models.EMCOnSiteDetailEnquiry
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstEMCOnSiteDetailEnquiry" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    @*<tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>*@
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === '0' ? null : val.toFixed('0');
+        },
+        
+    };
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var programId = $("#programSite option:selected").val();
+        var site = $("#programSite option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = extractToDate();
+        var serialNo = $('#serialNo').val();
+        var BoxNo = $('#BoxNo').val();
+        var palletNo = $('#palletNo').val();
+        var PCBASerial = $('#PCBASerial').val();
+        var PCBABox = $('#PCBABox').val();
+        var PCBAPallet = $('#PCBAPallet').val();
+        var documentNo = $('#documentNo').val();
+        var searchByDate = $("#searchByDate option:selected").val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/EMCOnSiteDetailEnquiry/GetList',
+            data: {
+                programId: programId,
+                site: site,
+                frmDt: fDate,
+                toDate: tDate,
+                serialNo: serialNo,
+                BoxNo: BoxNo,
+                palletNo: palletNo,
+                PCBASerial: PCBASerial,
+                PCBABox: PCBABox,
+                PCBAPallet: PCBAPallet,
+                documentNo: documentNo,
+                searchByDate: searchByDate
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').text(data.filterString);
+
+
+                var columnDef = [
+                    { "data": "Site", "title": "Program Id", "width": "60px", "visible":false },
+                    { "data": "programName", "title": "Program", "width": "60px" },
+                    { "data": "Site", "title": "Site", "width": "60px" },
+                    { "data": "Contract", "title": "Contract", "width": "60px" },
+                    { "data": "Source", "title": "Source", "width": "60px" },
+                    {
+                        "data": "PartNo", "title": "Part No.", "width": "80px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["Site"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "OEM", "title": "OEM", "width": "100px" },
+                    { "data": "Interface", "title": "Interface", "width": "90px" },
+                    { "data": "Form_Factor", "title": "Form Factor", "width": "90px" },
+                    { "data": "RPM", "title": "RPM", "width": "70px" },
+                    { "data": "Capacity", "title": "Capacity", "width": "80px" },
+                    { "data": "Type", "title": "Type", "width": "60px" },
+                    {
+                        "data": "Serial_No", "title": "Serial No.", "width": "100px",
+                        render: function (data, type, row) {
+                            var d = data.toString();
+                         
+                            var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["Serial_No"] + '&ProgramId=' + row["Site"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + d + '</a>';
+                        
+                            return url;
+                        }
+                    },
+                    { "data": "Erased_Type", "title": "Erased Type", "width": "100px" },
+                    { "data": "Status", "title": "Status", "width": "80px" },
+                    { "data": "Incoming_Pallet", "title": "Incoming Pallet", "width": "120px" },
+                    { "data": "Receiced_Date", "title": "Received On", "width": "90px", "className":"text-right" },
+                    { "data": "Received_UserName", "title": "Rcvd Username", "width": "130px" },
+                    { "data": "PCBA_Serial", "title": "PCBA Serial No.", "width": "100px" },
+                    { "data": "PCBA_STATUS", "title": "PCBA Status", "width": "100px" },
+                    { "data": "Demate_Date", "title": "Demated On", "width": "90px", "className": "text-right" },
+                    { "data": "Demate_UserName", "title": "Demate Username", "width": "130px" },
+                    { "data": "Box_ID", "title": "Box No.", "width": "80px" },
+                    { "data": "Boxed_Date", "title": "Boxed On", "width": "90px", "className": "text-right" },
+                    { "data": "Boxed_UserName", "title": "Boxed Username", "width": "130px" },
+                    { "data": "PCBA_Box", "title": "PCBA Box No.", "width": "90px" },
+                    { "data": "PCBA_Boxed_Date", "title": "PCBA Boxed On", "width": "140px", "className": "text-right" },
+                    { "data": "PCBA_Boxed_UserName", "title": "PCBA Boxed Username", "width": "150px" },
+                    { "data": "Pallet_ID", "title": "Pallet No.", "width": "100px" },
+                    { "data": "Pallet_UserName", "title": "Pallet Username", "width": "120px" },
+                    { "data": "Pallet_Date", "title": "Pallet On", "width": "90px", "className": "text-right" },
+                    { "data": "Document_No", "title": "Document No.", "width": "100px" },
+                    {
+                        "data": "PCBA_Pallet_ID", "title": "PCBA Pallet No.", "width": "120px"
+                    },
+                    { "data": "PCBA_Pallet_Date", "title": "PCBA Pallet On", "width": "130px", "className": "text-right" },
+                    { "data": "PCBA_Pallet_UserName", "title": "PCBA Pallet Username", "width": "150px" },
+                    { "data": "PCBA_Document_No", "title": "PCBA Document No.", "width": "120px" },
+                    { "data": "Shipped_Date", "title": "Shipped On", "width": "90px", "className": "text-right" },
+                    { "data": "Username", "title": "Username", "width": "100px" },
+                    { "data": "PCBA_Shipped_Date", "title": "PCBA Shipped On", "width": "140px", "className": "text-right" },
+                    { "data": "PCBA_Shipped_UserName", "title": "PCBA Shipped Username", "width": "160px" },
+                    { "data": "RMA_Status", "title": "RMA Status", "width": "80px", "className": "text-center" },
+                    { "data": "LAST_UPDATED_NAME", "title": "Last Updated Name", "width": "80px", "className": "text-center" },
+                    { "data": "ROWVERSION", "title": "ROWVERSION", "width": "80px", "className": "text-center" }
+                ]
+
+
+                ToggleDataList(true);
+                MakeDataGridCSV('lstEMCOnSiteDetailEnquiry', data.lstEMCOnSiteDetailEnquiry, 0, columnDef, true, true, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

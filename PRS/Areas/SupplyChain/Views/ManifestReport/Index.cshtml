@@ -1,0 +1,251 @@
+﻿@model IP.Areas.SupplyChain.Models.ManifestReport
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+
+    .leftsection {
+        text-align: center;
+        padding-top: 90px;
+        height: 42%;
+    }
+
+
+
+
+    .box-body {
+        padding-bottom: 10px !important;
+    }
+
+    .text_decoration {
+        color: #0089db;
+        text-align: right;
+        text-decoration: underline;
+    }
+
+    .text_decoration_footer {
+        color: #0089db;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div class="row section-color">
+        <div class="col-md-12">
+            <div id="dataList" class="box panel panel-default">
+                <input id="rptcode" type="hidden" value="192" />
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle > </strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right" style="margin-top:2PX;">
+                    </div>
+                </div>
+                <div class="box-body text-sm">
+                    <table id="lstManifest" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot style="background-color:white;">
+                            <tr>
+
+                                <th>Total :</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="row section-color">
+                    <div id="left_panel_Bottom" class="col-md-12 section-padding">
+                        <div id="leftsection" class="box panel panel-default leftsection" style="text-align: center;  height:54%; background-color: white; padding-top: 90px;">
+                            <h4>Click hyperlinks on above section to load data</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+    $.fn.dataTable.render.ellipsisAdr = function (cutoff, header) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                //var header = "Reported Problem";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    ToggleDataList(false);
+    LoaData();
+    function LoaData() {
+        $('#tblBody').empty();
+        $('#option').modal('hide');
+
+        var programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var custRef = $('#custRef').val();
+        var manifest = $('#manifest').val();
+
+
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/ManifestReport/GetList',
+            data: {
+                programId: programId,
+                ProgramName: _ProgramName,
+                custRef: custRef,
+                manifest: manifest
+
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+
+                var columnDef = [
+                    { "data": "CustomerReference", "title": "Customer Ref." },
+                    {
+                        "data": "PO", "title": "PO", "width": "100px"
+                    },
+                    { "data": "QTY", "title": "Qty", "width": "50px", "className": "text-right" },
+                    {
+                        "data": "PartNo", "title": "Part No.", "width": "110px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&Programid=' + programId + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "DESCRIPTION", "title": "Description", "width": "120px" },
+                    { "data": "COUNTRY_ORIGIN", "title": "COUNTRY_ORIGIN", "width": "60px" },
+                    {
+                        "data": "BULTOS", "title": "BULTOS", "width": "60px"
+                    },
+                    {
+                        "data": "TOTAL_BULTOS", "title": "TOTAL_BULTOS", "width": "60px"
+                    },
+                    {
+                        "data": "CANT_BULTO", "title": "CANT_BULTO", "width": "60px"
+                    },
+                    {
+                        "data": "TTLWeight", "title": "TTLWeight", "width": "60px"
+                    },
+                    {
+                        "data": "TTL_DIM", "title": "TTL_DIM", "width": "60px"
+                    },
+
+                    { "data": "ADDRESS", "title": "Address", "width": "180px", "render": $.fn.dataTable.render.ellipsisAdr(18, "Address") },
+                    { "data": "ADDRESS", "title": "Address", "width": "200px", "visible": false },
+                    { "data": "LastActivityDate", "title": "LastActivityDate", "width": "110px", "className": "text-right" },
+                    {
+                        "data": "MANIFEST", "title": "Manifest", "width": "40", "className": "text-center",
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\SupplyChain\\\\ManifestReport\\\\GetDetail?programId=' + programId + '&manifest=' + row["MANIFEST"] + '\',\'left_panel_Bottom\')">'+ data+ '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "PALLET", "title": "Pallet", "width": "40px" }
+                ];
+
+                //For Displaying footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(2).footer()).html(thousands_separators(api.column(2, { search: 'applied' }).data().sum()));
+                }
+                
+
+                ToggleDataList(true);
+
+                var h = getHeight(50);
+                //MakeFrameGrid('lstyield', data.lstyield, h, columnDef, 'buttons', true, true, footerfunc, false, $('#YieldbyStation').text(), true);
+
+            MakeDataGrid('lstManifest', data.lstManifest, 260, columnDef, true, true, footerfunc);
+
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+
+</script>

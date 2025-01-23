@@ -1,0 +1,147 @@
+﻿@model IP.Areas.BRT.Models.BRTLookup
+@{
+    ViewBag.Title = "GetData";
+    Layout = null;
+}
+
+
+<style>
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+
+    .row {
+        background-color: white;
+    }
+    .leftsection {
+        text-align: center;
+        padding-top: 120px;
+        height: 510px;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool">
+                <span class="fa fa-th-list fa-lg white"></span>
+            </button>
+            <h6 class="box-title" style="font-weight:bold;">@ViewBag.ReportTitle<strong id="filterString"></strong></h6>
+            <div id="buttons_lstLookup" class="box-tools pull-right">
+            </div>
+        </div>
+
+        <div id="right_panel_top" class="col-md-12 section-padding">
+
+
+            <div class="box-body">
+                <table id="lstData" class="table table-bordered table-striped text-sm" width="100%">
+                    <thead>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        var bay = '@ViewBag.bay';
+        var building = '@ViewBag.building'
+
+        ToggleDataList(false);
+        LoadData();
+        function LoadData() {
+            //   $('#lstData > tbody').empty();
+            //$('#lstwip').DataTable().clear();
+            //$('#lstwip').DataTable().destroy();
+
+            var _lstData = @Html.Raw(Json.Encode(Model.lstData));  //datatable wiplist
+            var _lstDataColumn = @Html.Raw(Json.Encode(Model.lstDataColumn)); // column headers
+
+
+
+            var th = '<tr>'; //create th for headers
+            var tft = '<tr style="background-color:white;">'; //create th for footers
+
+            $.each(_lstDataColumn, function (index, value) {
+
+                th += '<th id=idx'+ index + '>' + value + ' </th>'; // for table headers
+                if (index == 0)
+                    tft += '<th>Total :</th>'; //for table footer show total.
+                else
+                    tft += '<th></th>'; // for table footers
+
+            });
+            th += '</tr>'; // th end
+            tft += '</tr>' // th footer end
+            $('#lstData >thead').append(th); // th header append to thead
+            $('#lstData >tfoot').append(tft); // th footer append to footer
+
+            var columnDef = [];
+
+            columnDef.push({ "className": "Tier",  "width": "60px"});
+
+            // hyperlink on in_wip units
+            for (i = 1; i <= _lstDataColumn.length - 1; i++) {
+                    columnDef.push({
+                        "className": "text-right", "targets": i,
+                        render: function (data, type, row, index) {
+                           
+
+                            var rowData = document.getElementById('idx' +index.col).innerText;
+
+                            var url = '';
+                            url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\BRT\\\\BRTLookup\\\\Location?building='+ building +'&bay=' + bay + '&tier=' + row[0] + '&row=' + rowData +  '\',\'left_panel_Bottom\')">' + thousands_separators(data) + '</a>';
+                            return url;
+
+
+                        }
+
+
+                    });
+
+            }
+            var footerfunc = function () {
+                var api = this.api();
+                //apply sum on hyperlink
+                for (i = 1; i <= _lstDataColumn.length - 1; i++) {
+                    var colValue = api.column(i, { page: 'current' });
+                    colValue = colValue.data();
+                    var rowData = document.getElementById('idx' + i).innerText;
+                    colValue = colValue.sum();
+                    $(api.column(i).footer()).html(
+                        '<a href="#" class="Part_Undrln" onclick="OpenViewBRT(\'\\\\BRT\\\\BRTLookup\\\\Location?building=' + building + '&bay=' + bay + '&tier=' + '&row=' + rowData + '\',\'left_panel_Bottom\')">' + thousands_separators(colValue) + '</a>'
+
+                    );
+
+                }
+            }
+
+            ToggleDataList(true);
+            height = 405;
+            MakeMeFrameGrid('lstData', _lstData, height, columnDef, false, false, true, footerfunc);
+
+        }
+    });
+
+  
+   function OpenView(_url, target) {
+
+       $('#right_panel_bottom').empty();
+       $('#right_panel_bottom').append('<div id="left_bot_section" class="box panel panel-default leftsection"><h4><p>Click hyperlinks on left section to load data</p></h4></div>');
+
+        $.ajax({
+            url: _url,
+            success: function (data) {
+                $('#' + target).hide();
+                $("#wait").css("display", "none");
+                $("#" + target).html(data);
+                $('#' + target).show();
+            }
+        });
+
+
+    }
+</script>

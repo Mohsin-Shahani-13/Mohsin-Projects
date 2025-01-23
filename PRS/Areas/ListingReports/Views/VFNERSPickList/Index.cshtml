@@ -1,0 +1,118 @@
+﻿@model IP.Areas.ListingReports.Models.VFNERSPickList
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <input id="rptCode" type="hidden" value="256" />
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstVFNERSPickList" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<script>
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var Type = $("#Type option:selected").val();
+        var TypeText = $("#Type option:selected").text();
+        var _programId = $('#ddProgram').val();
+        var _ProgramName = $("#ddProgram option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/VFNERSPickList/GetList',
+            data: {
+                Type: Type,
+                TypeText: TypeText,
+                programId: _programId,
+                ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [];
+                columnDef = [
+                    { "data": "ProgramID", "title": "ProgramID", "width": "70px", "visible": false },
+                    { "data": "PartNo", "title": "PartNo.", "width": "110px", "visible": false },
+                    {
+                        "data": "serialno", "title": "Serial No.", "width": "110px",
+                        render: function (data, type, row) {
+                            var url;
+                            if (row["serialno"] == '*') {
+                                url = row["serialno"];
+                            }
+                            else {
+                                url = '<a href= "\\ListingReports\\\PartsSerial\\Detail?serialNo=' + row["serialno"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                            }
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "CustomerReference", "title": "Customer Reference", "width": "110px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\SupplyChain\\SO\\Detail?SOHeaderId=' + row["soheaderid"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "IDSStatus", "title": "IDS Status", "width": "70px" },
+                    { "data": "pick", "title": "Pick", "width": "80px" },
+                    { "data": "Pick Transaction Date", "title": "Pick Transaction Date", "width": "130px", "className": "text-right" },
+                    { "data": "Pick Message Processed Date", "title": "Pick Message Processed Date", "width": "170px", "className": "text-right" },
+                    { "data": "message", "title": "Message" },
+                    { "data": "Outmessage_Hdr_Id", "title": "Outmessage Hdr Id", "width": "120px" },
+                    { "data": "solineid", "title": "SO Line Id", "width": "90px" },
+                    { "data": "soheaderid", "title": "SO Header Id", "width": "90px" }
+
+                ]
+
+                ToggleDataList(true);
+                MakeDataGrid('lstVFNERSPickList', data.lstVFNERSPickList, 0, columnDef, true, true);
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+

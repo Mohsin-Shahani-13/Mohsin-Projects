@@ -1,0 +1,286 @@
+﻿@model IP.Areas.Finance.Models.WOComponent
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+
+    <tr>
+        <td class="pad" colspan="4" id="RptType">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="In-Transit", Value = "In-Transit" },
+                   new SelectListItem{ Text="WIP", Value = "WIP" },
+                   new SelectListItem{ Text="COGS", Value = "COGS" }
+
+                }, new { @class = "form-control" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>
+    <tr>
+
+        <td colspan="4">
+            <br />
+            <label>Data Source:</label>
+            <select id="InventorySource" class="form-control">
+
+                <option value="All">All</option>
+                <option value="EPICOR">EPICOR</option>
+                <option value="IFS">IFS</option>
+                <option value="PLUS">PLUS</option>
+
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td class="pad" id='ddtpFrom'>
+            <strong>From:</strong>
+            <div class='input-group date' id='dtpFrom'>
+                @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="pad" id='ddtpTo'>
+            <strong>To:</strong>
+            <div class='input-group date' id='dtpTo'>
+                @Html.TextBoxFor(model => model.toDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.partNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="partNo" name="partNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+
+    </tr>
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.fromWoId, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="fromWoId" name="fromWoId" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+
+        <td class="pad">
+            @Html.LabelFor(model => model.toWoId, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="toWoId" name="toWoId" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $(document).ready(function () {
+       
+        $("#ProgramID").show();
+        $("#InventorySource").show();
+        $("#ddtpFrom").hide();
+        $("#ddtpTo").hide();
+        $("#partNo").show();
+        $("#fromWoId").show();
+        $("#toWoId").show();
+        $("#rptType").change(function () {
+           
+            var selected_state = document.getElementById("rptType").value;
+            $('#partNo').val("");
+            $('#fromWoId').val("");
+            $('#toWoId').val("");
+
+            if (selected_state === "In-Transit") {
+                $('#errMsg').empty();
+                $("#ProgramID").show();
+                $("#InventorySource").show();
+                $("#ddtpFrom").hide();
+                $("#ddtpTo").hide();
+                $("#partNo").show();
+                $("#fromWoId").show();
+                $("#toWoId").show();
+               
+            }
+            else if (selected_state === "WIP") {
+                $('#errMsg').empty();
+                $("#ProgramID").show();
+                $("#InventorySource").show();
+                $("#ddtpFrom").hide();
+                $("#ddtpTo").hide();
+                $("#partNo").show();
+                $("#fromWoId").show();
+                $("#toWoId").show();
+               
+            }
+            
+            else {
+                $('#errMsg').empty();
+                $("#ProgramID").show();
+                $("#InventorySource").show();
+                $("#ddtpFrom").show();
+                $("#ddtpTo").show();
+                $("#partNo").show();
+                $("#fromWoId").show();
+                $("#toWoId").show();
+               
+            }
+            //$("#selected_state").children().show(); //only show cities in selected state
+        });
+    });
+  
+    $('#option').on('shown.bs.modal', function () {
+        $('#partNo').focus();
+    });
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    //For Date Picker
+    dateFrom();
+    dateTo();
+    function dateFrom() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        //var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('fromDt').value = someFormattedDate;
+    }
+    function dateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('toDt').value = someFormattedDate;
+    }
+
+    $("#dtpTo, #dtpFrom").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '-365d',
+        endDate: maxDate
+    });
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+
+    function OptionsIsValid() {
+
+
+        $('#lblMsg').empty();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var fromWoId = $('#fromWoId').val().trim();
+        var toWoId = $('#toWoId').val();
+        // var status = $('#ddlStatus option:selected').text();
+
+        if (fromWoId == '' && toWoId != '') {
+            $('#lblMsg').append('Enter a valid From Order No.');
+            return false;
+        }
+        else if (fromWoId != '' && toWoId == '') {
+            $('#lblMsg').append('Enter a valid To Order No.');
+            return false;
+        }
+        else {
+
+            $('#lblMsg').empty();
+            return true;
+        }
+        if (fDate.length <= 0 || tDate.length <= 0 || !isDate(fDate) || !isDate(tDate) || fDate > tDate) {
+            $('#lblMsg').append('Enter a valid date');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+        
+
+
+     }
+
+
+    function Go() { 
+
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var partNo = $('#partNo').val();
+        var fromWoId = $('#fromWoId').val();
+        var toWoId = $('#toWoId').val();
+        var InventorySource = $('#InventorySource').val();
+        var rptType = $("#rptType option:selected").val();
+
+        $('#option').modal('hide');
+            OpenPage('\\Finance\\WOComponent\\Index?ProgramID=' + programId + '&ProgramName=' + ProgramName + '&frmDt=' + fDate + ' &toDate=' + tDate + '&partNo=' + partNo + '&fromWoId=' + fromWoId + '&toWoId=' + toWoId + '&InventorySource' + InventorySource + '&rptType=' + rptType + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        
+   }
+</script>

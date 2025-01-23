@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Base";
+    if (Request.QueryString["page"] == "list")
+    { Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery); }
+    else
+    { Layout = "~/Views/Shared/_Layout.cshtml"; }
+}
+
+@section js{
+    <script type="text/javascript">
+
+        var IsReportViewer = '@Request.QueryString["IsReportViewer"]';
+
+        if (IsReportViewer == '')
+            OpenPage('/Dashboard/Index');
+        else {
+            LoadData();
+        }
+
+        function LoadData() {
+            $.ajax({
+                cache: false,
+                type: 'GET',
+                url: '/General/GetReport',
+                data: { rptId: '@Request.QueryString["RptId"]', IsRpt: '@Request.QueryString["IsRpt"]' },
+                datatype: JSON,
+                success: function (data) {
+                    data.Url = data.Url.replace('\\', '');
+                    Navigate(data.Target, data.Url, data.RptCode, data.Name, data.DesignedBy, data.MailTo);
+                },
+                onerror: function (r) { r },
+                failure: function (r) { r }
+            });
+        }
+
+        /*
+          var reportName =
+          if (reportName == 'Box') {
+              Navigate('option', '\\BoxRequest\\Option', '0101', 'Request for New Boxes', ' Mohsin Saleem @@ WinIT');
+          }
+          else if (reportName == 'Price') {
+              Navigate('option', '\\PriceHistory\\Option', '0102', 'Price History', ' Mohsin Saleem @@ WinIT');
+
+          }
+
+          else if (reportName == 'Ship') {
+              Navigate('option', '\\Shipment\\Option', '0103', 'Box Shipment', ' Mohsin Saleem @@ WinIT');
+
+          }
+
+          else if (reportName == 'chgReq') {
+              Navigate('option', '\\VendorChangeRequest\\Option', '0105', 'Vendor Change Request', ' Mohsin Saleem @@ WinIT');
+
+          }
+
+          else if (reportName == 'newPO') {
+              Navigate('option', '\\NewPO\\Option', '0106', 'PO Listing', ' Mohsin Saleem @@ WinIT');
+          }
+
+          else if (reportName == 'vendInfo') {
+              Navigate('option', '\\VendorInformation\\Option', '0104', 'Vendor Information', ' Mohsin Saleem @@ WinIT');
+
+          }
+          else if (reportName == 'PickupReq') {
+              Navigate('option', '\\PickupReq\\Option', '0109', 'Pickup Request', ' Mohsin Saleem @@ WinIT');
+
+          }
+          else if (reportName == 'SuggPartAttr') {
+              Navigate('option', '\\POSuggestion\\Option', '0201', 'Part Attributes (Table 2)', 'Imdadullah @@ WinIT');
+          }
+          else if (reportName == 'SuggVendAttr') {
+              Navigate('option', '\\POSuggVenAttr\\Option', '0202', 'Vendor Attributes (Table 3)', 'Imdadullah @@ WinIT');
+          }
+          */
+    </script>
+}
+

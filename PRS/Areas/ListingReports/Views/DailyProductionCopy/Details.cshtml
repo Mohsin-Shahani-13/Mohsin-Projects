@@ -1,0 +1,322 @@
+﻿@model IP.Areas.ListingReports.Models.DailyProductionCopy
+
+@{
+    ViewBag.Title = "Details";
+    Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery);
+}
+<style>
+    .text-sm {
+        padding-bottom: 2px;
+    }
+
+    .babygridheight {
+        width: 100%;
+    }
+
+    .more-text {
+        display: none;
+    }
+</style>
+<div class="row container-fluid">
+    <div class="row">
+        <input id="rptcode" type="hidden" value="130" />
+        <div id="datalist" class="col-md-5 section-padding ">
+            <div class="box-header with-border bg-blue-gradient">
+                @{
+                    // if (Layout == "~/Views/Shared/_LayoutInner.cshtml")
+                    if (Layout == null)
+                    {
+                        <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                            <span class="fa fa-filter fa-lg white"></span>
+                        </button>
+                    }
+                    else 
+                    {
+                        <button type="button" class="btn btn-box-tool">
+                            <span class="fa fa-th-list fa-lg white"></span>
+                        </button>
+                    }
+                }
+
+                <h6 class="box-title"><strong>Serial Number Detail >  Serial No. = '@Request.QueryString["serialNo"]'</strong></h6>
+                <div id="button" class="box-tools pull-right" style="margin-top:2PX;">
+                </div>
+
+            </div>
+            <div class="box-body" id="lstP">
+                <table id="lstDailyProduction1" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                    <thead class="sorted-asc">
+                        <tr>
+                            <th class="notexport"></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="box-header with-border bg-blue-gradient">
+                <h6 class="box-title"><strong>Serial Number Detail >  Serial No. = '@Request.QueryString["serialNo"]'</strong></h6>
+                <div id="button" class="box-tools pull-right" style="margin-top:2PX;">
+                </div>
+
+            </div>
+            <div class="box-body" id="lstP">
+                <table id="lstDailyProduction2" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                    <thead class="sorted-asc">
+                        <tr class="text-center">
+                            <th class="notexport"></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-7 section-padding">
+            <div class="box-header with-border bg-blue-gradient">
+                <h6 class="box-title"><strong>Serial Number Detail >  Serial No. = '@Request.QueryString["serialNo"]'</strong></h6>
+                <div id="button" class="box-tools pull-right" style="margin-top:2PX;">
+                </div>
+            </div>
+            <div class="box-body" id="lstP">
+                <table id="lstDailyProduction3" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                    <thead class="sorted-asc">
+                        <tr class="text-center">
+                            <th class="notexport"></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    if (Layout == null)
+    {
+        <script>
+    $(document).ready(function() {
+        ToggleDataList(false);
+
+            var _lstDailyProduction = @Html.Raw(Json.Encode(Model.lstDailyProduction));
+
+            var detailGrid1 = [
+
+            { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+            { "data": "woheaderid", "title": "WO Header Id", "width": "80px", "className": "text-center" },
+            { "data": "serialno", "title": "Serial No.", "width": "80px", "className": "text-center"},
+            { "data": "RMA/SN", "title": "RMA / SN", "width": "110px", "className": "text-center"},
+            { "data": "Model", "title": "Model", "width": "110px", "className": "text-center" },
+            { "data": "Family", "title": "Family", "width": "70px", "className": "text-center" },
+            { "data": "Technology", "title": "Technology", "width": "70px", "className": "text-center" },
+            { "data": "Ispass", "title": "Is Pass", "width": "40px", "className": "text-center" },
+            { "data": "iteration", "title": "Iteration", "width": "60px", "className": "text-center" },
+            { "data": "Workstation", "title": "Work Station", "width": "100px", "className": "text-center" },
+            { "data": "Day", "title": "Day", "width": "60px", "className": "text-center" },
+            { "data": "Time", "title": "Time", "width": "65px", "className": "text-center"},
+            { "data": "Shift", "title": "Shift", "width": "30px", "className": "text-center" },
+            { "data": "Hour", "title": "Hour", "width": "30px", "className": "text-center" },
+            { "data": "UserName", "title": "User Name", "width": "80px", "className": "text-center" },
+            { "data": "Technician", "title": "Technician", "width": "80px", "className": "text-center" },
+            { "data": "createdate", "title": "Created On", "width": "90px", "className": "text-center" },
+            { "data": "lastactivitydate", "title": "Last Activity On", "width": "90px", "className": "text-center" },
+            { "data": "RepairLevel", "title": "Repair Level", "width": "70px", "className": "text-center" }
+        ]
+        MakeMeBabyGrid('lstDailyProduction1', _lstDailyProduction, 200, detailGrid1, false, false);
+
+        var detailGrid2 = [
+
+            { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+            { "data": "woheaderid", "title": "WO Header Id", "width": "80px", "className": "text-center" },
+            { "data": "serialno", "title": "Serial No.", "width": "80px", "className": "text-center" },
+            { "data": "RMA/SN", "title": "RMA / SN", "width": "110px", "className": "text-center" },
+            { "data": "Model", "title": "Model", "width": "110px", "className": "text-center" },
+            { "data": "Family", "title": "Family", "width": "70px", "className": "text-center" },
+            { "data": "Technology", "title": "Technology", "width": "70px", "className": "text-center" },
+            { "data": "Ispass", "title": "Is Pass", "width": "40px", "className": "text-center" },
+            { "data": "iteration", "title": "Iteration", "width": "60px", "className": "text-center" },
+            { "data": "Workstation", "title": "Work Station", "width": "100px", "className": "text-center" },
+            { "data": "Day", "title": "Day", "width": "60px", "className": "text-center" },
+            { "data": "Time", "title": "Time", "width": "65px", "className": "text-center" },
+            { "data": "Shift", "title": "Shift", "width": "30px", "className": "text-center" },
+            { "data": "Hour", "title": "Hour", "width": "30px", "className": "text-center" },
+            { "data": "UserName", "title": "User Name", "width": "80px", "className": "text-center" },
+            { "data": "Technician", "title": "Technician", "width": "80px", "className": "text-center" },
+            { "data": "createdate", "title": "Created On", "width": "90px", "className": "text-center" },
+            { "data": "lastactivitydate", "title": "Last Activity On", "width": "90px", "className": "text-center" },
+            { "data": "RepairLevel", "title": "Repair Level", "width": "70px", "className": "text-center" }
+        ]
+        MakeMeBabyGrid('lstDailyProduction2', _lstDailyProduction, 200, detailGrid2, false, false);
+
+        var detailGrid3 = [
+
+            { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+            { "data": "woheaderid", "title": "WO Header Id", "width": "80px", "className": "text-center" },
+            { "data": "serialno", "title": "Serial No.", "width": "80px", "className": "text-center" },
+            { "data": "RMA/SN", "title": "RMA / SN", "width": "110px", "className": "text-center" },
+            { "data": "Model", "title": "Model", "width": "110px", "className": "text-center" },
+            { "data": "Family", "title": "Family", "width": "70px", "className": "text-center" },
+            { "data": "Technology", "title": "Technology", "width": "70px", "className": "text-center" },
+            { "data": "Ispass", "title": "Is Pass", "width": "40px", "className": "text-center" },
+            { "data": "iteration", "title": "Iteration", "width": "60px", "className": "text-center" },
+            { "data": "Workstation", "title": "Work Station", "width": "100px", "className": "text-center" },
+            { "data": "Day", "title": "Day", "width": "60px", "className": "text-center" },
+            { "data": "Time", "title": "Time", "width": "65px", "className": "text-center" },
+            { "data": "Shift", "title": "Shift", "width": "30px", "className": "text-center" },
+            { "data": "Hour", "title": "Hour", "width": "30px", "className": "text-center" },
+            { "data": "UserName", "title": "User Name", "width": "80px", "className": "text-center" },
+            { "data": "Technician", "title": "Technician", "width": "80px", "className": "text-center" },
+            { "data": "createdate", "title": "Created On", "width": "90px", "className": "text-center" },
+            { "data": "lastactivitydate", "title": "Last Activity On", "width": "90px", "className": "text-center" },
+            { "data": "RepairLevel", "title": "Repair Level", "width": "70px", "className": "text-center" }
+        ]
+        MakeMeBabyGrid('lstDailyProduction3', _lstDailyProduction, 250, detailGrid3, false, false);
+
+                    if (data["ErrorMessage"] != null) {
+            $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                    }
+    })
+        </script>
+    }
+    else
+    {
+        @section js{
+            <script>
+    $(document).ready(function () {
+        
+        ToggleDataList(false);
+
+        var _lstDailyProduction = @Html.Raw(Json.Encode(Model.lstDailyProduction));
+
+        var detailGrid1 = [
+
+            { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+            { "data": "woheaderid", "title": "WO Header Id", "width": "80px", "className": "text-center" },
+            { "data": "serialno", "title": "Serial No.", "width": "80px", "className": "text-center" },
+            { "data": "RMA/SN", "title": "RMA / SN", "width": "110px", "className": "text-center" },
+            { "data": "Model", "title": "Model", "width": "110px", "className": "text-center" },
+            { "data": "Family", "title": "Family", "width": "70px", "className": "text-center" },
+            { "data": "Technology", "title": "Technology", "width": "70px", "className": "text-center" },
+            { "data": "Ispass", "title": "Is Pass", "width": "40px", "className": "text-center" },
+            { "data": "iteration", "title": "Iteration", "width": "60px", "className": "text-center" },
+            { "data": "Workstation", "title": "Work Station", "width": "100px", "className": "text-center" },
+            { "data": "Day", "title": "Day", "width": "60px", "className": "text-center" },
+            { "data": "Time", "title": "Time", "width": "65px", "className": "text-center" },
+            { "data": "Shift", "title": "Shift", "width": "30px", "className": "text-center" },
+            { "data": "Hour", "title": "Hour", "width": "30px", "className": "text-center" },
+            { "data": "UserName", "title": "User Name", "width": "80px", "className": "text-center" },
+            { "data": "Technician", "title": "Technician", "width": "80px", "className": "text-center" },
+            { "data": "createdate", "title": "Created On", "width": "90px", "className": "text-center" },
+            { "data": "lastactivitydate", "title": "Last Activity On", "width": "90px", "className": "text-center" },
+            { "data": "RepairLevel", "title": "Repair Level", "width": "70px", "className": "text-center" }
+        ]
+        MakeMeBabyGrid('lstDailyProduction1', _lstDailyProduction, 200, detailGrid1, false, false);
+
+        var detailGrid2 = [
+
+            { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+            { "data": "woheaderid", "title": "WO Header Id", "width": "80px", "className": "text-center" },
+            { "data": "serialno", "title": "Serial No.", "width": "80px", "className": "text-center" },
+            { "data": "RMA/SN", "title": "RMA / SN", "width": "110px", "className": "text-center" },
+            { "data": "Model", "title": "Model", "width": "110px", "className": "text-center" },
+            { "data": "Family", "title": "Family", "width": "70px", "className": "text-center" },
+            { "data": "Technology", "title": "Technology", "width": "70px", "className": "text-center" },
+            { "data": "Ispass", "title": "Is Pass", "width": "40px", "className": "text-center" },
+            { "data": "iteration", "title": "Iteration", "width": "60px", "className": "text-center" },
+            { "data": "Workstation", "title": "Work Station", "width": "100px", "className": "text-center" },
+            { "data": "Day", "title": "Day", "width": "60px", "className": "text-center" },
+            { "data": "Time", "title": "Time", "width": "65px", "className": "text-center" },
+            { "data": "Shift", "title": "Shift", "width": "30px", "className": "text-center" },
+            { "data": "Hour", "title": "Hour", "width": "30px", "className": "text-center" },
+            { "data": "UserName", "title": "User Name", "width": "80px", "className": "text-center" },
+            { "data": "Technician", "title": "Technician", "width": "80px", "className": "text-center" },
+            { "data": "createdate", "title": "Created On", "width": "90px", "className": "text-center" },
+            { "data": "lastactivitydate", "title": "Last Activity On", "width": "90px", "className": "text-center" },
+            { "data": "RepairLevel", "title": "Repair Level", "width": "70px", "className": "text-center" }
+        ]
+        MakeMeBabyGrid('lstDailyProduction2', _lstDailyProduction, 200, detailGrid2, false, false);
+
+        var detailGrid3 = [
+
+            { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+            { "data": "woheaderid", "title": "WO Header Id", "width": "80px", "className": "text-center" },
+            { "data": "serialno", "title": "Serial No.", "width": "80px", "className": "text-center" },
+            { "data": "RMA/SN", "title": "RMA / SN", "width": "110px", "className": "text-center" },
+            { "data": "Model", "title": "Model", "width": "110px", "className": "text-center" },
+            { "data": "Family", "title": "Family", "width": "70px", "className": "text-center" },
+            { "data": "Technology", "title": "Technology", "width": "70px", "className": "text-center" },
+            { "data": "Ispass", "title": "Is Pass", "width": "40px", "className": "text-center" },
+            { "data": "iteration", "title": "Iteration", "width": "60px", "className": "text-center" },
+            { "data": "Workstation", "title": "Work Station", "width": "100px", "className": "text-center" },
+            { "data": "Day", "title": "Day", "width": "60px", "className": "text-center" },
+            { "data": "Time", "title": "Time", "width": "65px", "className": "text-center" },
+            { "data": "Shift", "title": "Shift", "width": "30px", "className": "text-center" },
+            { "data": "Hour", "title": "Hour", "width": "30px", "className": "text-center" },
+            { "data": "UserName", "title": "User Name", "width": "80px", "className": "text-center" },
+            { "data": "Technician", "title": "Technician", "width": "80px", "className": "text-center" },
+            { "data": "createdate", "title": "Created On", "width": "90px", "className": "text-center" },
+            { "data": "lastactivitydate", "title": "Last Activity On", "width": "90px", "className": "text-center" },
+            { "data": "RepairLevel", "title": "Repair Level", "width": "70px", "className": "text-center" }
+        ]
+        MakeMeBabyGrid('lstDailyProduction3', _lstDailyProduction, 250, detailGrid3, false, false);
+
+        if (data["ErrorMessage"] != null) {
+            $('.dataTables_empty > p').text(data["ErrorMessage"]);
+        }
+    });
+            </script>
+        }
+    }
+
+}

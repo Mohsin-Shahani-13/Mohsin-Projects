@@ -1,0 +1,164 @@
+﻿@model IP.Areas.Meta.Models.DataWipeResultLog
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstDataWipeResultLog" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+
+                        <th></th>
+                        <th></th>
+
+                        <th class="notexport"></th>
+
+
+                        @*<th></th> Last Run On*@
+
+                    </tr>
+
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+         var programId = '@Request.QueryString["programId"].ToString()';
+        var programName = '@Request.QueryString["programName"].ToString()';
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var serialNo = $('#serialNo').val();
+        var testerName = $('#testerName').val();
+
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DataWipeResultLog/GetList',
+            data: {
+                programId: programId,
+                programName: programName,
+                frmDt: fDate,
+                toDate: tDate,
+                SerialNo: serialNo,
+                testerName: testerName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                    var columnDef = [
+                        { "data": "ID", "title": "ID", "width": "60px", "visible": false },
+                        { "data": "SerialNumber", "title": "Serial No.", "width": "120px" },
+                        { "data": "WoHeaderId", "title": "WO Header Id", "width": "80px" },
+                        { "data": "Contract", "title": "Contract", "width": "60px" },
+                        { "data": "WorkStation", "title": "WorkStation", "width": "80px" },
+                        { "data": "TesterName", "title": "Tester Name", "width": "80px" },
+                        { "data": "Result", "title": "Result", "width": "70px" },
+                        { "data": "Message", "title": "Message" },
+                        { "data": "AsOf", "title": "AsOf", "width": "100px", "className": "text-right" },
+                        { "data": "Source", "title": "Source", "width": "100px" },
+                        {
+                            "data": "Request", "title": "Request", "width": "60px", "className": "text-center",
+                            //"render": function (data, type, row) {
+                            //    return $('<div/>').text(data).html();
+                            //}
+                            "render": function (data, type, row) {
+                                var url = '<a id="openRequestXmlLink" onclick="openXmlInNewTab(\'' + encodeURIComponent(data) + '\');">View</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "Response", "title": "Response", "width": "60px", "className": "text-center",
+
+                            "render": function (data, type, row) {
+                                var modifiedXmlData = data.replace(/'/g, ' ');
+                                var url = '<a id="openResponseXmlLink" onclick="openXmlInNewTab(\'' + encodeURIComponent(modifiedXmlData) + '\');">View</a>';
+                                return url;
+                            }
+
+                        },
+                        {
+                            "data": "Request", "title": "Request", "width": "60px", "className": "text-left", "visible": false,
+
+                            "render": function (data, type, row) {
+                                return $('<div/>').text(data).html();
+                            }
+                        },
+                        {
+                            "data": "Response", "title": "Response", "width": "60px", "className": "text-left", "visible": false,
+
+                            "render": function (data, type, row) {
+                                return $('<div/>').text(data).html();
+                            }
+
+                        },
+
+                        { "data": "RemoteHost", "title": "RemoteHost", "width": "60px", "visible": false  },
+                    ];
+
+                    ToggleDataList(true);
+
+                MakeDataGrid('lstDataWipeResultLog', data.lstDataWipeResultLog, 0, columnDef, true, true);
+
+
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    function openXmlInNewTab(xmlData) {
+        var blob = new Blob([decodeURIComponent(xmlData)], { type: "application/xml" });
+
+        var url = URL.createObjectURL(blob);
+
+        window.open(url, '_blank');
+
+    }
+
+</script>

@@ -1,0 +1,112 @@
+﻿@model IP.Areas.SupplyChain.Models.MaterialFulfillment
+
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.reference, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="reference" name="reference" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.orderType, new { @class = "col-4 col-form-label" })
+            <select id="ddOrderType" class="form-control" name="ddOrderType" onkeydown="GoOnEnter()">
+
+                <option value="All">All</option>
+                <option value="OEM">OEM</option>
+                <option value="VEN">VEN</option>
+                <option value="ADJUSTMENT">ADJUSTMENT</option>
+
+            </select>
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#reference').focus();
+    });
+
+
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+
+        //var reference = $('#reference').val();
+
+        //if (reference === '') {
+        //    $('#lblMsg').append('Please Enter reference No');
+        //    return false;
+        //}
+        return true;
+
+    }
+
+    function Go() {
+    var programId = $('#ddProgram').val();
+    var ProgramName = $("#ddProgram option:selected").text();
+    var reference = $('#reference').val(); 
+    var orderType = $("#ddOrderType option:selected").text();
+
+    $('#option').modal('hide');
+        OpenPage('\\SupplyChain\\MaterialFulfillment\\Index?programID=' + programId + '&programName=' + ProgramName + '&reference=' + reference + '&orderType=' + orderType + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+}
+
+
+</script>
+
+
+

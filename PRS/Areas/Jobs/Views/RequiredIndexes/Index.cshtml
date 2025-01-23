@@ -1,0 +1,142 @@
+﻿@model IP.Areas.Jobs.Models.RequiredIndexes
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    textarea {
+        resize: none !important;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="listOfLists" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <thv class="notexport"></thv>
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                       <th>Total :</th>
+                       <th></th>
+                       <th></th>
+                       <th></th>
+                       <th></th>
+                       <th></th>
+                       <th></th>
+                       <th></th>
+                       <th></th>
+                       <th></th>
+                       <thv class="notexport"></thv>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "Create Index Command";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+        $('#option').modal('hide');
+       
+        var serverName = $('#ddlServers option:selected').text();
+        var database = $('#ddDatabase option:selected').val();
+      
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/RequiredIndexes/GetList',
+            data: {
+                serverName: serverName,
+                database: database
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+               
+                    var columnDef = [
+                        { "data": "serverName", "title": "Server Name", "width": "90px" },
+                        { "data": "DATABASE", "title": "Data Base", "width": "80px" },
+                        { "data": "SCHEMA NAME", "title": "Schema Name", "width": "90px" },
+                        { "data": "OBJECT NAME", "title": "Object Name" },
+                        { "data": "user_scans", "title": "User Scans", "width": "80px" },
+                        { "data": "user_seeks", "title": "User Seeks", "width": "70px", "className": "text-right" },
+                        { "data": "LAST USER SEEK", "title": "Last User Seek On", "width": "120px", "className": "text-right" },
+                        { "data": "ESTIMATED CURRENT COST", "title": "Estimated Current Cost", "width": "160px", "className": "text-right" },
+                        { "data": "CAN BE IMPROVED", "title": "Can Be Improved", "width": "110px", "className": "text-right" },
+                        { "data": "CREATE INDEX COMMAND", "title": "Create Index Command", "width": "190px", "render": $.fn.dataTable.render.ellipsisAdr1(16) },
+                        { "data": "CREATE INDEX COMMAND", "title": "Create Index Command", "width": "190px", "visible": false }
+           
+
+          
+                    ]
+                   
+                ToggleDataList(true);
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(05).footer()).html(thousands_separators(api.column(05, { search: 'applied' }).data().reduce(function (a, b) {
+                        return Number(a) + Number(b);
+                    }, 0)));
+                }
+                MakeDataGrid('listOfLists', data.listOfLists, 0, columnDef, true, false, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+</script>
+
+
+

@@ -1,0 +1,97 @@
+﻿@model IP.Areas.ListingReports.Models.InvoiceDetail
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstInvoiceDetail" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        $('#tblBody').empty();
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+        var isAllDate = $('#isAllDate').is(':checked');
+        var fDate = $('#RecfromDt').val();
+        var tDate = $('#RectoDt').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/InvoiceDetail/GetList',
+            data: {
+                frmDt: fDate,
+                toDt: tDate,
+                isAllDate: isAllDate
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "REG PPID", "title": "REG PPID", "width": "140px" },
+                        { "data": "SHIP PPID", "title": "SHIP PPID", "width": "140px" },
+                        { "data": "UPGRADE YES/NO", "title": "UPGRADE YES/NO", "width": "140px" },
+                        { "data": "MODEL", "title": "MODEL", "width": "70px" },
+                        { "data": "SCREENING TEST RESULT", "title": "SCREENING TEST RESULT", "width": "180px" },
+                        { "data": "QUICK TEST RESULTS", "title": "QUICK TEST RESULTS" },
+                        { "data": "SHIP DATE", "title": "SHIP DATE", "width": "90px", "className": "text-right" },
+                        { "data": "SCRAP DATE", "title": "SCRAP DATE", "width": "90px", "className": "text-right" },
+                        { "data": "PARTS USED", "title": "PARTS USED", "width": "60px" }
+                        
+
+                    ]
+
+                    
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstInvoiceDetail', data.lstInvoiceDetail, 0, columnDef, true, true, false);
+                   
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+ 
+</script>

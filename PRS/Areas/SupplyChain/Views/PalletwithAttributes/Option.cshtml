@@ -1,0 +1,91 @@
+﻿@model IP.Areas.SupplyChain.Models.PalletwithAttributes
+@{
+    ViewBag.Title = "option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onchange = "loadWarehouses(this.value)" })
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.Warehouse, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddwarehouse", null, new { id = "Warehouse", @name = "ddwarehouse", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+
+    function loadWarehouses(programId) {
+
+        $.ajax({
+            url: '@Url.Action("GetWarehousesByProgram", "PalletwithAttributes")',  // Update with your controller's name
+            type: 'GET',
+            data: { ProgramId: programId },
+            success: function (data) {
+                var warehouseDropdown = $('#Warehouse');
+                warehouseDropdown.empty(); // Clear existing options
+
+                // Populate the dropdown with the received data
+                $.each(data, function (index, item) {
+                    warehouseDropdown.append($('<option>', {
+                        value: item.Value,
+                        text : item.Text
+                    }));
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading warehouses:', error);
+            }
+        });
+
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+                Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+            Go();
+    });
+
+    function Go() {
+
+        var programId = $('#ddProgram').val();
+        var programName = $('#ddProgram option:selected').text();
+        var warehouse = $('#Warehouse option:selected').text();
+
+        $('#option').modal('hide');
+        OpenPage('\\SupplyChain\\PalletwithAttributes\\Index?programId=' + programId + '&programName=' + programName +'&warehouse=' + warehouse + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>

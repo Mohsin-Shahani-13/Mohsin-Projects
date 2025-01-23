@@ -1,0 +1,13 @@
+﻿@{
+    string urlToOpen = ViewBag.UrlToOpen as string;
+    Layout = null;
+}
+@Scripts.Render("~/bundles/modernizr")
+
+@if (!string.IsNullOrEmpty(urlToOpen))
+{
+    <script>
+        window.open('@urlToOpen', '_blank');
+
+    </script>
+}

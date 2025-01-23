@@ -1,0 +1,174 @@
+﻿@model IP.Areas.Meta.Models.MetaTestRunFaultCodes
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstMetaTestRunFaultCode" class="table table-bordered table-striped text-sm table-hover" >
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <tfoot>
+                    <tr>
+                        @*<th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>*@
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MetaTestRunFaultCodes/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                $.each(data.lstDefectList, function (index, row) {
+
+                    //if (data.lstPartsInventory.length == 1) {
+                    //    isSingleRow = true;
+                    //    MenuHide();
+                    //    OpenPage('\\ListingReports\\PartInquiry\\Detail?partNo=' + row["partno"] + '&page=detailed');
+                    //}
+                });
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "ProgramID", "width": "100px", "visible": false },
+                        { "data": "ProgramName", "title": "PROGRAM", "width": "80px" },
+                        { "data": "Region", "title": "REGION", "width": "50px" },
+                        { "data": "HAS_SN", "title": "Has_SN", "width": "40px", "visible": false },
+                        { "data": "WorkStationDesc", "title": "WC_DESCRIPTION", "width": "160px" },
+                        {
+                            "data": "SerialNo", "title": "SERIAL_NO", "width": "100px",
+                            render: function (data, type, row) {
+
+                                if (row["SerialNo"] == '*' || row["HAS_SN"] == 'N') {
+                                    url = row["SerialNo"];
+                                }
+                                else {
+                                    var url = '<a href= \\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "ID", "title": "SERVICE_REQUEST_NO", "width": "70px"},
+                        {
+                            "data": "PartNo", "title": "PART_NO", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "PartDesc", "title": "DESCRIPTION", "width": "220px" },
+
+
+                        {
+                            "data": "CustomerReference", "title": "CUSTOMER_REF.", "width": "90px",
+                            render: function (data, type, row) {
+
+                                var url = '<a href= "\\SupplyChain\\WO\\Detail?ID=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "FaultCode", "title": "FAULT_CODE", "width": "60px" },
+                        { "data": "FaultDesc", "title": "FAULT_DESCRIPTION", "width": "120px" },
+                        { "data": "TYPE_DESIGNATION", "title": "TYPE_DESIGNATION", "width": "120px" },
+                        { "data": "Order_Type", "title": "ORDER_TYPE", "width": "130px" },
+                        { "data": "Result", "title": "RESULT", "width": "50px" },
+                        { "data": "Code", "title": "CODE", "width": "60px", "visible": false},
+                        { "data": "Result_message", "title": "RESULT_MESSAGE", "width": "70px", "visible": false },
+                        { "data": "By", "title": "BY", "width": "90px" },
+                        { "data": "SO_Dated", "title": "SO_DATED", "width": "95px", "className": "text-right" },
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                        //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+
+                    }
+
+
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstMetaTestRunFaultCode', data.lstMetaTestRunFaultCode, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+

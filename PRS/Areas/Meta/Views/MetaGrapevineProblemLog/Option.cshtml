@@ -1,0 +1,64 @@
+﻿@model IP.Areas.Meta.Models.MetaGrapevineProblemLog
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>
+   
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        Go();
+
+    });
+
+    function Go() {
+       
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+      
+
+        $('#option').modal('hide');
+        OpenPage('\\Meta\\MetaGrapevineProblemLog\\Index?programId=' + programId + '&programName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+

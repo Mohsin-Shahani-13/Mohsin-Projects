@@ -1,0 +1,119 @@
+﻿@model IP.Models.CodeTableListing
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    .dropdown-list {
+        width: 140px;
+    }
+
+    a {
+        cursor: pointer;
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div id="dataList" class="box panel panel-default">
+                <div class="box-header with-border bg-blue-gradient">
+                    <h6 class="box-title"><strong>Views</strong></h6>
+                    <div id="buttons_left" class="box-tools pull-right">
+
+                    </div>
+                </div>
+
+                <div class="box-body" id="CodeUnit">
+                    <table id="lstTable" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                        <thead class="sorted-asc">
+                            <tr>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10" id="rghtPanel">
+            <h3 style="padding-top:300px; text-align:center">Click on view name to load data </h3>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#lstTable').data({
+            "paging": false,
+            "buttons": false
+        });
+    });
+
+    $(document).ready(function () {
+        $('#lstTable').data({
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                infoFiltered: "",
+                info: " _START_ to _END_ of _TOTAL_ "
+            }
+        });
+    });
+
+    ToggleDataList(false);
+    LoadData();
+
+    function LoadData() {
+
+        $('#tblBody').empty();
+        $.ajax({
+
+            cache: false,
+            type: 'POST',
+            url: '/CodeTableListing/GetList',
+            data: {
+            },
+            datatype: JSON,
+            success: function (data) {
+                
+                var columnDef = [
+                    {
+                        "data": "CodeTables", "title": "Views",
+                        render: function (data, type, row) {
+                          
+                            if (row["ViewHasOptionPage"] == true) {
+
+                                var url = '<a href="#" onclick="OpenView(\'\\\\CodeTableListing\\\\Option?tblName=' + row["CodeTables"] + '&ViewId=' + row["ViewId"] + '&ViewInputField=' + row["ViewInputField"] + '&ViewLabel=' + row["ViewLabel"] + '&ViewHasProgramId=' + row["ViewHasProgramId"] + '&ViewCtrlType=' + row["ViewCtrlType"] + '&ViewOperator=' + row["ViewOperator"] +'\',\'rghtPanel\')">' + data + '</a>';
+                            }
+                            else {                                
+                                var url = '<a href="#" onclick="OpenView(\'\\\\CodeTableListing\\\\detail?tblName=' + row["CodeTables"] + '&ViewId=' + row["ViewId"] + '&ViewInputField=' + row["ViewInputField"] + '&ViewLabel=' + row["ViewLabel"] + '&ViewHasProgramId=' + row["ViewHasProgramId"] + '&ViewCtrlType=' + row["ViewCtrlType"] + '&ViewOperator=' + row["ViewOperator"] + '\',\'rghtPanel\')">' + data + '</a>';
+
+                            }
+                            return url;
+                        },
+                    },
+                ];
+
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(0).footer()).html(thousands_separators(api.column(0).data().sum()));
+                }
+                ToggleDataList(true);
+                var h = getHeight(96);
+                MakeFrameGrid('lstTable', data.lstTable, h, columnDef, 'buttons_left', true, false, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>

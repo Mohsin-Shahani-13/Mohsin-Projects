@@ -1,0 +1,152 @@
+﻿@model IP.Areas.SupplyChain.Models.SOPickList
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstSOPickListNotReserved" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var _custRef = $('#custRef').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SOPickList/GetNot_Reserved',
+            data: {
+
+                programId: _programId,
+                ProgramName: _ProgramName,
+                custRef: _custRef,
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+
+                        { "data": "ProgramID", "title": "Program Id", "width": "60px", "visible": false },
+                        {
+                            "data": "CustomerReference", "title": "Customer Reference", "width": "130px",
+                            render: function (data, type, row) {
+
+                                var locationNo;
+                                if (row["LocationNo"] == '' || row["LocationNo"] == null) {
+                                    locationNo = "null";
+                                }
+                                else {
+                                    locationNo = row["LocationNo"];
+                                }
+                              //  var filePath = "http://tpdc01s221/ReportServer?/Plus/PRS/SO_Pick_Ticket/&rs:Command=Render&rc:Toolbar=false" + '&CustRef=' + row["CustomerReference"] + '&Location=' + row["LocationNo"] + '&rs:Format=PDF';
+                                //var url = "<a href='#' onClick=OpenPdf('" + filePath + "')>" + data + '</a>'
+                                var url = '<a href= "../Externals/ReportViewer.aspx?CustRef=' + row["CustomerReference"] + '&rptName=SOPickList" target=_blank> ' + data + '</a>';
+                               // var url = '<a href = "http://tpdc01s221/ReportServer?/Ingenico/Daily_Production&rs:Format=PDF" target=_blank>'+ data+ '</a>'
+                                return url;
+                        }
+                        },
+                        { "data": "PRDetailsNo", "title": "PR Details No.", "width": "110px" },
+                        //{ "data": "PartNo", "title": "Part No.", "width": "90px" },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "90px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&Programid=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "Warehouse", "title": "Warehouse", "width": "90px" },
+                        
+                        
+                        { "data": "RequestType", "title": "Request Type", "width": "120px" },
+                        { "data": "SupplyCow", "title": "Supply Cow", "width": "100px" },
+                        { "data": "ShipVia", "title": "Ship Via", "width": "100px" },
+                        { "data": "MRACode", "title": "MRA Code", "width": "100px" },
+                        { "data": "QtyReserved", "title": "Rsvd", "width": "50px", "className": "text-right" },
+                        { "data": "QtyToShip", "title": "To Ship", "width": "50px", "className": "text-right" },
+                        { "data": "SOStatus", "title": "Status", "width": "100px" },
+
+                    ];
+
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9).data().sum()));
+                        $(api.column(10).footer()).html(thousands_separators(api.column(10).data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstSOPickListNotReserved', data.lstSOPickListNotReserved, 0, columnDef, true, true, footerfunc);
+                   
+            }
+                if(data["ErrorMessage"] != null) {
+            $('.dataTables_empty > p').text(data["ErrorMessage"]);
+        }
+    },
+    onerror: function (r) { r },
+    failure: function (r) { r }
+        });
+    }
+
+   
+</script>

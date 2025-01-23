@@ -1,0 +1,1383 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{17791D53-852D-46AA-91C5-EA2B098ABD65}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IP</RootNamespace>
+    <AssemblyName>IP</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <WebGreaseLibPath>..\..\..\..\Users\kashif.MAXKHI\Documents\Visual%20Studio%202013\Projects\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+    <PublishDatabases>false</PublishDatabases>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>false</DebugSymbols>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ClosedXML, Version=0.94.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.7.2.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=7.2.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>packages\EPPlus.7.2.2\lib\net35\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=6.1.1.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>packages\EPPlus.Interfaces.6.1.1\lib\net35\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
+      <HintPath>packages\EPPlus.System.Drawing.6.1.1\lib\net35\EPPlus.System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.0.3.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\ExcelNumberFormat.dll</HintPath>
+    </Reference>
+    <Reference Include="FastMember, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\FastMember.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.3.4.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Meta\Views\MetaDekit\Option.cshtml" />
+    <Content Include="Assemblies\Antlr3.Runtime.dll" />
+    <Content Include="Assemblies\ClosedXML.dll" />
+    <Content Include="Assemblies\DocumentFormat.OpenXml.dll" />
+    <Content Include="Assemblies\ExcelNumberFormat.dll" />
+    <Content Include="Assemblies\FastMember.dll" />
+    <Content Include="Assemblies\itextsharp.dll" />
+    <Content Include="Assemblies\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="Assemblies\Newtonsoft.Json.dll" />
+    <Content Include="Assemblies\System.ValueTuple.dll" />
+    <Content Include="Assemblies\System.Web.Helpers.dll" />
+    <Content Include="Assemblies\System.Web.Mvc.dll" />
+    <Content Include="Assemblies\System.Web.Optimization.dll" />
+    <Content Include="Assemblies\System.Web.Razor.dll" />
+    <Content Include="Assemblies\System.Web.WebPages.Deployment.dll" />
+    <Content Include="Assemblies\System.Web.WebPages.dll" />
+    <Content Include="Assemblies\System.Web.WebPages.Razor.dll" />
+    <Content Include="Assemblies\WebGrease.dll" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\css\AdminLTE.min.css" />
+    <Content Include="Content\css\all.css" />
+    <Content Include="Content\css\bootstrap-multiselect.css" />
+    <Content Include="Content\css\bootstrap.min.css" />
+    <Content Include="Content\css\buttons.dataTables.min.css" />
+    <Content Include="Content\css\datatable.min.css" />
+    <Content Include="Content\css\datatable.select.min.css" />
+    <Content Include="Content\css\EmptyLayout.css" />
+    <Content Include="Content\css\font-awesome.min.css" />
+    <Content Include="Content\css\ionicons.min.css" />
+    <Content Include="Content\css\jquery.gridster.css" />
+    <Content Include="Content\css\MyDataGrid.css" />
+    <Content Include="Content\css\responsive-tables.min.css" />
+    <Content Include="Content\css\scroller.dataTables.css" />
+    <Content Include="Content\css\Site.css" />
+    <Content Include="Content\css\bootstrap-datepicker.css" />
+    <Content Include="Content\css\Standards.css" />
+    <Content Include="Content\css\_all-skins.min.css" />
+    <Content Include="Content\fonts\fa-solid.eot" />
+    <Content Include="Content\fonts\fa-solid.svg" />
+    <Content Include="Content\fonts\fa-solid.ttf" />
+    <Content Include="Content\fonts\fa-solid.woff" />
+    <Content Include="Content\fonts\fa-solid.woff2" />
+    <Content Include="Content\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\fonts\FontAwesome.otf" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\images\3dots.png" />
+    <Content Include="Content\images\AWAN-DISTRIBUTION.png" />
+    <Content Include="Content\images\csv.png" />
+    <Content Include="Content\images\details_close.png" />
+    <Content Include="Content\images\details_edit.png" />
+    <Content Include="Content\images\details_open.png" />
+    <Content Include="Content\images\GelBallGreen.gif" />
+    <Content Include="Content\images\logo-mini.png" />
+    <Content Include="Content\images\delete-64.gif" />
+    <Content Include="Content\images\edit.png" />
+    <Content Include="Content\images\Excel.gif" />
+    <Content Include="Content\images\Loading.gif" />
+    <Content Include="Content\images\loading2.gif" />
+    <Content Include="Content\images\loading21.gif" />
+    <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\copy.png" />
+    <Content Include="Content\images\excel.png" />
+    <Content Include="Content\images\icon.png" />
+    <Content Include="Content\images\logo_reco.png" />
+    <Content Include="Content\images\Logo_reconext_new.png" />
+    <Content Include="Content\images\magnifying-glass.png" />
+    <Content Include="Content\images\magnifying.png" />
+    <Content Include="Content\images\mg-modified.png" />
+    <Content Include="Content\images\noimage.jpg" />
+    <Content Include="Content\images\No_Image.png" />
+    <Content Include="Content\images\OctaneIcon.ico" />
+    <Content Include="Content\images\OctaneWeb.png" />
+    <Content Include="Content\images\Octel-web.ico" />
+    <Content Include="Content\images\Octel-web.png" />
+    <Content Include="Content\images\Octel.png" />
+    <Content Include="Content\images\Octel_Logo.png" />
+    <Content Include="Content\images\play.png" />
+    <Content Include="Content\images\Plus.png" />
+    <Content Include="Content\images\PlusRS2.png" />
+    <Content Include="Content\images\PlusRS3.png" />
+    <Content Include="Content\images\PlusWithIcon.png" />
+    <Content Include="Content\images\plus_icon.png" />
+    <Content Include="Content\images\print.png" />
+    <Content Include="Content\images\report-icon.png" />
+    <Content Include="Content\images\sql.png" />
+    <Content Include="Content\images\supplychain.png" />
+    <Content Include="Content\images\trash.png" />
+    <Content Include="Content\images\userImage.png" />
+    <Content Include="Content\images\User_pic.png" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Content\webfonts\fa-brands-400.eot" />
+    <Content Include="Content\webfonts\fa-brands-400.svg" />
+    <Content Include="Content\webfonts\fa-brands-400.ttf" />
+    <Content Include="Content\webfonts\fa-brands-400.woff" />
+    <Content Include="Content\webfonts\fa-brands-400.woff2" />
+    <Content Include="Content\webfonts\fa-regular-400.eot" />
+    <Content Include="Content\webfonts\fa-regular-400.svg" />
+    <Content Include="Content\webfonts\fa-regular-400.ttf" />
+    <Content Include="Content\webfonts\fa-regular-400.woff" />
+    <Content Include="Content\webfonts\fa-regular-400.woff2" />
+    <Content Include="Content\webfonts\fa-solid-900.eot" />
+    <Content Include="Content\webfonts\fa-solid-900.svg" />
+    <Content Include="Content\webfonts\fa-solid-900.ttf" />
+    <Content Include="Content\webfonts\fa-solid-900.woff" />
+    <Content Include="Content\webfonts\fa-solid-900.woff2" />
+    <Content Include="Error.html" />
+    <Content Include="Extensions\CodeTableListing.aspx" />
+    <Content Include="Extensions\WidgetReport.aspx" />
+    <Content Include="Externals\B2BMessage.aspx" />
+    <Content Include="Externals\OutboundDocs.aspx" />
+    <Content Include="Externals\Documents.aspx" />
+    <Content Include="Externals\ReportViewer.aspx" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Properties\PublishProfiles\PRS Publish on S223.pubxml.user" />
+    <Content Include="Properties\PublishProfiles\PRS Publish on S225.pubxml.user" />
+    <Content Include="Properties\PublishProfiles\PRS Publish On VT-RS.pubxml.user" />
+    <Content Include="Scripts\adminlte.js" />
+    <Content Include="Scripts\bootstrap-multiselect.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\buttons.bootstrap.min.js" />
+    <Content Include="Scripts\buttons.colVis.min.js" />
+    <Content Include="Scripts\buttons.html5.min.js" />
+    <Content Include="Scripts\buttons.print.min.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\ChartBundle.js" />
+    <Content Include="Scripts\chartCommon.js" />
+    <Content Include="Scripts\ChartJsLabeling.js" />
+    <Content Include="Scripts\CommonGrids.js" />
+    <Content Include="Scripts\datetime.js" />
+    <Content Include="Scripts\gridCommon.js" />
+    <Content Include="Scripts\common-v1.0.js" />
+    <Content Include="Scripts\datatables.bs.min.js" />
+    <Content Include="Scripts\dataTables.buttons.min.js" />
+    <Content Include="Scripts\dataTables.editor.min.js" />
+    <Content Include="Scripts\datatables.min.js" />
+    <Content Include="Scripts\dataTables.scroller.min.js" />
+    <Content Include="Scripts\dataTables.select.min.js" />
+    <Content Include="Scripts\datepicker.min.js" />
+    <Content Include="Scripts\gridmvc.js" />
+    <Content Include="Scripts\gridmvc.lang.ru.js" />
+    <Content Include="Scripts\gridmvc.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jquery.bootstrap.newsbox.min.js" />
+    <Content Include="Scripts\jquery.gridster.js" />
+    <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\jquery.responsive-tables.min.js" />
+    <Content Include="Scripts\jszip.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\pdfmake.min.js" />
+    <Content Include="Scripts\percentBar.js" />
+    <Content Include="Scripts\Utility.js" />
+    <Content Include="Scripts\vfs_fonts.js" />
+    <Content Include="Scripts\zingchart.min.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActionFilters\CheckSessionTimeoutAtrribute.cs" />
+    <Compile Include="ActionFilters\IntTime.cs" />
+    <Compile Include="ActionFilters\LogAttribute.cs" />
+    <Compile Include="ActionFilters\NoCacheResponseFilter.cs" />
+    <Compile Include="ActionFilters\SessionTimeoutAttribute.cs" />
+    <Compile Include="ActionFilters\UpdateLastActivityAttribute.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Biztalk\BiztalkAreaRegistration.cs" />
+    <Compile Include="Areas\Biztalk\Controllers\InboundController.cs" />
+    <Compile Include="Areas\Biztalk\Controllers\MissingDeliveryNotificationController.cs" />
+    <Compile Include="Areas\Biztalk\Controllers\OutboundController.cs" />
+    <Compile Include="Areas\Biztalk\Controllers\OutboundTransactionDetailController.cs" />
+    <Compile Include="Areas\Biztalk\Models\Inbound.cs" />
+    <Compile Include="Areas\Biztalk\Models\MissingDeliveryNotification.cs" />
+    <Compile Include="Areas\Biztalk\Models\Outbound.cs" />
+    <Compile Include="Areas\Biztalk\Models\OutboundTransactionDetail.cs" />
+    <Compile Include="Areas\BRT\BRTAreaRegistration.cs" />
+    <Compile Include="Areas\BRT\Controllers\BRTLookupController.cs" />
+    <Compile Include="Areas\BRT\Controllers\CycleCountAccuracyController.cs" />
+    <Compile Include="Areas\BRT\Controllers\CycleCountController.cs" />
+    <Compile Include="Areas\BRT\Controllers\CycleCountSummaryController.cs" />
+    <Compile Include="Areas\BRT\Models\BRTLookup.cs" />
+    <Compile Include="Areas\BRT\Models\CycleCount.cs" />
+    <Compile Include="Areas\BRT\Models\CycleCountAccuracy.cs" />
+    <Compile Include="Areas\BRT\Models\CycleCountSummary.cs" />
+    <Compile Include="Areas\Finance\Controllers\GLTransactionsController.cs" />
+    <Compile Include="Areas\Finance\Controllers\KPNInvoiceController.cs" />
+    <Compile Include="Areas\Finance\Controllers\WOComponentController.cs" />
+    <Compile Include="Areas\Finance\Controllers\WorkOrderCompletionController.cs" />
+    <Compile Include="Areas\Finance\FinanceAreaRegistration.cs" />
+    <Compile Include="Areas\Finance\Models\GLTransactions.cs" />
+    <Compile Include="Areas\Finance\Models\KPNInvoice.cs" />
+    <Compile Include="Areas\Finance\Models\WOComponent.cs" />
+    <Compile Include="Areas\Finance\Models\WorkOrderCompletion.cs" />
+    <Compile Include="Areas\Jobs\Controllers\HighCPUConsumedQueriesController.cs" />
+    <Compile Include="Areas\Jobs\Controllers\HighCPUConsumedSPController.cs" />
+    <Compile Include="Areas\Jobs\Controllers\JobController.cs" />
+    <Compile Include="Areas\Jobs\Controllers\RequiredIndexesController.cs" />
+    <Compile Include="Areas\Jobs\Controllers\SSISController.cs" />
+    <Compile Include="Areas\Jobs\Controllers\SSRSController.cs" />
+    <Compile Include="Areas\Jobs\JobsAreaRegistration.cs" />
+    <Compile Include="Areas\Jobs\Models\HighCPUConsumedQueries.cs" />
+    <Compile Include="Areas\Jobs\Models\HighCPUConsumedSP.cs" />
+    <Compile Include="Areas\Jobs\Models\Job.cs" />
+    <Compile Include="Areas\Jobs\Models\RequiredIndexes.cs" />
+    <Compile Include="Areas\Jobs\Models\SSIS.cs" />
+    <Compile Include="Areas\Jobs\Models\SSRS.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\AgedPickListController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\AgedRepairsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\AuditDefectsReportController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BlacklistController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseAWPController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseCreditingTATByWeekController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseIFSInventoryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseLookupToolController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseREMANController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseRepairController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseRepairVolumeController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\BoseWIPRemanController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DailyProductionCopyController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DailyProductionReviewController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DailyProductionsCopyController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DataWipeResultController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DefectListController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DellOpenOrderRepairController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DellOutboundPreAlertController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DellScrapPreAlertController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DELLWIPSnapshotController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DiscrepancyCaseController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DownloadTestResultController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DriveInquiryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\DtaUploadController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\ECOCheckController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\EMCOnSiteDetailEnquiryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\ERSController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\ExceptionsReportController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\FimerTesterResultsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\GoodInventoryReadytoShipController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\GoProInventoryWebController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\GoProTestsAppController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\InvoiceDetailController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\MaterialInventoryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PartInquiryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PartsInventoryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PartsSerialController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PartsTransactionController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PartStructureBOMController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PCBABoxEnquiryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PendingPartsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PLUSGenericInformationController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\PrevShipScrapController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\ReceiptAndCreditREFURBController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\RedmineReportController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\RepairInventoryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\RepairReportNSNController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\RepairReportWithPartsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\RepairTATController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\ReverseController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\RptyieldController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\RTVOrderPartnerUpdateController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\SerialNumOnHoldController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\SNHistoryWebReportController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\SNInvNotShippedController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\SODetailedDataController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\SODetailedForCustomsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\SOReservationDetailsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VFNAWPDataComponentsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VFNERSPickListController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VFNReceivingController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VFNReceivingDataGrapevineController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VFNReceivingDataSerialsController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VFNVerifoneModelOutputController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VFNWSHistoryController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\VolumeAwaitingCreditingController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\WorkOrderRepairController.cs" />
+    <Compile Include="Areas\ListingReports\Controllers\WorkStationHistoryController.cs" />
+    <Compile Include="Areas\ListingReports\ListingReportsAreaRegistration.cs" />
+    <Compile Include="Areas\ListingReports\Models\AgedPickList.cs" />
+    <Compile Include="Areas\ListingReports\Models\AgedRepairs.cs" />
+    <Compile Include="Areas\ListingReports\Models\AuditDefectsReport.cs" />
+    <Compile Include="Areas\ListingReports\Models\Blacklist.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseAWP.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseCreditingTATByWeek.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseIFSInventory.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseLookupTool.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseREMAN.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseRepair.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseRepairVolume.cs" />
+    <Compile Include="Areas\ListingReports\Models\BoseWIPReman.cs" />
+    <Compile Include="Areas\ListingReports\Models\DailyProductionCopy.cs" />
+    <Compile Include="Areas\ListingReports\Models\DailyProductionReview.cs" />
+    <Compile Include="Areas\ListingReports\Models\DailyProductionsCopy.cs" />
+    <Compile Include="Areas\ListingReports\Models\DataWipeResult.cs" />
+    <Compile Include="Areas\ListingReports\Models\DefectList.cs" />
+    <Compile Include="Areas\ListingReports\Models\DellOpenOrderRepair.cs" />
+    <Compile Include="Areas\ListingReports\Models\DellOutboundPreAlert.cs" />
+    <Compile Include="Areas\ListingReports\Models\DellScrapPreAlert.cs" />
+    <Compile Include="Areas\ListingReports\Models\DELLWIPSnapshot.cs" />
+    <Compile Include="Areas\ListingReports\Models\DiscrepancyCase.cs" />
+    <Compile Include="Areas\ListingReports\Models\DownloadTestResult.cs" />
+    <Compile Include="Areas\ListingReports\Models\DriveInquiry.cs" />
+    <Compile Include="Areas\ListingReports\Models\DtaUpload.cs" />
+    <Compile Include="Areas\ListingReports\Models\ECOCheck.cs" />
+    <Compile Include="Areas\ListingReports\Models\EMCOnSiteDetailEnquiry.cs" />
+    <Compile Include="Areas\ListingReports\Models\ERS.cs" />
+    <Compile Include="Areas\ListingReports\Models\ExceptionsReport.cs" />
+    <Compile Include="Areas\ListingReports\Models\FimerTesterResults.cs" />
+    <Compile Include="Areas\ListingReports\Models\GoodInventoryReadytoShip.cs" />
+    <Compile Include="Areas\ListingReports\Models\GoProInventoryWeb.cs" />
+    <Compile Include="Areas\ListingReports\Models\GoProTestsApp.cs" />
+    <Compile Include="Areas\ListingReports\Models\InvoiceDetail.cs" />
+    <Compile Include="Areas\ListingReports\Models\MaterialInventory.cs" />
+    <Compile Include="Areas\ListingReports\Models\PartInquiry.cs" />
+    <Compile Include="Areas\ListingReports\Models\PartsInventory.cs" />
+    <Compile Include="Areas\ListingReports\Models\PartsSerial.cs" />
+    <Compile Include="Areas\ListingReports\Models\PartsTransaction.cs" />
+    <Compile Include="Areas\ListingReports\Models\PartStructureBOM.cs" />
+    <Compile Include="Areas\ListingReports\Models\PCBABoxEnquiry.cs" />
+    <Compile Include="Areas\ListingReports\Models\PendingParts.cs" />
+    <Compile Include="Areas\ListingReports\Models\PLUSGenericInformation.cs" />
+    <Compile Include="Areas\ListingReports\Models\PrevShipScrap.cs" />
+    <Compile Include="Areas\ListingReports\Models\ReceiptAndCreditREFURB.cs" />
+    <Compile Include="Areas\ListingReports\Models\RedmineReport.cs" />
+    <Compile Include="Areas\ListingReports\Models\RepairInventory.cs" />
+    <Compile Include="Areas\ListingReports\Models\RepairReportNSN.cs" />
+    <Compile Include="Areas\ListingReports\Models\RepairReportWithParts.cs" />
+    <Compile Include="Areas\ListingReports\Models\RepairTAT.cs" />
+    <Compile Include="Areas\ListingReports\Models\Reverse.cs" />
+    <Compile Include="Areas\ListingReports\Models\Rptyield.cs" />
+    <Compile Include="Areas\ListingReports\Models\RTVOrderPartnerUpdate.cs" />
+    <Compile Include="Areas\ListingReports\Models\SerialNumOnHold.cs" />
+    <Compile Include="Areas\ListingReports\Models\SNHistoryWebReport.cs" />
+    <Compile Include="Areas\ListingReports\Models\SNInvNotShipped.cs" />
+    <Compile Include="Areas\ListingReports\Models\SODetailedData.cs" />
+    <Compile Include="Areas\ListingReports\Models\SODetailedForCustoms.cs" />
+    <Compile Include="Areas\ListingReports\Models\SOReservationDetails.cs" />
+    <Compile Include="Areas\ListingReports\Models\VFNAWPDataComponents.cs" />
+    <Compile Include="Areas\ListingReports\Models\VFNERSPickList.cs" />
+    <Compile Include="Areas\ListingReports\Models\VFNReceiving.cs" />
+    <Compile Include="Areas\ListingReports\Models\VFNReceivingDataGrapevine.cs" />
+    <Compile Include="Areas\ListingReports\Models\VFNReceivingDataSerials.cs" />
+    <Compile Include="Areas\ListingReports\Models\VFNVerifoneModelOutput.cs" />
+    <Compile Include="Areas\ListingReports\Models\VFNWSHistory.cs" />
+    <Compile Include="Areas\ListingReports\Models\VolumeAwaitingCrediting.cs" />
+    <Compile Include="Areas\ListingReports\Models\WorkOrderRepair.cs" />
+    <Compile Include="Areas\ListingReports\Models\WorkStationHistory.cs" />
+    <Compile Include="Areas\Logistics\Controllers\CrossDockController.cs" />
+    <Compile Include="Areas\Logistics\Controllers\DocklogController.cs" />
+    <Compile Include="Areas\Logistics\Controllers\DockReceiptsController.cs" />
+    <Compile Include="Areas\Logistics\LogisticsAreaRegistration.cs" />
+    <Compile Include="Areas\Logistics\Models\CrossDock.cs" />
+    <Compile Include="Areas\Logistics\Models\Docklog.cs" />
+    <Compile Include="Areas\Logistics\Models\DockReceipts.cs" />
+    <Compile Include="Areas\Meta\Controllers\DataWipeResultLogController.cs" />
+    <Compile Include="Areas\Meta\Controllers\DriveDetailController.cs" />
+    <Compile Include="Areas\Meta\Controllers\FacebookInhouseTPPLController.cs" />
+    <Compile Include="Areas\Meta\Controllers\GetCurrentWSLogController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaClaimManagementController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaDekitController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaGrapevineProblemLogController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaInventoryController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaMTDGlobalShippingController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaPalletBoxController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaProductivityReportController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaReceivingReportController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaReceivingVolumeController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaRepairPartConsumptionController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaRepairReportController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaReportController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaRMAController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaRMAOrdersWithErrorsController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaShippingReportController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaSOHourlyOpsController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaTestRunFaultCodesController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaTPPLTTestController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaTrackDataWipeComplianceController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaWipController.cs" />
+    <Compile Include="Areas\Meta\Controllers\MetaYieldController.cs" />
+    <Compile Include="Areas\Meta\Controllers\RepairConsumptionReportController.cs" />
+    <Compile Include="Areas\Meta\Controllers\RepairReportVerAController.cs" />
+    <Compile Include="Areas\Meta\Controllers\RepairReportVerBController.cs" />
+    <Compile Include="Areas\Meta\Controllers\SOsStatusController.cs" />
+    <Compile Include="Areas\Meta\Controllers\SupernovaProductionReportController.cs" />
+    <Compile Include="Areas\Meta\MetaAreaRegistration.cs" />
+    <Compile Include="Areas\Meta\Models\DataWipeResultLog.cs" />
+    <Compile Include="Areas\Meta\Models\DriveDetail.cs" />
+    <Compile Include="Areas\Meta\Models\FacebookInhouseTPPL.cs" />
+    <Compile Include="Areas\Meta\Models\GetCurrentWSLog.cs" />
+    <Compile Include="Areas\Meta\Models\MetaClaimManagement.cs" />
+    <Compile Include="Areas\Meta\Models\MetaDekit.cs" />
+    <Compile Include="Areas\Meta\Models\MetaGrapevineProblemLog.cs" />
+    <Compile Include="Areas\Meta\Models\MetaInventory.cs" />
+    <Compile Include="Areas\Meta\Models\MetaMTDGlobalShipping.cs" />
+    <Compile Include="Areas\Meta\Models\MetaPalletBox.cs" />
+    <Compile Include="Areas\Meta\Models\MetaProductivityReport.cs" />
+    <Compile Include="Areas\Meta\Models\MetaReceivingReport.cs" />
+    <Compile Include="Areas\Meta\Models\MetaReceivingVolume.cs" />
+    <Compile Include="Areas\Meta\Models\MetaRepairPartConsumption.cs" />
+    <Compile Include="Areas\Meta\Models\MetaRepairReport.cs" />
+    <Compile Include="Areas\Meta\Models\MetaReport.cs" />
+    <Compile Include="Areas\Meta\Models\MetaRMA.cs" />
+    <Compile Include="Areas\Meta\Models\MetaRMAOrdersWithErrors.cs" />
+    <Compile Include="Areas\Meta\Models\MetaShippingReport.cs" />
+    <Compile Include="Areas\Meta\Models\MetaSOHourlyOps.cs" />
+    <Compile Include="Areas\Meta\Models\MetaTestRunFaultCodes.cs" />
+    <Compile Include="Areas\Meta\Models\MetaTPPLTTest.cs" />
+    <Compile Include="Areas\Meta\Models\MetaTrackDataWipeCompliance.cs" />
+    <Compile Include="Areas\Meta\Models\MetaWip.cs" />
+    <Compile Include="Areas\Meta\Models\MetaYield.cs" />
+    <Compile Include="Areas\Meta\Models\RepairConsumptionReport.cs" />
+    <Compile Include="Areas\Meta\Models\RepairReportVerA.cs" />
+    <Compile Include="Areas\Meta\Models\RepairReportVerB.cs" />
+    <Compile Include="Areas\Meta\Models\SOsStatus.cs" />
+    <Compile Include="Areas\Meta\Models\SupernovaProductionReport.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\AlcatelShippingReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ApprovedRejectRepairController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\AvailableInventoryController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\BonepileController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ConsumeComponentController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\CreditingTATController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\DailyPulseByDateController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\DailyPulseController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\Data2LogisticsReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\DellBillingController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\DiscrepancyReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\DMDLogisticsReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\DriveDetailsController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\FINSReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ImageController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ImageViewController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\InvoiceFamilyController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\InvoiceRepairDetailController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\InvoiceValveController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\KPNInventorySnapshotController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\LinkedTrackersRMAController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ManifestReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\MaterialFulfillmentController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\MinMaxLevelController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ComponentPickListController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\FaultCodeTest2StationController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\InvoiceRepairlevelController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\NPFController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\OpenB2COrdersController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\OpenWipOrdersController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PackingListController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PartAgingController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PartLocationController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PartsBackLogController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PartsUsageController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PartTransactionSummaryController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PendingPartController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ReceiptListController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\RepairReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\RepeatReturnController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\RFCExportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\RICInventoryControlController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\RMADiscrepancyController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\RMAViewerController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ROController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ShipmentDocumentController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\ShippingErrorController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\SLAReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\SOController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\SOPickListController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\SOTATController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\SummaryRR60Controller.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\TATController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\TransactionDetailController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\VALVEComponentUsageController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\VENUnitsPendingReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\VolumeAwaitingRefurbishmentController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\VRSOutMessagingController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WIPAgingByWOController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WIPAgingController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WIPAgingNSNController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WIPController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WIPOutlineController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WOController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WOFaultRepairController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WOHistoryShippedUnitsController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WorkOrderDetailController.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\WOWipReportController.cs" />
+    <Compile Include="Areas\SupplyChain\Models\AlcatelShippingReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ApprovedRejectRepair.cs" />
+    <Compile Include="Areas\SupplyChain\Models\AvailableInventory.cs" />
+    <Compile Include="Areas\SupplyChain\Models\Bonepile.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ConsumeComponent.cs" />
+    <Compile Include="Areas\SupplyChain\Models\CreditingTAT.cs" />
+    <Compile Include="Areas\SupplyChain\Models\DailyPulse.cs" />
+    <Compile Include="Areas\SupplyChain\Models\DailyPulseByDate.cs" />
+    <Compile Include="Areas\SupplyChain\Models\Data2LogisticsReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\DellBilling.cs" />
+    <Compile Include="Areas\SupplyChain\Models\DiscrepancyReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\DMDLogisticsReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\DriveDetails.cs" />
+    <Compile Include="Areas\SupplyChain\Models\FINSReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\Image.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ImageView.cs" />
+    <Compile Include="Areas\SupplyChain\Models\InvoiceFamily.cs" />
+    <Compile Include="Areas\SupplyChain\Models\InvoiceRepairDetail.cs" />
+    <Compile Include="Areas\SupplyChain\Models\InvoiceValve.cs" />
+    <Compile Include="Areas\SupplyChain\Models\KPNInventorySnapshot.cs" />
+    <Compile Include="Areas\SupplyChain\Models\LinkedTrackersRMA.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ManifestReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\MaterialFulfillment.cs" />
+    <Compile Include="Areas\SupplyChain\Models\MinMaxLevel.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ComponentPickList.cs" />
+    <Compile Include="Areas\SupplyChain\Models\FaultCodeTest2Station.cs" />
+    <Compile Include="Areas\SupplyChain\Models\InvoiceRepairlevel.cs" />
+    <Compile Include="Areas\SupplyChain\Models\NPF.cs" />
+    <Compile Include="Areas\SupplyChain\Models\OpenB2COrders.cs" />
+    <Compile Include="Areas\SupplyChain\Models\OpenWipOrders.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PackingList.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PalletwithAttributes.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PartAging.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PartLocation.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PartsBackLog.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PartsUsage.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PartTransactionSummary.cs" />
+    <Compile Include="Areas\SupplyChain\Models\PendingPart.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ReceiptList.cs" />
+    <Compile Include="Areas\SupplyChain\Models\RepairReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\RepeatReturn.cs" />
+    <Compile Include="Areas\SupplyChain\Models\RFCExport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\RICInventoryControl.cs" />
+    <Compile Include="Areas\SupplyChain\Models\RMADiscrepancy.cs" />
+    <Compile Include="Areas\SupplyChain\Models\RMAViewer.cs" />
+    <Compile Include="Areas\SupplyChain\Models\RO.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ShipmentDocument.cs" />
+    <Compile Include="Areas\SupplyChain\Models\ShippingError.cs" />
+    <Compile Include="Areas\SupplyChain\Models\SLAReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\SO.cs" />
+    <Compile Include="Areas\SupplyChain\Models\SOPickList.cs" />
+    <Compile Include="Areas\SupplyChain\Models\SOTAT.cs" />
+    <Compile Include="Areas\SupplyChain\Models\SummaryRR60.cs" />
+    <Compile Include="Areas\SupplyChain\Models\TAT.cs" />
+    <Compile Include="Areas\SupplyChain\Models\TransactionDetail.cs" />
+    <Compile Include="Areas\SupplyChain\Models\VALVEComponentUsage.cs" />
+    <Compile Include="Areas\SupplyChain\Models\VENUnitsPendingReport.cs" />
+    <Compile Include="Areas\SupplyChain\Models\VolumeAwaitingRefurbishment.cs" />
+    <Compile Include="Areas\SupplyChain\Models\VRSOutMessaging.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WIP.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WIPAging.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WIPAgingByWO.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WIPAgingNSN.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WIPOutline.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WO.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WOFaultRepair.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WOHistoryShippedUnits.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WorkOrderDetail.cs" />
+    <Compile Include="Areas\SupplyChain\Models\WOWipReport.cs" />
+    <Compile Include="Areas\SupplyChain\Controllers\PalletwithAttributesController.cs" />
+    <Compile Include="Areas\SupplyChain\SupplyChainAreaRegistration.cs" />
+    <Compile Include="Classess\cAuth.cs" />
+    <Compile Include="Classess\cCommon.cs" />
+    <Compile Include="Classess\cDAL.cs" />
+    <Compile Include="Classess\BasicEncrypt.cs" />
+    <Compile Include="Classess\cEmail.cs" />
+    <Compile Include="Classess\cEmployee.cs" />
+    <Compile Include="Classess\cImpersonate.cs" />
+    <Compile Include="Classess\cLog.cs" />
+    <Compile Include="Classess\cPDF.cs" />
+    <Compile Include="Classess\cSite.cs" />
+    <Compile Include="Controllers\CodeTableListingController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\DBIngenicoController.cs" />
+    <Compile Include="Controllers\DBIngenicoSecondController.cs" />
+    <Compile Include="Controllers\DBIngenicoThirdController.cs" />
+    <Compile Include="Controllers\DBShiftsController.cs" />
+    <Compile Include="Controllers\DocumentsController.cs" />
+    <Compile Include="Controllers\LinkPowerBIController.cs" />
+    <Compile Include="Controllers\LogQueriesController.cs" />
+    <Compile Include="Controllers\MetaDiagDBController.cs" />
+    <Compile Include="Controllers\MnuLibraryController.cs" />
+    <Compile Include="Controllers\SqlDocsController.cs" />
+    <Compile Include="Extensions\CodeTableListing.aspx.cs">
+      <DependentUpon>CodeTableListing.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Extensions\CodeTableListing.aspx.designer.cs">
+      <DependentUpon>CodeTableListing.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\WidgetReport.aspx.cs">
+      <DependentUpon>WidgetReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Extensions\WidgetReport.aspx.designer.cs">
+      <DependentUpon>WidgetReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Externals\B2BMessage.aspx.cs">
+      <DependentUpon>B2BMessage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Externals\B2BMessage.aspx.designer.cs">
+      <DependentUpon>B2BMessage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Externals\OutboundDocs.aspx.cs">
+      <DependentUpon>OutboundDocs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Externals\OutboundDocs.aspx.designer.cs">
+      <DependentUpon>OutboundDocs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Externals\Documents.aspx.cs">
+      <DependentUpon>Documents.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Externals\Documents.aspx.designer.cs">
+      <DependentUpon>Documents.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Externals\ReportViewer.aspx.cs">
+      <DependentUpon>ReportViewer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Externals\ReportViewer.aspx.designer.cs">
+      <DependentUpon>ReportViewer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CodeTableListing.cs" />
+    <Compile Include="Models\DashboardModel.cs" />
+    <Compile Include="Models\DBIngenico.cs" />
+    <Compile Include="Models\DBIngenicoSecond.cs" />
+    <Compile Include="Models\DBIngenicoThird.cs" />
+    <Compile Include="Models\DBShifts.cs" />
+    <Compile Include="Models\Documents.cs" />
+    <Compile Include="Models\LinkPowerBI.cs" />
+    <Compile Include="Models\LogQueries.cs" />
+    <Compile Include="Models\MetaDiagDB.cs" />
+    <Compile Include="Models\MnuLibrary.cs" />
+    <Compile Include="Models\General.cs" />
+    <Compile Include="Models\SqlDocs.cs" />
+    <Compile Include="Models\UserProfile.cs" />
+    <Compile Include="Models\WidgetModel.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\WidgetController.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Home.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="packages.config" />
+    <Content Include="Views\Shared\_LayoutEmpty.cshtml" />
+    <Content Include="Views\Home\Error.cshtml" />
+    <Content Include="Views\Home\Base.cshtml" />
+    <Content Include="Views\Home\WIPStatus.cshtml" />
+    <Content Include="Scripts\datatable_sum.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Widget\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutInner.cshtml" />
+    <Content Include="Views\SqlDocs\Index.cshtml" />
+    <Content Include="Views\MnuLibrary\Index.cshtml" />
+    <Content Include="Views\LogQueries\Index.cshtml" />
+    <Content Include="Views\LogQueries\UnitList.cshtml" />
+    <Content Include="Views\LogQueries\ActivityLog.cshtml" />
+    <Content Include="Views\Dashboard\Samsung_Horizon.cshtml" />
+    <Content Include="Views\Shared\_LayoutDashboard.cshtml" />
+    <Content Include="Views\Dashboard\SamsungRefresh.cshtml" />
+    <Content Include="Views\Dashboard\SamsungHorizonChart.cshtml" />
+    <Content Include="Views\Dashboard\BigTv.cshtml" />
+    <Content Include="Views\Dashboard\DBIndex.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\web.config" />
+    <Content Include="Areas\SupplyChain\Views\RO\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\ROUnit.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\ROUnitAccessory.cshtml" />
+    <Content Include="Areas\ListingReports\Views\web.config" />
+    <Content Include="Areas\ListingReports\Views\PartInquiry\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartInquiry\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartInquiry\Detail.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsInventory\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsInventory\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsTransaction\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsTransaction\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SO\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SO\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SO\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SO\SOUnit.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SO\SOUnitAccessory.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WO\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WO\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsSerial\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsSerial\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WO\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WO\WOUnit.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsSerial\Detail.cshtml" />
+    <Content Include="Areas\Logistics\Views\web.config" />
+    <Content Include="Areas\Logistics\Views\Docklog\Option.cshtml" />
+    <Content Include="Areas\Logistics\Views\Docklog\Index.cshtml" />
+    <Content Include="Areas\Logistics\Views\CrossDock\Option.cshtml" />
+    <Content Include="Areas\Logistics\Views\CrossDock\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIP\GetUnits.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIP\GetWIP.cshtml" />
+    <Content Include="Areas\ListingReports\Views\Rptyield\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\Rptyield\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\Rptyield\GetDetail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPAging\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPAging\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartAging\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartAging\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartLocation\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartLocation\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIP\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SO\GetSODetail.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SerialNumOnHold\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SerialNumOnHold\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SNInvNotShipped\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SNInvNotShipped\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartStructureBOM\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartStructureBOM\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\ListingReports\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DefectList\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DefectList\Index.cshtml" />
+    <Content Include="Areas\Logistics\Views\DockReceipts\Option.cshtml" />
+    <Content Include="Areas\Logistics\Views\DockReceipts\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SOPickList\option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SOPickList\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\GetRODetail.cshtml" />
+    <Content Include="Views\CodeTableListing\Index.cshtml" />
+    <Content Include="Views\CodeTableListing\detail.cshtml" />
+    <Content Include="Views\Shared\GetProgramBySite.cshtml" />
+    <Content Include="Views\CodeTableListing\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ComponentPickList\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ComponentPickList\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WOFaultRepair\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WOFaultRepair\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsInventory\GetSerials.cshtml" />
+    <Content Include="Areas\ListingReports\Views\FimerTesterResults\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\FimerTesterResults\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\web.config" />
+    <Content Include="Areas\Biztalk\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Inbound\Option.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Inbound\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Inbound\Detail.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Outbound\Option.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Outbound\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Outbound\Detail.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Inbound\GetSerial.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Outbound\GetSerial.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPOutline\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPOutline\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\ROWithNoWO.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RepeatReturn\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RepeatReturn\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPAgingByWO\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPAgingByWO\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPAgingByWO\GetData.cshtml" />
+    <Content Include="Areas\ListingReports\Views\MaterialInventory\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\MaterialInventory\Index.cshtml" />
+    <Content Include="Areas\BRT\Views\web.config" />
+    <Content Include="Areas\BRT\Views\BRTLookup\Option.cshtml" />
+    <Content Include="Areas\BRT\Views\BRTLookup\Index.cshtml" />
+    <Content Include="Areas\BRT\Views\BRTLookup\GetData.cshtml" />
+    <Content Include="Areas\BRT\Views\BRTLookup\Location.cshtml" />
+    <Content Include="Areas\BRT\Views\BRTLookup\SerialNo.cshtml" />
+    <Content Include="Areas\BRT\Views\BRTLookup\LocationByPart.cshtml" />
+    <Content Include="Areas\Finance\Views\web.config" />
+    <Content Include="Areas\Finance\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Finance\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Finance\Views\GLTransactions\Option.cshtml" />
+    <Content Include="Areas\Finance\Views\GLTransactions\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionReview\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionReview\Index.cshtml" />
+    <Content Include="Areas\BRT\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BRT\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\BRT\Views\CycleCount\Option.cshtml" />
+    <Content Include="Areas\BRT\Views\CycleCount\Index.cshtml" />
+    <Content Include="Areas\BRT\Views\CycleCountSummary\Option.cshtml" />
+    <Content Include="Areas\BRT\Views\CycleCountSummary\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SLAReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SLAReport\Index.cshtml" />
+    <Content Include="Areas\BRT\Views\CycleCountAccuracy\Option.cshtml" />
+    <Content Include="Areas\BRT\Views\CycleCountAccuracy\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SOPickList\GetNotReserved.cshtml" />
+    <Content Include="Areas\BRT\Views\CycleCount\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\FaultCodeTest2Station\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\FaultCodeTest2Station\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ECOCheck\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ECOCheck\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SOPickList\GetClearToBuild.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PendingParts\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PendingParts\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\NPF\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\NPF\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartsUsage\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartsUsage\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceRepairlevel\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceRepairlevel\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\MinMaxLevel\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\MinMaxLevel\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\WorkStationHistory\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\WorkStationHistory\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DataWipeResult\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DataWipeResult\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DataWipeResult\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceRepairlevel\GetDetail.cshtml" />
+    <Content Include="Areas\Meta\Views\web.config" />
+    <Content Include="Areas\Meta\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Meta\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaShippingReport\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaShippingReport\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaReceivingReport\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaReceivingReport\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaProductivityReport\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaProductivityReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ApprovedRejectRepair\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ApprovedRejectRepair\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaReceivingVolume\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaReceivingVolume\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaMTDGlobalShipping\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaMTDGlobalShipping\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaWip\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaWip\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaTestRunFaultCodes\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaTestRunFaultCodes\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaSOHourlyOps\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaSOHourlyOps\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SOPickList\GetSOPickList.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceRepairDetail\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceRepairDetail\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceFamily\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceFamily\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Inbound\GetSummary.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Inbound\GetInbound.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Outbound\GetSummary.cshtml" />
+    <Content Include="Areas\Biztalk\Views\Outbound\GetOutbound.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionCopy\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionCopy\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionsCopy\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionsCopy\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionCopy\Details.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionsCopy\Detail.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaInventory\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaInventory\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaRMA\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaRMA\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceValve\GetDetail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceValve\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\InvoiceValve\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaDekit\Index.cshtml" />
+    <Content Include="Areas\Logistics\Views\DockReceipts\GetDetail.cshtml" />
+    <Content Include="Areas\Finance\Views\WorkOrderCompletion\Option.cshtml" />
+    <Content Include="Areas\Finance\Views\WorkOrderCompletion\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RFCExport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RFCExport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartsBackLog\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartsBackLog\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartsBackLog\GetDetail.cshtml" />
+    <Content Include="Areas\Meta\Views\DriveDetail\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\DriveDetail\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RMADiscrepancy\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RMADiscrepancy\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VALVEComponentUsage\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VALVEComponentUsage\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartTransactionSummary\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartTransactionSummary\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RMADiscrepancy\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RMADiscrepancy\Summary.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PartTransactionSummary\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DriveDetails\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DriveDetails\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WO\repairedUnits.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WOWipReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WOWipReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DtaUpload\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DtaUpload\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PackingList\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\WorkOrderRepair\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\WorkOrderRepair\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ReceiptList\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PackingList\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ReceiptList\Summary.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ReceiptList\Detail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Bonepile\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Bonepile\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SummaryRR60\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SummaryRR60\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ConsumeComponent\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ConsumeComponent\GetList.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ConsumeComponent\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaGrapevineProblemLog\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaGrapevineProblemLog\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaYield\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaYield\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\MissingDeliveryNotification\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\MissingDeliveryNotification\Option.cshtml" />
+    <Content Include="Areas\Jobs\Views\web.config" />
+    <Content Include="Areas\Jobs\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Jobs\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Jobs\Views\Job\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\OutboundTransactionDetail\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\OutboundTransactionDetail\Option.cshtml" />
+    <Content Include="Areas\Jobs\Views\Job\Option.cshtml" />
+    <Content Include="Areas\Biztalk\Views\OutboundTransactionDetail\Detail.cshtml" />
+    <Content Include="Areas\Jobs\Views\Job\GetDetail.cshtml" />
+    <Content Include="Areas\Jobs\Views\SSRS\Index.cshtml" />
+    <Content Include="Areas\Biztalk\Views\OutboundTransactionDetail\GetMessage.cshtml" />
+    <Content Include="Areas\Jobs\Views\SSIS\Index.cshtml" />
+    <Content Include="Areas\Jobs\Views\SSRS\Option.cshtml" />
+    <Content Include="Areas\Jobs\Views\SSIS\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DataWipeResult\ViewContent.cshtml" />
+    <Content Include="Areas\Jobs\Views\HighCPUConsumedSP\Index.cshtml" />
+    <Content Include="Areas\Jobs\Views\HighCPUConsumedSP\Option.cshtml" />
+    <Content Include="Areas\Jobs\Views\RequiredIndexes\Index.cshtml" />
+    <Content Include="Areas\Jobs\Views\RequiredIndexes\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WorkOrderDetail\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WorkOrderDetail\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaClaimManagement\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaClaimManagement\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaPalletBox\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaPalletBox\Index.cshtml" />
+    <Content Include="Areas\Jobs\Views\HighCPUConsumedQueries\Option.cshtml" />
+    <Content Include="Areas\Jobs\Views\HighCPUConsumedQueries\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DataWipeResult\GetTxt.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaTPPLTTest\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaTPPLTTest\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\FacebookInhouseTPPL\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\FacebookInhouseTPPL\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DownloadTestResult\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DownloadTestResult\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairInventory\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ERS\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairInventory\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\Reverse\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaRepairPartConsumption\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaRepairPartConsumption\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaRMAOrdersWithErrors\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaRMAOrdersWithErrors\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaReport\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\TAT\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\TAT\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ExceptionsReport\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ExceptionsReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DriveInquiry\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DriveInquiry\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\PreRegisteredUnit.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PCBABoxEnquiry\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RMAViewer\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RMAViewer\Summary.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RMAViewer\Detail.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SOReservationDetails\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SOReservationDetails\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Image\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Image\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaTrackDataWipeCompliance\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaTrackDataWipeCompliance\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\GetCurrentWSLog\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\GetCurrentWSLog\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Image\GetList.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ImageView\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ImageView\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\EMCOnSiteDetailEnquiry\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\EMCOnSiteDetailEnquiry\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\AlcatelShippingReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\AlcatelShippingReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DMDLogisticsReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DMDLogisticsReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\LinkedTrackersRMA\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\LinkedTrackersRMA\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VENUnitsPendingReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VENUnitsPendingReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RICInventoryControl\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RICInventoryControl\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\MaterialFulfillment\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\MaterialFulfillment\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\MaterialFulfillment\Detail.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RedmineReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RedmineReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ManifestReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ManifestReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ManifestReport\GetDetail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DellBilling\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DellBilling\GetSummary.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DellBilling\GetDetail.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\OpenB2COrders\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\OpenB2COrders\Option.cshtml" />
+    <Content Include="Areas\Finance\Views\WOComponent\Option.cshtml" />
+    <Content Include="Areas\Finance\Views\WOComponent\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\AvailableInventory\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\AvailableInventory\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\Blacklist\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\Blacklist\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SOTAT\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SOTAT\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\CreditingTAT\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\CreditingTAT\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\GoProInventoryWeb\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\GoProInventoryWeb\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VolumeAwaitingRefurbishment\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VolumeAwaitingRefurbishment\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DiscrepancyReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DiscrepancyReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\TransactionDetail\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\TransactionDetail\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\FINSReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\FINSReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\GoodInventoryReadytoShip\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\GoodInventoryReadytoShip\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\DataWipeResultLog\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\DataWipeResultLog\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DiscrepancyCase\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DiscrepancyCase\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RO\OptionBose.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\SO\OptionBose.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WO\OptionBose.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WOFaultRepair\OptionBose.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VALVEComponentUsage\OptionBose.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PartsSerial\OptionBose.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\TAT\OptionBose.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RepairReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\RepairReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DailyProductionReview\OptionBose.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Data2LogisticsReport\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\Data2LogisticsReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\SOsStatus\Option.cshtml" />
+    <Content Include="Areas\Meta\Views\SOsStatus\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\RefurbNewRepack.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\RefurbProcessFGI.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\RefurbRecvScrap.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\RepairRecvCredit.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\RepairProcessFGI.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\RepairRecvTested.cshtml" />
+    <Content Include="Areas\ListingReports\Views\ReceiptAndCreditREFURB\RepairRecvPack.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DellBilling\Index.cshtml" />
+    <Content Include="Areas\Finance\Views\KPNInvoice\Option.cshtml" />
+    <Content Include="Areas\Finance\Views\KPNInvoice\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DELLWIPSnapshot\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PrevShipScrap\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PrevShipScrap\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DellOpenOrderRepair\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DellOpenOrderRepair\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WOHistoryShippedUnits\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WOHistoryShippedUnits\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\OpenWipOrders\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DailyPulse\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DellOutboundPreAlert\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DellOutboundPreAlert\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DellScrapPreAlert\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\DellScrapPreAlert\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ShippingError\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RTVOrderPartnerUpdate\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PendingPart\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PendingPart\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPAgingNSN\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\WIPAgingNSN\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VRSOutMessaging\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\AuditDefectsReport\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\AuditDefectsReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairReportWithParts\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairReportWithParts\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\AgedPickList\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SNHistoryWebReport\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SNHistoryWebReport\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VRSOutMessaging\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairReportNSN\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairReportNSN\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNAWPDataComponents\Index.cshtml" />
+    <Content Include="Areas\Logistics\Views\Docklog\OptionDell.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNReceivingDataGrapevine\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNReceivingDataGrapevine\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNReceivingDataSerials\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNReceivingDataSerials\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNReceiving\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNReceiving\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNVerifoneModelOutput\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNVerifoneModelOutput\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNWSHistory\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNWSHistory\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SODetailedData\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SODetailedData\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VolumeAwaitingCrediting\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\InvoiceDetail\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\InvoiceDetail\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseWIPReman\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseRepair\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseRepair\GetList.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PalletwithAttributes\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\PalletwithAttributes\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseREMAN\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseREMAN\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ShipmentDocument\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\ShipmentDocument\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SODetailedForCustoms\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\SODetailedForCustoms\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\VolumeAwaitingRefurbishment\GetUnits.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DailyPulseByDate\Option.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\DailyPulseByDate\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairTAT\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\RepairTAT\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseRepairVolume\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseRepairVolume\GetUnits.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VolumeAwaitingCrediting\GetUnit.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\CreditingTAT\GetDetail.cshtml" />
+    <Content Include="Areas\ListingReports\Views\AgedRepairs\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\AgedRepairs\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PLUSGenericInformation\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseRepairVolume\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PLUSGenericInformation\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PLUSGenericInformation\Detail.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseREMAN\GetDetail.cshtml" />
+    <Content Include="Areas\Meta\Views\SupernovaProductionReport\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\MetaRepairReport\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\RepairConsumptionReport\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PLUSGenericInformation\RedirectToNewTab.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseIFSInventory\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseWIPReman\GetUnits.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseLookupTool\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseLookupTool\Index.cshtml" />
+    <Content Include="Areas\SupplyChain\Views\KPNInventorySnapshot\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseCreditingTATByWeek\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseCreditingTATByWeek\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\PLUSGenericInformation\DetailReports.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNERSPickList\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\VFNERSPickList\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\BoseAWP\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\RepairReportVerA\Index.cshtml" />
+    <Content Include="Areas\Meta\Views\RepairReportVerB\Index.cshtml" />
+    <Content Include="Areas\ListingReports\Views\GoProTestsApp\Option.cshtml" />
+    <Content Include="Areas\ListingReports\Views\GoProTestsApp\Index.cshtml" />
+    <Content Include="Areas\Logistics\Views\Docklog\OptionBose.cshtml" />
+    <None Include="Properties\PublishProfiles\PRS Publish on S223.pubxml" />
+    <None Include="Properties\PublishProfiles\PRS Publish on S225.pubxml" />
+    <None Include="Properties\PublishProfiles\PRS Publish On VT-RS.pubxml" />
+    <Content Include="Views\LinkPowerBI\Index.cshtml" />
+    <Content Include="Views\LinkPowerBI\Option.cshtml" />
+    <Content Include="Views\Documents\Index.cshtml" />
+    <Content Include="Views\DBShifts\IngenicoShift1.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Home\Logout.cshtml" />
+    <Content Include="Views\Shared\_LayoutLogin.cshtml" />
+    <Content Include="Views\DBIngenico\Index.cshtml" />
+    <Content Include="Views\DBIngenicoSecond\Index.cshtml" />
+    <Content Include="Views\DBIngenicoThird\Index.cshtml" />
+    <Content Include="Views\MetaDiagDB\Index.cshtml" />
+    <Content Include="Views\MetaDiagDB\METACounterDB.cshtml" />
+    <Content Include="Views\Dashboard\PackingCounter.cshtml" />
+    <Content Include="Views\Dashboard\GetDashboards.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\Logistics\Views\Shared\" />
+    <Folder Include="Areas\Meta\Views\DataWipeResultLogTest\" />
+    <Folder Include="bin\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

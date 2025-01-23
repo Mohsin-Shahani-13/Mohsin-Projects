@@ -1,0 +1,147 @@
+﻿@model IP.Areas.SupplyChain.Models.ReceiptList
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstReceiptList" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th class="notexport"> </th>
+                        <th>Total:</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        @*<th></th>
+                        <th></th>*@
+
+                    </tr>
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+
+        var _RptType = $('#rptName option:selected').text();
+        var _PalletBoxNo = $('#PalletBoxNo').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/ReceiptList/GetList',
+            data: {
+
+                RptType: _RptType,
+                PalletBoxNo: _PalletBoxNo
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+
+                        { "data": "box_no", "title": "box_no", "width": "130px", "visible": false },
+                        {
+                            "data": "pallet", "title": "Pallet", "width": "150px",
+                            render: function (data, type, row) {
+
+                                var locationNo;
+                                if (row["LocationNo"] == '' || row["LocationNo"] == null) {
+                                    locationNo = "null";
+                                }
+                                else {
+                                    locationNo = row["LocationNo"];
+                                }
+
+                                var url = '<a href= "../Externals/ReportViewer.aspx?PalletBoxNo=' + row["box_no"] + '&rptName=ReceiptList" target=_blank> ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "description", "title": "Description", "width": "130px" },
+                        { "data": "RMA", "title": "RMA", "width": "120px" },
+                        { "data": "Model", "title": "Model", "width": "120px" },
+                        {"data": "Qty", "title": "Qty", "width": "80px", "className": "text-right"}
+                    ];
+
+                    //For Displaying  Footer Sum
+
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(5).footer()).html(thousands_separators(api.column(5).data().sum()));
+
+                    }
+                    ToggleDataList(true);
+                    //var h = getHeight(85);
+
+                    MakeDataGrid('lstReceiptList', data.lstReceiptList, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

@@ -1,0 +1,97 @@
+﻿@model IP.Areas.ListingReports.Models.RedmineReport
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.status, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddStatus", null, new { id = "ddStatus", @name = "ddStatus", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    @*<tr>
+        <td class="pad" colspan="4" id="RptType">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                new SelectListItem{ Text="Awaiting BA", Value = "Awaiting BA" },
+                new SelectListItem{ Text="Awaiting Business Test", Value = "Awaiting Business Test" },
+                new SelectListItem{ Text="Awaiting Code Review", Value = "Awaiting Code Review" },
+                new SelectListItem{ Text="Awaiting Release", Value = "Awaiting Release" },
+                new SelectListItem{ Text="Awaiting Test", Value = "Awaiting Test" },
+                new SelectListItem{ Text="BA In Progress", Value = "BA In Progress" },
+                new SelectListItem{ Text="Closed", Value = "Closed" },
+                new SelectListItem{ Text="Dev On Hold", Value = "Dev On Hold" },
+                new SelectListItem{ Text="In Progress", Value = "In Progress" },
+                new SelectListItem{ Text="In Test", Value = "In Test" },
+                new SelectListItem{ Text="Not Started", Value = "Not Started" },
+                new SelectListItem{ Text="Test In Progress", Value = "Test In Progress" },
+                new SelectListItem{ Text="Summary", Value = "Summary" },
+                new SelectListItem{ Text="Detail", Value = "Detail" }
+
+
+                }, new { @class = "form-control" })
+        </td>
+    </tr>*@
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+    $('#btnGo').click(function () {
+
+            Go();
+       
+    });
+
+    function Go() {
+
+        var programId = $('#ddProgram').val();
+        var programName = $("#ddProgram option:selected").text();
+        //var fDate = $('#fromDt').val();
+        //var tDate = $('#toDt').val();
+        //var venType = $('#venType').val();
+        //var venNo = $('#venNo').val();
+        var status = $("#ddStatus option:selected").text();
+
+        $('#option').modal('hide');
+        OpenPage('\\ListingReports\\RedmineReport\\Index?programID=' + programId + '&programName=' + programName + '&status=' + status + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+
+
+

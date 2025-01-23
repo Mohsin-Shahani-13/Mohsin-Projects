@@ -1,0 +1,123 @@
+﻿@model IP.Models.Documents
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+<script src="~/Scripts/buttons.bootstrap.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<style type="text/css">
+    .sqlDoc {
+        /*display: none;*/
+    }
+
+    .download {
+        padding-top: 4px;
+        
+    }
+</style>
+<div id="parentDiv" class="container">
+    <input id="rptcode" type="hidden" value="IPMENU" />
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool">
+                <span class="fas fa-file fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle</strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+
+
+
+        </div>
+        <div class="box-body">
+            <table id="lstDoc" class="table table-bordered table-striped text-sm table-hover" style="width:100% !important">
+                <thead>
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th class="invisible"></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    ToggleDataList(false);
+    LoadData();
+
+    //For SQL Documentation
+    var rptDtlCode, rptDtlTitle, qrytool;
+
+    var rptCode = $('#rptCode').val(); // for sql docs.
+    var rptTitle = $('#rptTitle').val(); // for sql docs.
+
+    if (rptCode === undefined) {
+        rptDtlCode = $('#rptcode').val();
+        rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+        qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '" title="How they do that" target="_blank">';
+        qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+        qrytool += '</a>';
+
+        $('#buttons').empty();
+        $('#buttons').append(qrytool);
+    }
+    else {
+        qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptCode + '&rptTitle=' + rptTitle + '" title="How they do that" target="_blank">';
+        qrytool += '<span class="fa-stack sqlDoc"><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+        qrytool += '</a>';
+        $('#buttons').empty();
+        $('#buttons').append(qrytool);
+    }
+
+
+    function LoadData() {
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/Documents/GetPoliciesList',
+            data: {},
+            datatype: JSON,
+            success: function (data) {
+
+                $('#tblBody').empty();
+                
+                var columnWidth = [
+                    { "title": "Id", "width": "40px", "visible": false },
+                    { "title": "Name", "width": "120px" },
+                    { "title": "Description" },
+                    { "title": "Path", "visible": false },
+                    { "title": "Is Active", "width": "40px", "visible": false },
+                    { "title": "By", "width": "130px" },
+                    { "title": "On", "width": "90px", "class": "text-right" },
+                    {
+                        "title": "", "class": "text-center", "width": "30px",
+                        render: function (data, type, row) {
+                            var url = '';
+                            url += '<a href="/Externals/Documents.aspx?DocId=' + row[0] + '&DocPath=' + row[3] + '&page=list" alt="NA" target= _blank title="Click to download"><i class="fas fa-download download"></i></a>';
+                            return url;
+                        }
+                    }
+                ]
+                ToggleDataList(true);
+                MakeDataGrid('lstDoc', data.lstDoc, 0, columnWidth, true, true, false);
+               
+
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+    }
+
+</script>

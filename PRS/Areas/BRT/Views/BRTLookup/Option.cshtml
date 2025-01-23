@@ -1,0 +1,62 @@
+﻿@model IP.Areas.BRT.Models.BRTLookup
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    @*<tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>*@
+    <tr>
+        <td colspan="2" class="pad">
+            @Html.LabelFor(model => model.building, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddlBuilding", null, new { id = "ddlBuilding", @name = "ddlBuilding", @class = "form-control", @onkeydown = "GoOnEnter()" })
+            <br />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#building').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function Go() {
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var building = $('#ddlBuilding option:selected').text();
+        $('#option').modal('hide');
+        OpenPage('\\BRT\\BRTLookup\\Index?building=' + building + '&ProgramID=' + programId + ' &ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+

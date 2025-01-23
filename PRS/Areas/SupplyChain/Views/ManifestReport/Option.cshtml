@@ -1,0 +1,105 @@
+﻿@model IP.Areas.SupplyChain.Models.ManifestReport
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+
+    .padding {
+        padding-top: 20px;
+    }
+
+    .ischecked {
+        padding-top: 42px;
+        padding-left: 20px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.custRef, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="custRef" name="custRef" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.manifest  , new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="manifest" name="manifest" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#custRef').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+
+        return true;
+
+    }
+
+    function Go() {
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var custRef = $('#custRef').val();
+        var manifest = $('#manifest').val();
+       
+        $('#option').modal('hide');
+        OpenPage('\\SupplyChain\\ManifestReport\\Index?ProgramID=' + programId + '&ProgramName=' + ProgramName + '&custRef=' + custRef + '&manifest=' + manifest + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+
+
+

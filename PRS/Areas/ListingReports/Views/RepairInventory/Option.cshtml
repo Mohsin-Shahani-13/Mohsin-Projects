@@ -1,0 +1,68 @@
+﻿@model IP.Areas.ListingReports.Models.RepairInventory
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        width: 260px;
+    }
+</style>
+<table class="fullWidth">
+    
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.serialNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="serialNo" name="serialNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td style="padding: 10px;">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td align="center">
+            <span id="myValidationMessage" class="optionMsg"></span>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+
+
+
+    $('#option').on('shown.bs.modal', function () {
+        $('#serialNo').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        Go();
+
+    });
+
+
+    function Go() {
+        var serialNo = $('#serialNo').val();
+
+        $('#option').modal('hide');
+        OpenPage('\\ListingReports\\RepairInventory\\Index?serialNo=' + serialNo +  '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+

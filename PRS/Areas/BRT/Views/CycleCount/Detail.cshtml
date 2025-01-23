@@ -1,0 +1,271 @@
+﻿@model IP.Areas.BRT.Models.CycleCount
+@{
+    ViewBag.Title = "Detail";
+    Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery);
+}
+
+
+@{
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    //var jsonModel = serializer.Serialize(Model.lstSerial);
+
+}
+
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="107" />
+    <div id="datalist" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            
+                    <button type="button" id="opp" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+
+             
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong></h6>
+            <div id="buttons" class="box-tools pull-right" style="margin-top:2PX;">
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstDetail" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+@{
+    if (Layout == null)
+    {
+        <script type="text/javascript">
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+      $(document).ready(function () {
+        ToggleDataList(false);
+          var lstDetail = @Html.Raw(Model.serializer.Serialize((Model.lstDetail)));
+
+                    var columnDef = [
+                        { "title": "ProgramID", "width": "60px", "visible": false },
+                        { "title": "Program", "width": "60px" },
+                        { "title": "Part No.", "width": "80px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row[2] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "title": "Description" },
+                        { "title": "Warehouse", "width": "120px" },
+                        { "title": "Location No.", "width": "160px" },
+                        { "title": "Iteration", "width": "50px" },
+                        {
+                            "title": "Qty", "width": "50px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "title": "Counted", "width": "50px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        { "title": "Delta", "width": "30px", "className": "text-right" },
+                        {
+                            "data": "IRA", "title": "IRA", "width": "30px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                                return val;
+                            }
+                        },
+                        { "title": "Error", "width": "30px", "className": "text-center" },
+                        { "title": "Id", "width": "20px" },
+                        { "title": "Created By", "width": "100px" },
+                        { "title": "Last Activity On", "width": "90px", "className": "text-right" }
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(7).footer()).html(thousands_separators(api.column(7, { search: 'applied' }).data().sum()));
+                        $(api.column(8).footer()).html(thousands_separators(api.column(8, { search: 'applied' }).data().sum()));
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9, { search: 'applied' }).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+          MakeDataGrid('lstDetail', lstDetail, 0, columnDef, true, true, footerfunc);
+
+      
+              $("#opp").click(function () {
+
+                  Navigate('option', '\\BRT\\CycleCount\\Option', '107', 'Cycle Count', 'Specd by: Abbas Arsiwala @@ Reconext &amp; Designed by: Fasihullah khan @@ WinIT', 'mailto:kashif@winit.biz?cc=mohsin@winit.biz;Tahir@winit.biz&amp;subject=Cycle Count Report');
+
+              });
+
+      
+
+        });
+
+        </script>
+    }
+    else
+    {
+        @section js
+                {
+
+            <script type="text/javascript">
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+                $(document).ready(function () {
+        ToggleDataList(false);
+                var lstDetail = @Html.Raw(Model.serializer.Serialize((Model.lstDetail)));
+
+                    var columnDef = [
+                        { "title": "ProgramID", "width": "60px", "visible": false },
+                        { "title": "Program", "width": "60px" },
+                        {
+                            "title": "Part No.", "width": "80px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row[2] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "title": "Description" },
+                        { "title": "Warehouse", "width": "120px" },
+                        { "title": "Location No.", "width": "160px" },
+                        { "title": "Iteration", "width": "50px" },
+                        {
+                            "title": "Qty", "width": "50px", "className": "text-right",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "title": "Counted", "width": "50px", "className": "text-right",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        { "title": "Delta", "width": "30px", "className": "text-right" },
+                        {
+                             "title": "IRA", "width": "30px", "className": "text-right",
+                            render: function (data, type, row) {
+                                var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                                return val;
+                            }
+                        },
+                        { "title": "Error", "width": "30px", "className": "text-center" },
+                        { "title": "Id", "width": "20px" },
+                        { "title": "Created By", "width": "100px" },
+                        { "title": "Last Activity On", "width": "90px", "className": "text-right" }
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(7).footer()).html(thousands_separators(api.column(7, { search: 'applied' }).data().sum()));
+                        $(api.column(8).footer()).html(thousands_separators(api.column(8, { search: 'applied' }).data().sum()));
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9, { search: 'applied' }).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+                MakeDataGrid('lstDetail', lstDetail, 0, columnDef, true, true, footerfunc);
+
+                
+
+                    $("#opp").click(function () {
+
+                        Navigate('option', '\\BRT\\CycleCount\\Option', '107', 'Cycle Count', 'Specd by: Abbas Arsiwala @@ Reconext &amp; Designed by: Fasihullah khan @@ WinIT', 'mailto:kashif@winit.biz?cc=mohsin@winit.biz;Tahir@winit.biz&amp;subject=Cycle Count Report');
+
+                    });
+
+                });
+              
+            </script>
+        }
+    }
+}
+

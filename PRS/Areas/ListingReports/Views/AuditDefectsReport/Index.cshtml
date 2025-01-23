@@ -1,0 +1,116 @@
+﻿@model IP.Areas.ListingReports.Models.AuditDefectsReport
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstAuditDefectsReport" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <tfoot>
+                    <tr>
+                        @*<th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>*@
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var _programId = $('#ddProgram').val();
+        var _programName = $("#ddProgram option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/AuditDefectsReport/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                programName: _programName
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "Lineno", "title": "Line No.", "width": "70px" },
+                        { "data": "Material Number", "title": "Material No.", "width": "90px" },
+                        {
+                            "data": "Serial Number", "title": "Serial No."
+                        },
+                        { "data": "RMA/To Number", "title": "RMA/To No.", "width": "100px" },
+                        { "data": "Audit Date", "title": "Audit Date", "width": "140px", "className": "text-right"},
+                        { "data": "Def Code", "title": "Defect Code", "width": "80px"}
+                    ]
+
+                    //For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //    //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                    //    //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+
+                    //}
+
+
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstAuditDefectsReport', data.lstAuditDefectsReport, 0, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+

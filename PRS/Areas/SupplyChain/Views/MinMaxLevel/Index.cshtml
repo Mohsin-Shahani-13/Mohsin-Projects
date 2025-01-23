@@ -1,0 +1,129 @@
+﻿@model IP.Areas.SupplyChain.Models.MinMaxLevel
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP" style="height:90%">
+            <table id="lstMinMaxLevel" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+        //$('#lstROH').DataTable().clear();
+        //$('#lstROH').DataTable().destroy();
+
+        $('#option').modal('hide');
+
+        var partNo = $('#partNo').val();
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+
+        var isSingleRow = false;
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MinMaxLevel/GetList',
+            data: {
+                partNo: partNo,
+                programId: programId,
+                ProgramName: ProgramName
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                //$('#lstROH').DataTable().clear();
+                //$('#lstROH').DataTable().destroy();
+
+                
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "ProgramID", "width": "100px", "visible": false },
+                        { "data": "Name", "title": "Program", "width": "60px" },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] +  '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "COW", "title": "COW", "width": "80px"},
+                        { "data": "Min Level", "title": "Min Level", "width": "100px", "className": "text-right" },
+                        { "data": "Max Level", "title": "Max Level", "width": "100px", "className": "text-right" },
+                        { "data": "InventoryStock", "title": "Inventory Stock", "width": "120px", "className": "text-right" },
+                        { "data": "Status", "title": "Status", "width": "90px" }
+
+                    ]
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(4).footer()).html(thousands_separators(api.column(4).data().sum()));
+                    $(api.column(5).footer()).html(thousands_separators(api.column(5).data().sum()));
+                    $(api.column(6).footer()).html(thousands_separators(api.column(6).data().sum()));
+
+                }
+
+
+                    ToggleDataList(true);
+                MakeDataGrid('lstMinMaxLevel', data.lstMinMaxLevel, 0, columnDef, true, true, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+

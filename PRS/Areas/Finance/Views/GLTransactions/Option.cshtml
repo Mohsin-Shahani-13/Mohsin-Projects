@@ -1,0 +1,101 @@
+﻿@model IP.Areas.Finance.Models.GLTransactions
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+    .padding {
+        padding-top: 20px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+
+    <tr>
+        <td colspan="2" class="pad">
+            <label>Fiscal Year:</label>
+            <select id='FiscalYear' class="form-control">
+            </select>
+        </td>
+
+        <td class="pad" colspan="2">
+            <label>Fiscal Period:</label>
+
+            @Html.DropDownList("FiscalPeriod", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text= DateTime.Now.Month.ToString() ,Value = DateTime.Now.Month.ToString() },
+                   new SelectListItem{ Text="1", Value = "1" },
+                   new SelectListItem{ Text="2", Value = "2" },
+                   new SelectListItem{ Text="3", Value = "3" },
+                   new SelectListItem{ Text="4", Value = "4" },
+                   new SelectListItem{ Text="5", Value = "5" },
+                   new SelectListItem{ Text="6", Value = "6" },
+                   new SelectListItem{ Text="7", Value = "7" },
+                   new SelectListItem{ Text="8", Value = "8" },
+                   new SelectListItem{ Text="9", Value = "9" },
+                   new SelectListItem{ Text="10", Value = "10" },
+                   new SelectListItem{ Text="11", Value = "11" },
+                   new SelectListItem{ Text="12", Value = "12" }
+
+                }, new { @id = "FiscalPeriod", @class = "form-control" })
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#FiscalPeriod').focus();
+    });
+
+    var dateDropdown = document.getElementById('FiscalYear');
+
+    var currentYear = new Date().getFullYear();
+    var earliestYear = currentYear - 5;
+    while (currentYear >= earliestYear) {
+        var dateOption = document.createElement('option');
+        dateOption.text = currentYear;
+        dateOption.value = currentYear;
+        dateDropdown.add(dateOption);
+        currentYear -= 1;
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function Go() {
+        var FiscalYear = $('#FiscalYear').val();
+        var FiscalPeriod = $('#FiscalPeriod').val();
+        //var FiscalPeriodText = $("#FiscalPeriod option:selected").text();
+
+        $('#option').modal('hide');
+        OpenPage('\\Finance\\GLTransactions\\Index?FiscalPeriod=' + FiscalPeriod + '&FiscalYear=' + FiscalYear +'&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>

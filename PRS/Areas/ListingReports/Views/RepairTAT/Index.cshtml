@@ -1,0 +1,127 @@
+﻿@model IP.Areas.ListingReports.Models.RepairTAT
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    .text-left {
+        font-weight: bold;
+    }
+</style>
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstRepairTAT" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var COLUMN_FORMAT = {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === "0" ? '' : val.toFixed(0);
+        },
+    };
+
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|'|)/gm, "");
+                var header = "Message";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> More</a>';
+            }
+            return data;
+        };
+    };
+
+    ToggleDataList(false);
+    LoadData();
+
+    function LoadData() {
+        $('#tblBody').empty();
+        $('#option').modal('hide');
+
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/RepairTAT/GetList',
+            data: {
+                programId: programId,
+                ProgramName: ProgramName,
+                frmDt: fDate,
+                toDt: tDate
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [
+                    { "data": "Focus", "title": "Focus", "width": "50px", "className": "text-left" },
+                    { "data": "Target", "title": "Target", "width": "120px", "className": "text-center" },
+                    { "data": "Actual", "title": "Actual", "width": "80px", "className": "text-center" }
+                ];
+
+                ToggleDataList(true);
+                MakeDataGrid('lstRepairTAT', data.lstRepairTAT, 0, columnDef, true, true, false);
+                //MakeFrameGrid('lstRepairTAT', data.lstRepairTAT, 200, columnDef, true, false, true, false, false, $('#ttlRO').text(), false, false);
+
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="77" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+</script>

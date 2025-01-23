@@ -1,0 +1,241 @@
+﻿@model IP.Areas.Jobs.Models.Job
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    textarea {
+        resize: none !important;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div class="row section-color">
+        <div class="col-md-12">
+            <div id="dataList" class="box panel panel-default">
+                <input id="rptcode" type="hidden" value="021" />
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle >  </strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right" style="margin-top:2PX;">
+                    </div>
+                </div>
+                <div class="box-body text-sm">
+                    <table id="lstJobs" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                        <thead class="sorted-asc">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+
+                                <th></th>
+                                <th></th>
+                                <th></th>
+
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="row section-color">
+                    <div id="left_panel_Bottom" class="col-md-12 section-padding">
+                        <div id="leftsection" class="box panel panel-default leftsection" style="text-align: center;  height:65%; background-color: white; padding-top: 90px;">
+                            <h4>Click hyperlinks on above section to load data</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "Notify Operator";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    $.fn.dataTable.render.ellipsisAdr2 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "Notify Operator";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    $.fn.dataTable.render.ellipsisAdr3 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|%|;|'|\/|")/gm, "");
+
+                var header = "Command";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === '0' ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+        var server = $('#ddlServers option:selected').text();
+        $('#option').modal('hide');
+        var isSingleRow = false;
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/Job/GetList',
+            data: {
+                server: server
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ServerName", "title": "Server Name", "width": "80px" },
+                        {
+                            "data": "JobName", "title": "Package Name", 
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\Jobs\\\\Job\\\\GetDetail?JobName=' + row["JobName"] + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "LastRunOn", "title": "Last Run On", "width": "100px", "className": "text-right" },
+                        { "data": "NextRunOn", "title": "Next Run On", "width": "100px", "className": "text-right" },
+                        {
+                            "data": "JobStatus", "title": "Status", "width": "90px", "className": "text-center",
+                            render: function (data, type, row) {
+
+                                console.log(row["JobStatus"])
+
+                                if (row["JobStatus"] == 'Succeeded') {
+
+                                    var url = '<span style="color:green;font-weight:bolder">' + data + '</span>'
+
+                                }
+
+                                else if (row["JobStatus"] == 'Running') {
+                                    var url = '<span style="color:blue;font-weight:bolder">' + data + '</span>'
+
+                                }
+
+                                else if (row["JobStatus"] == 'Failed') {
+                                    var url = '<span style="color:red;font-weight:bolder">' + data + '</span>'
+
+                                }
+                                else if (row["Status"] == 'Disabled') {
+                                    var url = '<span style="color:#E69500;font-weight:bolder">' + data + '</span>'
+
+                                }
+                                else {
+                                    var url = '<span>' + data + '</span>'
+                                }
+                                return url;
+
+                            }
+                        },
+                        { "data": "JobStartedOn", "title": "Job Started On", "width": "100px", "className": "text-right" },
+                        { "data": "JobFinishedOn", "title": "Job Finished On", "width": "110px", "className": "text-right" },
+                        { "data": "job_duration", "title": "Job Duration", "width": "90px", "className": "text-right" },
+                        {
+                            "data": "ScheduledOn", "title": "Scheduled On", 
+
+                            //"render": $.fn.dataTable.render.ellipsisAdr2(10) 
+                        },
+                        {
+                            "data": "retry_attempts", "title": "Retry Attempts", "width": "100px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "retry_interval", "title": "Retry Interval", "width": "100px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        { "data": "Notify", "title": "Notify", "width": "100px" },
+                        { "data": "notifyOperator", "title": "Notify Operator", "width": "220px", "render": $.fn.dataTable.render.ellipsisAdr2(30) }
+                    ]
+                    //For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //    $(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                    //}
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstJobs', data.listOfLists, 250, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

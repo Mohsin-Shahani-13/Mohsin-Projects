@@ -1,0 +1,214 @@
+﻿@model IP.Areas.Meta.Models.MetaWip
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstMetaWIP" class="table table-bordered table-striped text-sm table-hover" >
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                 </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    @*<tr>
+                        <th class="notexport"></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                    </tr>*@
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+   
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+        var _programId = $('#ddProgram').val();
+        var _ProgramName = $("#ddProgram option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MetaWip/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                ProgramName: _ProgramName
+               
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramId", "title": "Program Id", "width": "60px", "visible": false },
+                        { "data": "ProgramName", "title": "Program ", "width": "60px" },
+                        { "data": "Region", "title": "Region ", "width": "60px" },
+                        { "data": "RMANo", "title": "RMA_NO", "width": "90px", "visible": false},
+                        { "data": "KITPart", "title": "KIT_PN", "width": "70px" },
+                        { "data": "KITSerialNo", "title": "KIT_SN", "width": "70px" },
+                        { "data": "WoId", "title": "SERVICE_REQUEST_NO", "width": "60px" },
+                        {
+                            "data": "CustomerRef", "title": "ORDER_NO", "width": "100px" ,
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\SupplyChain\\WO\\Detail?Id=' + row["WoId"] + '&custRef=' + row["CustomerRef"] + '&ProgramId=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "PartNo", "title": "PART_NO", "width": "80px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "PartDesc", "title": "DESCRIPTION", "width": "220px" },
+                        {
+                            "data": "SerialNo", "title": "SERIAL_NO", "width": "90px",
+                            render: function (data, type, row) {
+                                if (row["SerialNo"] == "*" || row["HAS_SN"] == 'N') {
+                                    url = row["SerialNo"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramId"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                }
+                                return url;
+                            }
+                        }, 
+                        { "data": "WorkStationId", "title": "WorkStation_Id", "width": "100px", "visible": false  },
+                        { "data": "WorkStation", "title": "WC_NAME", "width": "150px" },
+                        { "data": "Warehouse", "title": "WAREHOUSE", "width": "90px" },
+                        { "data": "HoldReason", "title": "HOLD_REASON", "width": "110px" },
+                        { "data": "IsPass", "title": "IS_PASS", "width": "60px" },
+                        { "data": "WorkStationHisId", "title": "WS history ID", "width": "110px", "visible": false  },
+                        { "data": "FaultCode", "title": "FAULT_CODE", "width": "80px" },
+                        { "data": "FaultDesc", "title": "FC_DESC.", "width": "100px" },
+                        { "data": "WOStartDate", "title": "START_DATE", "width": "100px", "className": "text-right" },
+                        { "data": "WOEndDate", "title": "ORDER_COMPLETION_DATE", "width": "90px", "className": "text-right" },
+                        { "data": "PrimCommodity", "title": "PRIMARY_COMMODITY", "width": "140px" },
+                        { "data": "SecondCommodity", "title": "SECONDARY_COMMODITY", "width": "140px" },
+                        { "data": "Family", "title": "FAMILY", "width": "80px" },
+                        { "data": "QtyReq", "title": "COMP_QTY_REQUIRED", "width": "80px", "className": "text-right" },
+                        { "data": "QtyCons", "title": "COMP_QTY_CONSUMED", "width": "80px", "className": "text-right" },
+                        { "data": "Capacity", "title": "CAPACITY", "width": "80px" },
+                        { "data": "PairedSerialNo", "title": "PAIRED_SN", "width": "140px" },
+                        { "data": "TriageGrade", "title": "TRIAGE_GRADE", "width": "140px" },
+                        { "data": "FinalGrade", "title": "FINAL_GRADE", "width": "200px" },
+                        { "data": "RcvdTimes", "title": "RCVD_TIMES", "width": "100px" },
+                        { "data": "WOStatus", "title": "STATUS", "width": "80px" },
+                        { "data": "LastRunOn", "title": "LAST_RUN_ON", "width": "90px", "className": "text-right" }
+                    ]
+
+                    ToggleDataList(true);
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(24).footer()).html(thousands_separators(api.column(24, { search: 'applied' }).data().sum()));
+                        $(api.column(25).footer()).html(thousands_separators(api.column(25, { search: 'applied' }).data().sum()));
+
+                    }
+                    MakeDataGrid('lstMetaWIP', data.lstMetaWIP, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

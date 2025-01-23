@@ -1,0 +1,121 @@
+﻿@model IP.Areas.SupplyChain.Models.PalletwithAttributes
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstPalletwithAttributes" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total:</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                    </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var programId = $('#ddProgram').val();
+        var programName = $('#ddProgram option:selected').text();
+        var warehouse = $('#Warehouse option:selected').text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/PalletwithAttributes/GetList',
+            data: {
+
+                programId: programId,
+                programName: programName,
+                warehouse: warehouse
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                var columnDef = [
+                    { "data": "ProgramID", "title": "ProgramID", "width": "60px", "visible": false },
+                    { "data": "LocationNo", "title": "Part Location No.", "width": "150px" },
+                    {
+                        "data": "PartNo", "title": "Part No.", "width": "100px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "Qty", "title": "Qty", "width": "50px", "className": "text-right" },
+                    { "data": "CustomPalletBoxNo", "title": "Custom Pallet Box No.", "width": "200px" },
+                    { "data": "Warehouse", "title": "Warehouse", "width": "150px" },
+                    { "data": "AttributeName", "title": "Attribute Name", "width": "150px" },
+                    { "data": "Value", "title": "Attribute Value", "width": "150px" },
+                    { "data": "Username", "title": "Username", "width": "150px" },
+                    { "data": "CreateDate", "title": "Created On", "width": "150px", "className": "text-right" }
+                ];
+
+                ToggleDataList(true);
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                        $(api.column(3).footer()).html(thousands_separators(api.column(3).data().sum()));
+                   
+
+                }
+
+                MakeDataGrid('lstPalletwithAttributes', data.lstPalletwithAttributes, 0, columnDef, true, true, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

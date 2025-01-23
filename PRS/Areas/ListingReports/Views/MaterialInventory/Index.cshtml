@@ -1,0 +1,124 @@
+﻿@model IP.Areas.ListingReports.Models.MaterialInventory
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP" style="height:90%">
+            <table id="lstMaterialInventory" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+</thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+        //$('#lstROH').DataTable().clear();
+        //$('#lstROH').DataTable().destroy();
+
+        $('#option').modal('hide');
+
+        var partNo = $('#partNo').val();
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+
+        var isSingleRow = false;
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MaterialInventory/GetList',
+            data: {
+                partNo: partNo,
+                programId: programId,
+                ProgramName: ProgramName
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                //$('#lstROH').DataTable().clear();
+                //$('#lstROH').DataTable().destroy();
+
+
+                var columnDef = [
+                    { "data": "ProgramId", "title": "ProgramId", "width": "60px", "visible": false },
+                        { "data": "PrimCommDesc", "title": "Primary Commodity", "width": "160px" },
+                        {
+                            "data": "CompPartNo", "title": "Part No.", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["CompPartNo"] + '&ProgramId=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "CompPartDesc", "title": "Component Description"},
+                        { "data": "AvgConsQty", "title": "Weekly AVG Cons.", "width": "100px", "className": "text-right"  },
+                        { "data": "CrntStockQty", "title": "Current Stock Inv.", "width": "100px", "className": "text-right" },
+                        { "data": "WeekOfInv", "title": "Weeks Of Inv.", "width": "80px", "className": "text-right" },
+                        { "data": "WhereUsed", "title": "Where Use Models", "width": "500px" }
+                    ]
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(3).footer()).html(thousands_separators(api.column(3, { search: 'applied' }).data().sum()));
+                    $(api.column(4).footer()).html(thousands_separators(api.column(4, { search: 'applied' }).data().sum()));
+
+                }
+
+
+                    ToggleDataList(true);
+                MakeDataGrid('lstMaterialInventory', data.lstMaterialInventory, 0, columnDef, true, true, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+

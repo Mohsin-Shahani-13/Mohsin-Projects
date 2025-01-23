@@ -1,0 +1,68 @@
+﻿@model IP.Areas.SupplyChain.Models.Bonepile
+
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.ProgramID, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.partNo, new { @class = "col-4 col-form-lebel" })
+            <input type="text" class="form-control" id="partNo" name="custRef" autofocus onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#compPartNo').focus();
+    });
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        Go();
+
+    });
+
+    function Go() {
+
+        var ProgramId = $('#ddProgram').val();
+        var ProgramName = $("#ddProgram option:selected").text();
+        var PartNo = $('#partNo').val();
+
+        $('#option').modal('hide');
+
+        OpenPage('\\SupplyChain\\Bonepile\\Index?&ProgramID=' + ProgramId + '&ProgramName=' + ProgramName + '&partNo=' + PartNo + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>

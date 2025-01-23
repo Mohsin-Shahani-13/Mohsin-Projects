@@ -1,0 +1,95 @@
+﻿@model IP.Areas.Jobs.Models.SSIS
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    @*<tr>
+            <td colspan="2" class="pad">
+                @Html.LabelFor(model => model.ServerNames, htmlAttributes: new { @class = "col-4 col-form-lable" })
+                @Html.DropDownList("ddlServers", null, new { id = "ddlServers", @name = "ddlServers", @class = "form-control", @onkeydown = "GoOnEnter()" })
+                <br />
+            </td>
+        </tr>*@
+    @*<tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>*@
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.jobName, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="jobName" name="ReportName" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td class="pad" colspan="4">
+            <label>Job Status:</label>
+            @Html.DropDownList("jobStatus", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="All", Value = "All",  },
+                   new SelectListItem{ Text="Enabled", Value = "enabled" },
+                   new SelectListItem{ Text="Disabled", Value = "disabled" },
+
+
+                }, new { @id = "jobStatus", @class = "form-control" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" class="pad">
+            @Html.LabelFor(model => model.statusId, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddlStatus", null, new { id = "ddlStatus", @name = "ddlStatus", @class = "form-control", @onkeydown = "GoOnEnter()" })
+            <br />
+        </td>
+    </tr>
+
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#jobName').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function Go() {
+        var jobName = $('#jobName').val();
+        var status = $('#ddlStatus option:selected').text();
+        //var statusid = $('#ddlStatus option:selected').val();
+        var ProgramId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var jobStatus = $('#jobStatus option:selected').val();
+        
+        $('#option').modal('hide');
+        OpenPage('\\Jobs\\SSIS\\Index?jobName=' + jobName + '&status=' + status + '&programId=' + ProgramId  + '&ProgramName=' + ProgramName + '&jobStatus=' + jobStatus + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+

@@ -1,0 +1,806 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Plus-RS</title>
+    @System.Web.Optimization.Styles.Render("~/Content/css")
+
+    <style>
+        a {
+            cursor: pointer;
+        }
+
+        .margin {
+            margin: 4px;
+            padding-top: 5px;
+            color: white;
+        }
+
+        .dropdown {
+            background-color: #29373D;
+            color: white;
+        }
+
+        .modal-width {
+            width: 80%;
+            height: 80%;
+            margin: 50px auto auto auto;
+        }
+
+        .modalcontent {
+            height: 80%;
+            border-radius: 0;
+        }
+
+        .logonUser {
+            margin-top: 8px;
+        }
+
+        .settingIcon {
+            margin-top: 2px;
+        }
+
+        /*Right Panel CSS*/
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            right: 0;
+            background-color: #29373D;
+            color: white;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 50px;
+            padding-left: 5px;
+        }
+
+        /*End Right Panel CSS*/
+
+        .main-sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            overflow-x: hidden;
+            overflow-y: auto
+        }
+
+        .ribbon {
+            background-color: black;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .skins {
+            margin-top: 5px;
+            padding: 5px;
+        }
+
+        .blueBall {
+            color: #3C8DBC
+        }
+
+        .greenBall {
+            color: #00A65A
+        }
+
+        .redBall {
+            color: #DD4B39
+        }
+
+        .yellowBall {
+            color: #F39C12
+        }
+
+        .aquaBall {
+            color: #00C0EF
+        }
+
+        .close {
+            font-size: 30px;
+            font-weight: 500;
+            padding-left: 2px;
+            color: #FFFFFF !important;
+            text-shadow: #FFFFFF !important;
+        }
+
+        .dropdown-menu {
+            width: auto;
+        }
+
+        #ddCategory {
+            color: black;
+            margin-top: 5px;
+            height: 21px;
+            background-color: #EFEFEF;
+        }
+
+        option {
+            background-color: #FFFFFF;
+            color: #777777;
+            font-size: 14px;
+            font-family: Helvettica Neue, Arial, Helvetica, sans-serif;
+        }
+
+        .Dropdown {
+            position: relative;
+            display: inline-block;
+            text-align: left;
+            cursor: pointer;
+            color: #000;
+            transition: all 200ms ease;
+        }
+
+        #syncMessage {
+            background-color: red;
+            margin-top: 11px;
+            margin-right: 2px;
+            color: white;
+            font-family: sans-serif;
+            padding: 3px;
+        }
+    </style>
+</head>
+<body id="main" class="hold-transition skin-blue sidebar-mini sidebar-collapse lte-fixed" style="overflow:hidden;" onresize="resize_grid_height()" onload="get_initial_attributes()">
+    <div class="wrapper" style="overflow:hidden;">
+        <header class="main-header">
+            <!-- Logo -->
+            <a onclick="OpenPage('\\Dashboard\\Index')" class="logo" style="text-decoration:none">
+                <span class="logo-mini">
+                    <img src="~/Content/images/plus_icon.png" alt="NA" width="25" />
+                    @*<img src="~/Content/images/AWAN-DISTRIBUTION.png" alt="NA" width="25" />*@
+                </span>
+                <span class="logo-lg"><img src="~/Content/images/Plus.png" style="width:170px; height:35px;" alt="NA" /></span>
+            </a>
+            <nav class="navbar navbar-static-top">
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="padding-top:19px">
+                    <span class="fa fa-bars"></span>
+                </a>
+                <label id="companyName" style="color:white; padding-top:15px;">@ViewBag.companyName</label>
+                <div class="navbar-custom-menu">
+                    <ul id="nav" class="nav navbar-nav">
+                        @*<li class="">
+            <div id="syncMessage"></div>
+        </li>*@
+                        <!--<li class="margin">
+    <div class="dropdown">
+        <button type="button" class="btn btn-secondary dropdown-toggle btn-xs" data-toggle="dropdown" style="color: black; margin-top: 4px;">
+            Power BI Reports &nbsp;
+            <span><i class="caret"></i></span>
+        </button>
+        <ul id="ddCategory" class="dropdown-menu">-->
+                        @*@foreach (var valCat in ViewBag.ddCategory)
+        {
+            <li>  <a class="dropdown-item" id="ddCategorys"  aria-expanded="false" style="color: black;">@valCat.Text</a></li>
+
+        }*@
+
+                        @*<li><a>Power BI</a></li>
+        <li><a>Inventory</a></li>
+        <li><a>Production</a>*@
+                        <!--</ul>
+        </div>
+    </li>-->
+                        <!--<li>-->
+                        @*@Html.DropDownList("ddCategory", null, new { id = "ddCategory", @name = "ddCategory", @class = "dropdown-list" })*@
+                        <!--<div style="color: black; margin-top: 4px;">
+
+            <select class="btn btn-secondary dropdown-toggle btn-xs " name="ddCategory" id="ddCategory" style="color: black; margin-top: 10px; margin-right:3px; background-color:#EFEFEF; height:21px;">
+                <option style="display:none" selected value="0">Power BI Reports</option>
+                <option style="background-color:white" value="Cisco B2B">Cisco B2B</option>
+                <option style="background-color:white" value="Inventory ">Inventory</option>
+                <option style="background-color:white" value="Production">Production</option>
+            </select>
+        </div>
+    </li>-->
+                        @*@{
+
+            if (ViewBag.HasHelpDoc == true)
+            {
+                <li class="margin">
+                    <button class="btn btn-secondary btn-xs" style="color: black; margin-top: 5px;  margin-right: -4px;" onclick="Navigate('Index','/Documents/Index','IPMENU', 'Documents', '', '')" type="button">
+                        Help Docs
+                    </button>
+                </li>
+            }
+        }*@
+                        @*<li class="margin" id="genericBtn">
+                            <button class="btn btn-secondary btn-xs" style="color: black; margin-top: 4px;  margin-right: -4px;" onclick="Navigate('Index','/ListingReports/PLUSGenericInformation','248', 'Generic Reports', '', '')" type="button">
+                                Generic Reports
+                            </button>
+                        </li>*@
+
+                        @*<li class="margin">
+                            @Html.DropDownList("ddCategory", null, new { id = "ddCategory", @name = "ddCategory", @class = "btn btn-secondary dropdown-toggle btn-xs ddCategory" })
+                        </li>*@
+
+
+                        @*<li>
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-secondary dropdown-toggle btn-xs" data-toggle="dropdown" style="color: black; margin-top: 13px; margin-right : -8.5px !important">
+                                    Useful Links &nbsp;
+                                    <span><i class="caret"></i></span>
+                                </button>
+                                <ul class="dropdown-menu">
+
+                                    @foreach (var link in ViewBag.ddlLinks)
+                                    {
+                                        <li>  <a class="dropdown-item" id="ddlLinks" href="@link.Value" target="_blank" aria-expanded="false">@link.Text</a></li>
+
+                                    }
+
+                                </ul>
+                            </div>
+                        </li>*@
+
+                        <li class="margin">
+                            @*<button class="btn btn-secondary btn-xs" style="color: black; margin-top: 4px;" onclick="window.open('@Url.Action("SamsungRefresh", "DashBoard", new { target="_blank" })')" type="button">
+                Dashboard
+            </button>*@
+                            @*<button class="btn btn-secondary btn-xs" style="color: black; margin-top: 4px;" onclick="window.open('@Url.Action("BigTv", "Dashboard", new { target="_blank" })')" type="button">
+                Dashboard
+            </button>*@
+                        </li>
+
+
+
+
+                        <li class="margin">
+                            @*<button class="btn btn-secondary btn-xs" style="color: black; margin-top: 4px;  margin-right: -4px;" onclick="Navigate('Index','/CodeTableListing/Index','Views', 'Views', '', '')" type="button">
+                                Views
+                            </button>*@
+                            @*<button class="btn btn-secondary btn-xs" style="color: black; margin-top: 4px;" onclick="Navigate('Index','/CodeTableListing/Index','TABLES', 'Code Tables', '', '')" type="button">
+                Code Tables
+            </button>*@
+                        </li>
+                        @*<li class="margin">
+                            <button class="btn btn-secondary btn-xs" style="color: black; margin-top: 4px; margin-right: -4px; " onclick="Navigate('Index','/LogQueries/Index', 'LOGS', 'Activity Logs', '', '')" type="button">
+                                Activity Logs
+                            </button>
+                        </li>*@
+                        @*<li class="margin">
+                            <button class="btn btn-secondary btn-xs" style="color: black; margin-top: 4px;" onclick="Navigate('Index','/MnuLibrary/Index', 'IPMENU', 'Menu Library', '', '')" type="button">
+                                Menu Library
+                            </button>
+                        </li>*@
+
+                        <li class="margin">
+                            @Html.DropDownList("Connections", null, new { id = "ddlConnection", @name = "ddlConnection", @class = "dropdown-list" })
+                        </li>
+                        <li class="margin">
+                            @Html.DropDownList("ddlProgram", null, new { id = "ddlProgram", @name = "ddlProgram", @class = "dropdown-list" })
+                        </li>
+                        @*<li class="margin">
+            @Html.DropDownList("ddlSites", null, new { id = "ddlSites", @name = "ddlSites", @class = "dropdown-list" })
+        </li>*@
+
+                        @*<li class="margin logonUser">
+            <span class="fa fa-user"></span>
+            <span id="userName">Hi </span>
+            <ul>
+                <li>
+                    <a href="@Url.Action("Logout","Home")" style="color:white; background-color:#325FAB;" class="navbar-user-container"><i class="fa fa-sign-out-alt white"></i> Log Out</a>
+                </li>
+            </ul>
+        </li>*@
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="fa fa-user"></span>
+                                <span id="userName">Hi </span>
+                                <i class="caret"></i>
+                            </a>
+                            <ul class="dropdown-menu" style="width:15px; right:65%; left: 0%;">
+                                <li class="user-footer">
+
+                                    <div>
+                                        <a style="color: #3c8dbc;" href="@Url.Action("Logout","Home")" class="navbar-user-container"><i class="fa fa-sign-out-alt green"></i> Log Out</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </div>
+            </nav>
+
+            <div id="mySidenav" class="sidenav">
+                <ul style="visibility:hidden;">
+                    <li>
+                        <a>
+                            <i class="fa fa-users" style="color:white;"></i>
+                            <span style="color:white"> User Permissions </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul id="IPMnu" class="sidebar-menu" data-widget="tree">
+                    <li><a onclick="OpenPage('\\Dashboard\\Index')"><i class="fa fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+        <!-- Content Wrapper. Contains page content -->
+        <div id="renderBody" class="content-wrapper">
+            @RenderBody()
+        </div>
+
+        <div id="option" class="modal fade" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close full-opacity-hover" data-dismiss="modal">&times;</button>
+                    <div id="modalHeader" class="modal-header bg-blue-gradient option-title">
+
+                    </div>
+                    <div id="modalBody" class="modal-body">
+                    </div>
+                    @*<div id="modalFooter" class="modal-footer" style="color:gray; font-size:11px; text-align:left; ">
+                            <span id="designedby"></span> | <a id="MailTo" href="" target="_blank" title="Click to report features and bugs">MailTo</a>
+
+                        </div>*@
+                    <div id="modalFooter" class="modal-footer" style="color:gray; font-size:11px; text-align:left; ">
+                        <span id="designedby"></span> | <a id="MailTo" href="" target="_blank" title="Click to report features and bugs">MailTo</a> |
+                        <a id="ActivityLog" href="#" onclick="ShowLog()" title="Click to View Activity Log">Activity Log</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*background-color: rgba(255, 255, 255, 0.5);*@
+        <div id="wait" style="width:100%;height:100%;left:0px;top:0px; text-align:center; vertical-align:middle" class="modal">
+            <img src='~/Content/images/loading2.gif' width="64" height="64" style="text-align:center; vertical-align:middle; margin-top:400px;" />
+        </div>
+
+        <div id="comments" class="modal fade" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div id="commentsheader" class="modal-header bg-blue-gradient option-title">
+
+                    </div>
+                    <div id="commentsbody" class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="MsgAlert" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-red-gradient option-title">
+                    <strong id="MsgType"></strong>
+                </div>
+                <div class="modal-body">
+                    <p id="MsgBody"></p>
+                </div>
+                <div class="modal-footer" style="padding:4px;">
+                    <button type="button" class="btn btn-default" id="MsgbtnNo" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="btnAddOverwrite" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <button type="button" class="close full-opacity-hover" data-dismiss="modal">&times;</button>
+                <div id="modalHeader" class="modal-header bg-blue-gradient option-title">
+                    <span>PRS</span>
+                </div>
+
+                <div id="modalBody" class="modal-body">
+                    <p id="msg"></p>
+                    <table width="100%">
+                        <tr>
+                            <td align="right">
+                                <a id="btnAddQty" role="button" class="btn btn-primary">Add</a>
+                            </td>
+                            <td align="right" width="100">
+                                <a id="btnOverwrite" role="button" class="btn btn-primary">Overwrite</a>
+                            </td>
+                            @*<td align="center">
+                                    <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+                                </td>*@
+                            <
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <input class="desgndBy" type="hidden" />
+    <input class="mnId" type="hidden" />
+    <input id="rptCode" name="rptCode" type="hidden" />
+    <input id="rptTitle" name="rptTitle" type="hidden" />
+
+    @System.Web.Optimization.Scripts.Render("~/bundles/jquery")
+    @RenderSection("js", false)
+    <script>
+        // Temporary comment by Kashif Maqsood (It is irritating on every new landing page need to be fixed)
+        //(function () {
+        //    $(document).ajaxComplete(function (e, xhr, options) {
+
+        //        if (xhr.status === 401 && xhr.statusText === "Session expired") {
+        //            // Prevents the event from bubbling up the DOM tree, preventing any parent handlers from being notified of the event
+
+        //            e.stopPropagation();
+        //            // location.href = xhr.getResponseHeader("Location");
+        //            window.location.href="Home/Base";
+        //        }
+        //    });
+        //})();
+    </script>
+    <script>
+
+        (function () {
+            $(document).ajaxComplete(function (e, xhr, options) {
+                if (xhr.status === 401 && xhr.statusText === "Session expired") {
+                    // Prevents the event from bubbling up the DOM tree, preventing any parent handlers from being notified of the event
+                    e.stopPropagation();
+                    location.href = xhr.getResponseHeader("Location");
+                }
+            });
+        })();
+    </script>
+    <script>
+    var links = $("#ddlLinks option:selected").val();
+    $("#ddlLinks").change(function () {
+       var getlink = $("#ddlLinks option:selected").val();
+
+        if ($(this).val() != '') {
+            window.open(getlink, '_blank');
+        }
+    });
+
+
+        //$("#ddCategory").click(function () {
+        //    OpenPage('\\LinkPowerBI\\Index?ddCategory=' + _ddCategory )
+        //});
+
+        $("#ddCategory").find("option").eq(0).css("display", "none");
+        $("#ddCategory").change(function () {
+
+            var _ddCategory = $('#ddCategory option:selected').val();
+            if (_ddCategory != "0") {
+                OpenPage('\\LinkPowerBI\\Index?ddCategory=' + _ddCategory)
+            }
+            $('#ddCategory').prop('selectedIndex', 0);
+            });
+
+
+
+
+        var site;
+        function ChangeTheme(bgColor) {
+            $('nav').css('background', bgColor);
+            $('aside').css('background', bgColor);
+        }
+
+        function TogglePanel() {
+
+            var width = document.getElementById("mySidenav").style.width;
+            if(width === '0px' || width === '')
+                document.getElementById("mySidenav").style.width = "200px";
+            else
+                document.getElementById("mySidenav").style.width = "0px";
+        }
+
+        var mnId = '';
+    var empname = '@Session["EmpName"]';
+    empname = empname.charAt(0).toUpperCase() + empname.substr(1).toLowerCase();
+
+    $('#userName').append('' + empname + '');
+    $('.dropdown-toggle').dropdown();
+
+        LoadMenus();
+        LoadButton();
+    site = $('#ddlSites option:selected').val(); // Added by Tahir
+
+        $('#ddlSites').change(function () {
+            var ddlSites = $('#ddlSites');  // Added by Tahir
+            site = $('#ddlSites option:selected').val();  // Added by Tahir
+
+        $.ajax({
+            type: 'POST',
+            url: '/Home/GetSiteDtl',
+            data: { siteId: ddlSites.val() },
+            success: function (data) {
+
+                $('#IPMnu > li ~ li').remove();
+                LoadMenus();
+                LoadButton();
+                $('#companyName').html(data);
+                $('#ddlSites').blur();
+                OpenPage('\\Dashboard\\Index');
+
+            },
+            fail: function () {
+                alert('fail');
+            },
+            error: function (r) {
+                alert('error');
+            }
+
+        });
+    });
+
+    $('#ddlConnection').change(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/Home/ChangeCon',
+            data: {
+                conType: $('#ddlConnection').val()
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#IPMnu > li ~ li').remove();
+                LoadMenus();
+                LoadButton();
+            }
+        });
+        $('#ddlConnection').blur();
+        OpenPage('\\Dashboard\\Index');
+
+    });
+
+    $('#ddlProgram').change(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/Home/ChangeSite',
+            data: {
+                site: $('#ddlProgram').val()
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#IPMnu > li ~ li').remove();
+                LoadMenus();
+                LoadButton();
+
+            }
+        });
+        $('#ddlProgram').blur();
+        OpenPage('\\Dashboard\\Index');
+
+    });
+        function LoadButton() {
+            var site = $('#ddlProgram').val()
+            if (site !== "MEXICALI") {
+                $('#genericBtn').addClass('hidden');
+            } else {
+                $('#genericBtn').removeClass('hidden');
+            }
+
+        }
+    //$('#ddlPicsConnection').change(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: '/Home/ChangePixCon',
+    //        data: {
+    //            con: $('#ddlPicsConnection').val()
+    //        },
+    //        datatype: JSON,
+    //        success: function (data) {
+
+    //        }
+    //    });
+    //    $('#ddlPicsConnection').blur();
+    //    OpenPage('\\Dashboard\\Index');
+    //});
+
+    $("[data-toggle=tooltip]").tooltip(); //MENU TOOL TIP
+
+    //var menuIds = [];
+    //GetSyncCount();
+    //setInterval(GetSyncCount, 60000)
+    //function GetSyncCount() {
+    //    $.ajax({
+    //        type: 'GET',
+    //        url: '/Home/GetSyncCount',
+    //        datatype: JSON,
+    //        global: false,
+    //        success: function (data) {
+
+    //            $('#syncMessage').remove();
+    //            var message = '';
+    //            var messageColor = '';
+    //            // Create a new <li> element
+    //            var listItem = $('<li></li>').addClass('');
+
+    //            // Create a <div> element with id "syncMessage" and append it to the <li> element
+    //            var syncMessageDiv = $('<div></div>').attr('id', 'syncMessage');
+    //            syncMessageDiv.css({
+    //                'border-radius': '5px', // Adjust the value as needed
+    //                'border': '1px solid #000' // Example border style
+    //            });
+    //            listItem.html(syncMessageDiv);
+
+    //            // Append the <li> element inside the element with id "nav"
+    //            $('#nav').prepend(listItem);
+
+    //            if (data === true) {
+    //                message = 'Reporting database is in sync. Recheck in 1 minute';
+    //                messageColor = 'green';
+    //            } else {
+    //                message = 'Reporting database is not in sync. Recheck in 1 minute';
+    //                messageColor = 'red';
+    //            }
+
+    //            $('#syncMessage').text(message).css('background-color', messageColor);
+    //        }
+    //    });
+    //}
+    function LoadMenus() {
+        $.ajax({
+            type: 'GET',
+            url: '/Home/GetMenus',
+            datatype: JSON,
+            success: function (data) {
+                if ($.isArray(data)) {
+                    CreateMenuItem(data);
+                }
+                else {
+                    $('#renderBody').html(data);
+                }
+            }
+        });
+    }
+
+    function OpenLI(mnuID) {
+        if ($('#main').hasClass("sidebar-collapse")) {
+            //WHEN MENU BAR IS CLOSED
+            $("#IPMnu > li").attr("data-toggle", "push-menu");
+
+            if ($('#IPMnu > #' + mnuID + '').hasClass("menu-open")) {
+                $('#IPMnu > #' + mnuID + '').removeClass('menu-open');
+                $('#IPMnu > #' + mnuID + ' > ul').css({ display: "none" });
+            }
+            else {
+                $('#IPMnu > #' + mnuID + ' > ul').css({ display: "block" });
+            }
+        }
+        else {
+            //WHEN MENU IS OPEN, DO NOT CLOSE MENU BAR ON CLICK OF PARENT
+            $('#IPMnu > li').attr("data-toggle", "");
+        }
+    }
+
+        function CreateMenuItem(items, parentId) {
+        $.each(items, function (index, column) {
+            var mnuId = column.MnuId;
+            var mnuTitle = column.MnuTitle;
+            var mnuUrl = column.MnuHyperlink;
+            var mnuParent = column.MnuParent;
+            var mnuIcon = column.MnuIcon;
+            var mnuTarget = column.MnuTarget;
+            var rptCode = column.RptCode;
+            var mnuType = column.MnuType;
+            var MailTo = column.MailTo;
+            //$('#EmailTo').attr('href', emailTo);
+            //@*@ViewBag.id*@ = emailTo;
+            //$('#email').append(emailTo);
+
+            if (mnuUrl === '') {
+                var html = '';
+
+                if (mnuId === 0) {
+                    html = "<li class = 'treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' data-toggle='tooltip' title='" + mnuTitle + "'>" +
+                        "<i class='" + mnuIcon + "'/></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+                else if (site === '5' && mnuType === 'lcd') {  // Added by Tahir
+                    html = "<li class='treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' title='" + mnuTitle + "' data-toggle='tooltip'>" +
+                        "<i class='" + mnuIcon + "' ></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+                else if ((site === '8' || site === '9') && mnuType === 'itd') { // add site 9 for juarez (ITAD) show itad reports
+                    html = "<li class='treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' title='" + mnuTitle + "' data-toggle='tooltip'>" +
+                        "<i class='" + mnuIcon + "' ></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+                else if (mnuType !== 'lcd' && mnuType !== 'itd') {  // Added by Tahir
+                    html = "<li class='treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' title='" + mnuTitle + "' data-toggle='tooltip'>" +
+                        "<i class='" + mnuIcon + "' ></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+            }
+            else {
+                html = '<li id = "' + mnuId + '"><a onclick="Navigate(\'' + mnuTarget + '\', \''
+                    + mnuUrl + '\',\'' + rptCode + '\',\'' + column.MnuTitleShort + '\',\''
+                    + column.DesignedBy + '\',\'' + column.MailTo + '\');" ><i class="fa fa-circle-o"></i>' + mnuTitle + '</a></li>';
+
+            }
+
+            if (mnuParent == '') {
+                $('#IPMnu').append(html);
+            } else {
+                $('#' + mnuParent).append(html);
+            }
+
+        });
+    }
+
+    function ActiveReport(rptCode, rptTitle) {
+        $('#rptCode').val(rptCode);
+        $('#rptTitle').val(rptTitle);
+    }
+
+    $(document).ready(function () {
+        $('#Clear').click(function () {
+                /*Clear all input type="text" box*/
+                $('#input[type="text"]').val('');
+                /*Clear textarea using id */
+            $('#txtCmnt').val('');
+            $('#lblMsg').empty();
+
+        });
+    });
+
+    $('#MsgAlert').modal({
+        backdrop: false,
+        show: false
+    });
+
+    $('#MsgAlert').on('shown.bs.modal', function () {
+        $('#MsgbtnNo').focus();
+    });
+
+    </script>
+
+</body>
+</html>
+<script type="text/javascript">
+    var old_browser_height = 0;
+    function resize_grid_height() {
+        var new_browser_height = window.innerHeight;
+        var grid_height = $('.dataTables_scrollBody').height();
+        if (isNaN(grid_height)) {
+            return;
+        }
+        if (new_browser_height > old_browser_height) {
+            var difference = new_browser_height - old_browser_height;
+            grid_height += difference;
+        }
+        else {
+            var difference = old_browser_height - new_browser_height;
+            grid_height -= difference;
+        }
+        $('.dataTables_scrollBody').css('height', grid_height + 'px');
+        old_browser_height = new_browser_height;
+    }
+    function get_initial_attributes() {
+        old_browser_height = window.innerHeight;
+    }
+
+    var url = "@Url.Action("ActivityLog", "LogQueries")";
+
+    function ShowLog() {
+        var rptCode = $("#rptCode").val();
+        var rptTitle = $("#rptTitle").val();
+        window.open(url + "?rptCode=" + rptCode + "&rptTitle=" + rptTitle, '_blank');
+    }
+
+</script>

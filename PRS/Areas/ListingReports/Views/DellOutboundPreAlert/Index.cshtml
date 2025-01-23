@@ -1,0 +1,101 @@
+﻿@model IP.Areas.ListingReports.Models.DellOutboundPreAlert
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstDellOutboundPreAlert" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        $('#tblBody').empty();
+        var custRef = $('#custRef').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DellOutboundPreAlert/GetList',
+            data: {
+                custRef: custRef
+               
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                    var columnDef = [
+                        { "data": "ORDER_REF", "title": "Ship Order No.", "width": "80px" },
+                        { "data": "RTV Order Number", "title": "RTV Order No." },
+                        { "data": "DEPOT", "title": "Depot", "width": "70px" },
+                        { "data": "EXPECTED PARTNR", "title": "Expected Partner", "width": "130px" },
+                        { "data": "ACTUAL PARTNR", "title": "Actual Partner", "width": "120px" },
+                        { "data": "QtyToShip", "title": "Qty To Ship", "width": "80px", "className": "text-right" },
+                        { "data": "ETA", "title": "ETA", "width": "70px", "className": "text-right" }
+                        
+                    ];
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(5).footer()).html(thousands_separators(api.column(5).data().sum()));
+                    }
+                    ToggleDataList(true);
+
+                    MakeDataGrid('lstDellOutboundPreAlert', data.lstDellOutboundPreAlert, 0, columnDef, true, true, footerfunc);
+                
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>
+
+
+

@@ -1,0 +1,187 @@
+﻿@model IP.Areas.ListingReports.Models.DriveInquiry
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+    .modal-content{
+        width: 850px;
+    }
+</style>
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+       
+                <form id="myForm">
+                    @*<div class="row">*@
+                        <div class="col-md-6 ">
+                            @for (int i = 1; i <= 20; i++)
+                            {
+                                <div class="form-group pad">
+                                    <label for="pcbaSerialNo_@i" class="col-sm-4 control-label">PCBA Serial No. @i:</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control pcbaSerialNo" id="pcbaSerialNo_@i" data-index="@i" style="height:25px;" onkeydown="GoOnEnter()">
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-md-6 ">
+                            @for (int i = 1; i <= 20; i++)
+                            {
+                                <div class="form-group pad">
+                                    <label for="serialNo_@i" class="col-sm-3 control-label">Serial No. @i:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control serialNo" id="serialNo_@i" data-index="@i" style="height:25px;" onkeydown="GoOnEnter()">
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                    @*</div>*@
+                </form>
+
+         
+    </div>
+
+</div>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function ResetControls() {
+
+        $('#lblMsg1').empty();
+
+        $('#myForm')[0].reset();
+    }
+
+    function saveData() {
+        var pcbaValues = [];
+        var serialValues = [];
+        //var _programName = '@Request.QueryString["programId"]';
+       // var _site = $("#ddlUserSite option:selected").val();
+
+        // Extract values from PCBA Serial No input fields
+        $('.pcbaSerialNo').each(function () {
+            var index = $(this).data('index');
+            var value = $(this).val();
+            pcbaValues.push({
+                index: index,
+                value: value
+            });
+        });
+
+        // Extract values from Serial No input fields
+        $('.serialNo').each(function () {
+            var index = $(this).data('index');
+            var value = $(this).val();
+            serialValues.push({
+                index: index,
+                value: value
+            });
+        });
+
+        // Combine PCBA and Serial values into a single object
+        var dataToSend = {
+            pcbaValues: pcbaValues,
+            serialValues: serialValues,
+            programId : _site
+        }
+
+        // Make AJAX request
+        //$.ajax({
+        //    type: "POST",
+        //    url: "/DriveInquiry/GetData",
+        //    data:
+        //        dataToSend,
+
+
+
+
+        //    success: function (result) {
+        //       // $('#trainingEntry').modal('hide');
+        //       // LoadData();
+        //    },
+        //    error: function (error) {
+        //        // Handle error
+        //        console.log(error);
+        //    }
+        //});
+    }
+
+    function Go() {
+        var pcbaValues = [];
+        var serialValues = [];
+        //var _programName = '@Request.QueryString["programId"]';
+       // var _site = $("#ddlUserSite option:selected").val();
+
+        // Extract values from PCBA Serial No input fields
+        $('.pcbaSerialNo').each(function () {
+            var index = $(this).data('index');
+            var value = $(this).val();
+            pcbaValues.push({
+                index: index,
+                Pcbavalue: value
+            });
+        });
+
+        // Extract values from Serial No input fields
+        $('.serialNo').each(function () {
+            var index = $(this).data('index');
+            var value = $(this).val();
+            serialValues.push({
+                index: index,
+                Serialvalue: value
+            });
+        });
+
+        // Combine PCBA and Serial values into a single object
+        var dataToSend = {
+            pcbaValues: JSON.stringify(pcbaValues),
+            serialValues: JSON.stringify(serialValues),
+
+
+        }
+
+          $('#option').modal('hide');
+       // OpenPage('\\ListingReports\\DriveInquiry\\Index?pcbaValue=' + encodeURIComponent(JSON.stringify(dataToSend.pcbaValues)) + '&serialValue=' + encodeURIComponent(JSON.stringify(dataToSend.serialValues)) + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        var url = '\\ListingReports\\DriveInquiry\\Index?pcbaValue=' + encodeURIComponent(dataToSend.pcbaValues) +
+    '&serialValue=' + encodeURIComponent(dataToSend.serialValues) +
+    '&menuTitle=' + encodeURIComponent($('.modal-header').html()) +
+    '&rptCode=' + '@Request.QueryString["rptCode"]';
+
+OpenPage(url);
+    }
+</script>

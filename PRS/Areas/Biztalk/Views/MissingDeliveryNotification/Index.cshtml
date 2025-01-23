@@ -1,0 +1,94 @@
+﻿@model IP.Areas.Biztalk.Models.MissingDeliveryNotification
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="154" />
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstMissingDeliveryNotification" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                @*<tfoot>
+                    <tr>
+               
+                    </tr>
+                </tfoot>*@
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+        $('#option').modal('hide');
+
+        var fDate = $('#fromDt').val();
+       
+        
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MissingDeliveryNotification/GetList',
+            data: {              
+                frmDt: fDate,             
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [
+                    { "data": "Contract", "title": "Contract", "width": "60px" },
+                    { "data": "Message_Type", "title": "Msg. Type", "width": "140px" },
+                    { "data": "Customer_order_No", "title": "Customer Order No.", "width": "120px" },
+                    { "data": "Shipment_Date", "title": "Shipment Date", "width": "90px", "className": "text-right" },
+                    { "data": "Site", "title": "Site", "width": "60px" },
+                    { "data": "Carrier_Name", "title": "Carrier Name", "width": "100px" },
+                    { "data": "Waybill", "title": "Way Bill", "width": "100px" },         
+                    { "data": "EventCode", "title": "Event Code", "width": "100px" },
+                    { "data": "EventDescription", "title": "Event Description", "width": "180px" },
+                    { "data": "ErrorMessage", "title": "Error Message" }
+                ]
+
+
+                ToggleDataList(true);
+                MakeDataGrid('lstMissingDeliveryNotification', data.lstMissingDeliveryNotification, 0, columnDef, true, false, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+

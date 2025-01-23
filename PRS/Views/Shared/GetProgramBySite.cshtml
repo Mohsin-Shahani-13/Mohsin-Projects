@@ -1,0 +1,15 @@
+﻿@model IP.Models.Home
+@{
+
+}
+@if(Session["ProgramForSite"] == null)
+{
+<script>
+    window.location.href = '@Url.Action("Base", "Home")';
+</script>
+}
+else
+{ 
+@Html.LabelFor(model => model.ProgramName)
+@Html.DropDownList("ProgramID", new SelectList(ViewBag.ddProgram, "Value", "Text"), new { @id = "ProgramID", @class = "form-control" })
+}

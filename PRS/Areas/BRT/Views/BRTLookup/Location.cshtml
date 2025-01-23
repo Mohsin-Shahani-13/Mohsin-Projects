@@ -1,0 +1,307 @@
+﻿@model IP.Areas.BRT.Models.BRTLookup
+@{
+    ViewBag.Title = "Location";
+    Layout = null;
+}
+<style>
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="0043-2" />
+    <div class="row section-color">
+        @*<div class="col-md-8">*@
+        <div id="dataList" class="box panel panel-default">
+            <div class="box-header with-border bg-blue-gradient">
+                <button type="button" class="btn btn-box-tool">
+                    <span class="fa fa-th-list fa-lg white"></span>
+                </button>
+                <h6 class="box-title" id="head_lstUnitLst"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+                <div id="buttons">
+
+                </div>
+            </div>
+            <div class="box-body">
+                <table id="lstlocation" class="table table-bordered table-striped text-sm table-hover" width="100%;">
+                    <thead>
+                        <tr>
+                            <th class="notexport"></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="notexport"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        ToggleDataList(false);
+        LoadData();
+        function LoadData() {
+            var COLUMN_FORMAT =
+            {
+                formatDecimal: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : thousands_separators(val.toFixed(4));
+                },
+                formatTwoDecimal: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : val.toFixed(2);
+                },
+                formatNumber: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : thousands_separators(val.toFixed(0));
+                },
+
+                formatNumberForZero: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : val.toFixed(0);
+                },
+
+            };
+            var _lstlocation = @Html.Raw(Model.serializer.Serialize((Model.lstlocation)));
+
+        if (_lstlocation.length > 0) {
+            $('#lstlocation > tbody').empty();
+        }
+            var columnDef = [
+
+                    { "title": "Location No.", "width": "140px" },
+                    {
+                        "title": "Part No.",
+                         render: function (data, type, row) {
+
+                             var url = '<a class="Part_Undrln"  href="#" onclick="OpenView(\'\\\\BRT\\\\BRTLookup\\\\LocationByPart?locationNo=' + row[0] + '&partNo=' + row[1] + '&LocationId=' + row[3] + '\',\'right_panel_bottom\')">' + data + '</a>';
+                            return url;
+                        },
+                    },
+                    {
+                        "title": "Qty On Hand", "width": "50px", "className": "text-right",
+                        render: function (data, type, row) {
+                            var url;
+                            if (row[4] == 'N') {
+                                url = thousands_separators(row[2]);
+                            }
+                            else {
+                                var url = '<a class="Part_Undrln"  href="#" onclick="OpenView(\'\\\\BRT\\\\BRTLookup\\\\SerialNo?locationNo=' + row[0] + '&partNo=' + row[1] + '&LocationId=' + row[3] + '\',\'right_panel_bottom\')">' + thousands_separators(data) + '</a>';
+                                }
+                                return url;
+                            }
+                    },
+                { "title": "Location ID", "width": "140px", "visible": false },
+                { "title": "IsSerialExist", "width": "140px", "visible": false },
+
+                ];
+
+            //For Displaying  Footer Sum
+            var footerfunc = function () {
+                var api = this.api();
+                $(api.column(2).footer()).html(thousands_separators(api.column(2).data().sum()));
+
+
+            }
+
+            //var tableHeader = $('.table').innerHeight();
+            //var topHeader = $('.box-header').innerHeight();
+            //var browserHeight = window.innerHeight;
+            //var gridHeight = browserHeight - (tableHeader + topHeader);
+            ToggleDataList(true);
+            MakeFrameGrid('lstlocation', _lstlocation, 0, columnDef, false, false, false, footerfunc, false, $('#box-title').text(), false, false);
+           // MakeDataGrid('lstlocation', _lstlocation,  gridHeight, columnDef, false, false, footerfunc);
+        }
+    });
+
+    function MakeFrameGrid(tableId, data, tableHeight, columns, buttonId, search, isScrollX, footerFunction, isFramed, reportTitle, isSqlDoc, showPaging) {
+        var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+        isFramed = isFramed === undefined || isFramed === false ? false : true;
+        isScrollX = isScrollX === undefined ? false : true;
+        if (search === undefined) { search = true; }
+        reportTitle = reportTitle === undefined ? $('.box-title').text() : reportTitle;
+        showPaging = showPaging === undefined ? true : false;
+
+        var gridHeight = 0;
+        var gridButtonsClass = '';
+        //var gridButtonSize = 0;
+        gridButtonsClass = 'btn-header btn-box-tool';
+        gridSearchBoxClass = 'bg-white';
+        gridButtonSize = 20;
+
+        var layoutHeader = $('nav').innerHeight();
+        var cardHeader = 30;
+        var dataList = 445;
+        var tableFooter = 20;
+        var cardFooterH = 20;
+
+        if (showPaging)
+            cardFooterH = 20;
+
+        //if (isFooter === true)
+        //    tableFooter = 24;
+
+
+        var browserHeight = window.innerHeight;
+        tableFooter = tableFooter === undefined ? 0 : tableFooter;
+        gridHeight = browserHeight - (layoutHeader + cardHeader + dataList + tableFooter + cardFooterH);
+
+        //For SQL Documentation
+        var boxtool;
+        if (search === true) {
+            if (isFramed) {
+                $('#trHeadSearch').empty();
+                boxtool = '<input class="txtSearch-frame" id="txtFrameSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                $('#trHeadSearch').append(boxtool);
+            }
+            else {
+                $('#' + buttonId).empty();
+                if (isSqlDoc === true)
+                    AddSqlDoc(buttonId);
+                boxtool = '<input class="txtSearch-frame" id="txtFrameSearch' + tableId + '" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                $('#' + buttonId).append(boxtool);
+            }
+        }
+        else {
+            if (isFramed) {
+                $('#trHeadSearch').empty();
+                boxtool = '<input class="txtSearch-frame" id="txtFrameSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                $('#trHeadSearch').append(boxtool);
+            }
+            else {
+                $('#' + buttonId).empty();
+                if (isSqlDoc === true)
+                    AddSqlDoc(buttonId);
+            }
+        }
+
+        var table = $('#' + tableId).DataTable({
+            order: [],
+            data: data,
+            destroy: true,
+            columns: columns,
+            bInfo: showPaging,
+            paging: showPaging,
+            ordering: true,
+            searching: search,
+            deferRender: true,
+            pagingType: 'full',
+            pageLength: 100,
+            scrollCollapse: false,
+            scrollX: isScrollX,
+            scrollY: gridHeight,
+            footerCallback: footerFunction,
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                oPaginate: {
+                    sNext: '<i class="fa fa-forward"></i>',
+                    sPrevious: '<i class="fa fa-backward"></i>',
+                    sFirst: '<i class="fa fa-step-backward"></i>',
+                    sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            },
+            "dom": "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'#designedBy.col-sm-3'><'col-sm-4'p>>", // Added By Tahir
+            buttons: [
+                {
+                    extend: 'copyHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Copy',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        columns: 'th:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Export to excel',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        columns: 'th:not(.notexport)'
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        var excelColumns = [];
+
+                        header = $("row[r=2]", sheet);
+
+                        cols = header.find("c");
+                        cols.each(function () {
+                            t = $(this).find("t").text();
+                            if (t.includes("Serial") || t.includes("Customer Ref."))
+                                excelColumns.push($(this).attr("r"));
+                        });
+                        $(excelColumns).each(function () {
+                            var cell = this.substring(0, 1);
+                            $('row:gt(1) c[r^="' + cell + '"]', sheet).each(function () {
+                                $(this).removeAttr('s');
+                                $(this).attr('t', 'inlineStr');
+                                $(this).find('v').replaceWith('<is><t>' + $(this).text() + '</t></is>');
+                            });
+                        });
+
+                    }
+                },
+                {
+                    extend: 'print',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Print',
+                    title: '',
+                    messageTop: function () { return '<h4>' + reportTitle + '</h4>'; },
+                    filename: 'DataExport',
+                    exportOptions: {
+                        columns: 'th:not(.notexport)'
+                    }
+                }
+
+            ],
+            select: true
+        });
+
+        table.buttons().container()
+            .appendTo('#' + buttonId);
+
+        table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+        table.button(0).nodes().addClass(gridButtonsClass);
+
+        table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(1).nodes().addClass(gridButtonsClass);
+
+        table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(2).nodes().addClass(gridButtonsClass);
+
+        $('#txtFrameSearch' + tableId).on('keyup change', function () {
+            table.search(this.value).draw();
+        });
+        $('.dataTables_filter').hide();
+        table.columns.adjust().draw();
+
+    }
+
+</script>
+
+

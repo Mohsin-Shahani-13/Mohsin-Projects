@@ -1,0 +1,1131 @@
+﻿@model IP.Areas.Biztalk.Models.Inbound
+@{
+    ViewBag.Title = "Detail";
+    Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery);
+}
+<style>
+    .text-sm {
+        padding-bottom: 2px;
+    }
+
+
+
+    /*.leftsection {
+        text-align: center;*/
+    /*padding-top: 50px;*/
+    /*height: 38%;
+        background-color:white;
+    }*/
+
+    .more-text {
+        display: none;
+        color: red;
+    }
+
+    /* .modal-body {
+        color: red !important;
+    }
+
+    .modal-width {
+        width: 80% !important;
+        height: 80% !important;
+        margin: 50px auto auto auto !important;
+    }
+
+    .modalcontent {
+        height: 80% !important;
+        border-radius: 0 !important;
+    }*/
+
+    .truncate {
+        max-width: 1200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #lstattribute_info {
+        display: none;
+    }
+
+    #lstattribute_paginate {
+        display: none;
+    }
+    /*  .dataTables_scrollHeadInner {
+        width: 100%;
+    }*/
+    #lstLineAttr_info {
+        display: none;
+    }
+
+    #lstLineAttr_paginate {
+        display: none;
+    }
+    /*#lstLineAttr_info {
+        display: none;
+    }*/
+    #lstSerialAttr_info {
+        display: none;
+    }
+
+    #lstSerialAttr_paginate {
+        display: none;
+    }
+
+    .btn-success {
+        color: white;
+        font-size: smaller;
+    }
+</style>
+@{
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    //var jsonModel = serializer.Serialize(Model.lstSerial);
+
+}
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="024" />
+    <div id="datalist" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            @{
+                // if (Layout == "~/Views/Shared/_LayoutInner.cshtml")
+                if (Layout == null)
+                {
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-box-tool">
+                        <span class="fa fa-th-list fa-lg white"></span>
+                    </button>
+                }
+            }
+            <h6 class="box-title"><strong>Inbound Detail >  Header Id = '@Request.QueryString["hdrId"]'</strong></h6>
+            <div id="button" class="box-tools pull-right" style="margin-top:2PX;">
+            </div>
+        </div>
+        <div id="topHeader" class="box-body row text-sm">
+            <div class="col-md-12 text-sm">
+                <table id="tblheader" class="table text-sm" style="margin-bottom:-5px; width:100%">
+                    <tr>
+                        <td style="width: 60px;"><strong>@Html.DisplayNameFor(m => m.messageType)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.messageType)</td>
+
+                        <td style="width: 70px;"><strong>@Html.DisplayNameFor(m => m.Processed)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.Processed)</td>
+
+                        <td style="width: 120px;"><strong>@Html.DisplayNameFor(m => m.orderNo)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.orderNo)</td>
+
+                        <td style="width: 100px;"><strong>@Html.DisplayNameFor(m => m.orderCode)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.orderCode)</td>
+
+                        <td style="width: 120px;"><strong>@Html.DisplayNameFor(m => m.trackingRef)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.trackingRef)</td>
+
+                        <td style="width: 100px;"><strong>@Html.DisplayNameFor(m => m.responseDate)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.responseDate)</td>
+
+                        @*<td style="width: 100px;"><strong>@Html.DisplayNameFor(m => m.HeaderAttr)</strong></td>*@
+                        <td class="bg-gray-light"><a href="#" id="HeadAtt"><div style="width:100%;">Header Attribute</div></a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>@Html.DisplayNameFor(m => m.contract)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.contract)</td>
+
+                        <td><strong>@Html.DisplayNameFor(m => m.senderId)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.senderId)</td>
+
+                        <td><strong>@Html.DisplayNameFor(m => m.coType)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.coType)</td>
+
+                        <td><strong>@Html.DisplayNameFor(m => m.buyerCode)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.buyerCode)</td>
+
+                        <td><strong>@Html.DisplayNameFor(m => m.billOfLading)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.billOfLading)</td>
+
+                        <td><strong>@Html.DisplayNameFor(m => m.processedDate)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.processedDate)</td>
+
+                        @*<td style="width: 100px;"><strong>@Html.DisplayNameFor(m => m.LineHeader)</strong></td>*@
+                        @*<td class="bg-gray-light">Line Attribute</td>*@
+                        <td class="bg-gray-light"><a href="#" id="HeadAttLine"><div style="width:100%;">Line Attribute</div></a></td>
+                        @* @Html.ActionLink(model, new { controller = "Inbound", action = "GetAttribute", id = Model.HdrId })*@
+                        @*<td class="bg-gray-light" >
+                                @Html.ActionLink("Text", "GetAttribute", "Inbound", new { Model.HdrId }, null)
+                            </td>*@
+                    </tr>
+                    <tr>
+                        <td><strong>@Html.DisplayNameFor(m => m.company)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.company)</td>
+
+                        <td><strong>@Html.DisplayNameFor(m => m.messageType)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.messageType)</td>
+
+
+                        <td><strong>@Html.DisplayNameFor(m => m.messageSubType)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.messageSubType)</td>
+
+
+                        <td><strong>@Html.DisplayNameFor(m => m.authorizeCode)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.authorizeCode)</td>
+
+                        <td><strong>@Html.DisplayNameFor(m => m.comInv)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.comInv)</td>
+
+
+                        <td><strong>@Html.DisplayNameFor(m => m.insertDate)</strong></td>
+                        <td class="bg-gray-light">@Html.DisplayFor(m => m.insertDate)</td>
+
+                        @*<td style="width: 100px;"><strong>@Html.DisplayNameFor(m => m.SerialHeader)</strong></td>*@
+                        @*<td class="bg-gray-light">Serial Attribute</td>*@
+                        <td class="bg-gray-light"><a href="#" id="HeadAttSerial"><div style="width:100%;">Serial Attribute</div></a></td>
+                    </tr>
+                </table>
+
+                @if (Model.Processed == "F")
+                {
+                    <div class="msg">
+                        <table class="table-condensed" style="width:100%; height:9px;">
+                            <tr>
+                                <td style="color:red; font-size:small; font-weight:500; margin:10px; padding-top:10px;">
+                                    @Html.DisplayNameFor(m => m.msg)
+                                </td>
+                                <td class="truncate" style="color:red; font-size:small;  padding-top:12px;" title="@Html.DisplayFor(m => m.msg)">
+                                    @Html.DisplayFor(m => m.msg)
+                                </td>
+                                <td class="bg-gray-light" title="Reprocess" style="padding-right: 700px; vertical-align: middle !important;">
+                                    @*<a href="~/Externals/B2BMessage.aspx?hdrId=@Request.QueryString["hdrId"].ToString()&rptName=INBOUND" class="btn btn-success" role="button" target="_blank">Reprocess</a>*@
+                                    <a href="#" onclick="SendMsg('@Request.QueryString["hdrId"].ToString()', 'INBOUND');" class="btn btn-success" role="button">Reprocess</a>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                }
+
+
+
+                <div id="msg" class="modal fade" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div id="commentsheader" class="modal-header bg-blue-gradient option-title">
+                                Message
+                            </div>
+                            <div id="msgbody" class="modal-body" style="font-size:small;">
+                            </div>
+                            <div class="modal-footer" style="padding:4px;">
+                                <button type="button" class="btn btn-default" id="Msgbtn" data-dismiss="modal">OK</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="baby-col-12 section-padding">
+            <div class="box babygridheight" style="margin-top:4px;">
+                <div class="box-header bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool">
+                        <span class="fa fa-th-list fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title " id="line"><strong>Line >  Header Id = '@Request.QueryString["hdrId"]'</strong></h6>
+                    <div id="btnLine" class="box-tools pull-right">
+                        <span class="fa fa-th-list fa-lg white"></span>
+                    </div>
+                </div>
+                <div class="box-body text-sm" style="height:37%">
+                    <table id="lstDetail" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%;"*@>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                        <tfoot style="background-color:white;">
+                            <tr>
+                                <th style="text-align:left;">Total :</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row " style="margin-bottom: -20px">
+        <div class="baby-col-12 section-padding">
+            <div class="box">
+                <table id="lstData" class="table table-bordered table-striped text-sm" width="100%">
+                    <thead>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    @if (Model.Processed == "F")
+    {
+        <div class="row">
+            <div id="left_panel_Bottom" class="col-md-12">
+                <div id="left_bot_section" class="box panel panel-default leftsection" style=" text-align: center;  height: 38%; background-color: white;">
+                    <h4 style="margin-top:120px">Click hyperlink on above section to load data</h4>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div id="left_panel_Bottom" class="col-md-12">
+                <div id="left_bot_section" class="box panel panel-default leftsection" style="text-align: center;  height:43%; background-color: white;">
+                    <h4 style="margin-top:120px">Click hyperlink on above section to load data</h4>
+                </div>
+            </div>
+        </div>
+    }
+    <!-- Modal For lstattribute-->
+    <div class="modal" id="Optionitem" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#0073b7; color:white;">
+                    <h5 class="modal-title"><strong>Header Attribute</strong></h5>
+                    <button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-25px; color:white;">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:0px">
+                    <table id="lstattribute" class="col-12 table table-bordered table-striped text-sm" width="100%">
+                        <thead width="100%">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                    </table>
+                </div>
+
+                <br />
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal For Line Attribute-->
+    <div class="modal" id="Optionitem1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#0073b7; color:white;">
+                    <h5 class="modal-title"><strong>Line Attribute</strong></h5>
+                    <button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-25px; color:white;">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:0px">
+                    <table id="lstLineAttr" class="col-12 table table-bordered table-striped text-sm" width="100%">
+                        <thead width="100%">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                    </table>
+                </div>
+
+                <br />
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal For Serial Attribute-->
+    <div class="modal" id="Optionitem2" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#0073b7; color:white;">
+                    <h5 class="modal-title"><strong>Serial Attribute</strong></h5>
+                    <button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-25px; color:white;">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:0px">
+                    <table id="lstSerialAttr" class="col-12 table table-bordered table-striped text-sm" width="100%">
+                        <thead width="100%">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                    </table>
+                </div>
+
+                <br />
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    if (Layout == null)
+    {
+        <script type="text/javascript">
+
+            var COLUMN_FORMAT =
+            {
+                formatDecimal: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : thousands_separators(val.toFixed(4));
+                },
+                formatTwoDecimal: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : val.toFixed(2);
+                },
+                formatNumber: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : thousands_separators(val.toFixed(0));
+                },
+
+                formatNumberForZero: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : val.toFixed(0);
+                },
+
+            };
+
+                $('#button').empty();
+                var qrytool = '<a id="showQuery" class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=024' + '&rptTitle=Inbound Detail' + '&isDetail=Y' + '" title="How they do that" target="_blank">';
+                qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+                qrytool += '</a>';
+            $('#button').append(qrytool);
+
+            //For Header Attribute
+            $('#HeadAtt').click(function () {
+
+                $('#Optionitem').modal('show')
+
+            });
+
+                    $(document).ready(function () {
+                        $('#HeadAtt').click(function () {
+                            var hdrId = '@Request.QueryString["hdrId"]'
+                            $('#Optionitem').modal('show');
+
+                            $.ajax({
+
+                                cache: false,
+                                type: 'GET',
+                                url: '/Inbound/GetAttribute',
+                                data: {
+                                    hdrId: hdrId
+                                },
+                                datatype: JSON,
+                                success: function (data) {
+                                    $('#filterString').append(data.filterString);
+
+
+                                    var columnDef = [
+
+                                        { "data": "ID", "title": "ID", "width": "80px", "visible": false },
+                                        { "data": "Message_Type", "title": "Msg. Type", "width": "150px"},
+                                        { "data": "Field_Name", "title": "Field Name", "width": "200px" },
+                                        { "data": "Value", "title": "Value" }
+
+                                    ]
+
+
+                                    ToggleDataList(true);
+                                    MakeFrameGrid('lstattribute', data.lstattribute, 400, columnDef, true, false, false);
+
+                                    if (data["ErrorMessage"] != null) {
+                                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                                    }
+                                },
+                                onerror: function (r) { r },
+                                failure: function (r) { r }
+                            });
+
+
+                        });
+
+                         //For Line Attribute
+                        $('#HeadAttLine').click(function () {
+
+                        $('#Optionitem1').modal('show')
+
+                         });
+
+                    $(document).ready(function () {
+                        $('#HeadAttLine').click(function () {
+                            var hdrId = '@Request.QueryString["hdrId"]'
+                            $('#Optionitem1').modal('show');
+
+                            $.ajax({
+
+                                cache: false,
+                                type: 'GET',
+                                url: '/Inbound/GetLineAttr',
+                                data: {
+                                    hdrId: hdrId
+                                },
+                                datatype: JSON,
+                                success: function (data) {
+                                    $('#filterString').append(data.filterString);
+
+
+                                    var columnDef = [
+
+                                        { "data": "ID", "title": "ID", "width": "80px", "visible": false },
+                                        { "data": "Field_Name", "title": "Field Name", "width": "200px" },
+                                        { "data": "Value", "title": "Value" }
+
+                                    ]
+
+
+                                    ToggleDataList(true);
+                                    MakeFrameGrid('lstLineAttr', data.lstLineAttr, 400, columnDef, true, false, false);
+
+                                    if (data["ErrorMessage"] != null) {
+                                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                                    }
+                                },
+                                onerror: function (r) { r },
+                                failure: function (r) { r }
+                            });
+
+                        });
+
+                        });
+
+
+                         //For Serial Attribute
+                        $('#HeadAttSerial').click(function () {
+
+                        $('#Optionitem2').modal('show')
+
+                         });
+
+                    $(document).ready(function () {
+                        $('#HeadAttSerial').click(function () {
+                            var hdrId = '@Request.QueryString["hdrId"]'
+                            $('#Optionitem2').modal('show');
+
+                            $.ajax({
+
+                                cache: false,
+                                type: 'GET',
+                                url: '/Inbound/GetSerialAttr',
+                                data: {
+                                    hdrId: hdrId
+                                },
+                                datatype: JSON,
+                                success: function (data) {
+                                    $('#filterString').append(data.filterString);
+
+
+                                    var columnDef = [
+
+                                        { "data": "ID", "title": "ID", "width": "80px", "visible": false },
+                                        { "data": "Field_Name", "title": "Field Name", "width": "200px" },
+                                        { "data": "Value", "title": "Value" }
+
+                                    ]
+
+
+                                    ToggleDataList(true);
+                                    MakeDataGrid('lstSerialAttr', data.lstSerialAttr, 400, columnDef, true, false, false);
+
+                                    if (data["ErrorMessage"] != null) {
+                                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                                    }
+                                },
+                                onerror: function (r) { r },
+                                failure: function (r) { r }
+                            });
+
+                        });
+                        });
+
+                    ToggleDataList(false);
+                    var _lstDetail = @Html.Raw(Json.Encode(Model.lstDetail));
+                    @*var _lstSerial = @Html.Raw(jsonModel);*@
+
+                    var columnWidth = [
+                        { "data": "Inmessage_Hdr_Id", "title": "Msg. Id", "width": "50px" },
+                        //{
+                        //    "data": "Line_No", "title": "Line No.", "width": "60px",
+                        //    render: function (data, type, row) {
+
+                        //        url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\Biztalk\\\\Inbound\\\\GetSerial?hdrId=' + row["Inmessage_Hdr_Id"] + '&lineNo=' + row["Line_No"] + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                        //        return url;
+                        //    }
+                        //},
+                        { "data": "HAS_LN", "title": "HAS_LN", "visible": false },
+                        {
+                            "data": "Line_No", "title": "Line No.", "width": "60px",
+                            render: function (data, type, row) {
+                                var d = data.toString();
+                                if (row["HAS_LN"] == 'N') {
+                                    url = row["Line_No"];
+                                }
+                                else {
+                                    url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\Biztalk\\\\Inbound\\\\GetSerial?hdrId=' + row["Inmessage_Hdr_Id"] + '&lineNo=' + row["Line_No"] + '\',\'left_panel_Bottom\')">' + d + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "Message_Line_No", "title": "Msg. Line No.", "width": "60px" },
+                        {
+                            "data": "Qty", "title": "Qty", "width": "40px", "className": "text-right",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        { "data": "Qty_UOM", "title": "Qty UOM", "width": "60px"},
+                        { "data": "Part_no", "title": "Part No.", "width": "130px" },
+                        { "data": "Vendor_Part_No", "title": "Vendor Part No.", "width": "130px" },
+                        { "data": "Description", "title": "Desc.", "width": "150px"},
+                        {
+                            "data": "Price", "title": "Price", "width": "70px", "className": "text-right",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatDecimal(data);
+                                return val;
+                            }
+                        },
+                        { "data": "Tax", "title": "Tax", "width": "60px" },
+                        { "data": "Cust_Line_Id", "title": "Cust. Line Id", "width": "80px" },
+                        { "data": "Configuration_Id", "title": "Config. Id", "width": "60px" },
+                        { "data": "Hazardous", "title": "Hazardous", "width": "80px" },
+                        { "data": "Class_Code", "title": "Class Code", "width": "80px" },
+                        { "data": "Model_Catalog_No", "title": "Model Catalog No.", "width": "120px" },
+                        { "data": "Configuration_Code", "title": "Config. Code", "width": "80px" },
+                        { "data": "Box_Length", "title": "Box Length", "width": "80px" },
+                        { "data": "Box_Width", "title": "Box Width", "width": "70px" },
+                        { "data": "Box_Height", "title": "Box Height", "width": "70px" },
+                        { "data": "Notes1", "title": "Notes1", "width": "60px" },
+                        { "data": "Notes2", "title": "Notes2", "width": "60px" },
+                        { "data": "Notes4", "title": "Notes4", "width": "60px" },
+                        { "data": "C01", "title": "C01", "width": "80px" },
+                        { "data": "C02", "title": "C02", "width": "80px" },
+                        { "data": "C03", "title": "C03", "width": "80px" },
+                        { "data": "C04", "title": "C04", "width": "80px" },
+                        { "data": "C05", "title": "C05", "width": "80px" },
+                        { "data": "C06", "title": "C06", "width": "200px" },
+                        { "data": "C07", "title": "C07", "width": "100px" },
+                        { "data": "C08", "title": "C08", "width": "80px" },
+                        { "data": "C09", "title": "C09", "width": "80px" },
+                        { "data": "C10", "title": "C10", "width": "80px" },
+                        { "data": "N02", "title": "N02", "width": "80px" },
+                        { "data": "N03", "title": "N03", "width": "80px" },
+                        { "data": "N04", "title": "N04", "width": "80px" },
+                        { "data": "N05", "title": "N05", "width": "80px" },
+                        { "data": "D01", "title": "D01", "width": "90px", "className": "text-right" },
+                        { "data": "D02", "title": "D02", "width": "90px", "className": "text-right" },
+                        { "data": "DO4", "title": "DO4", "width": "90px", "className": "text-right" },
+                        { "data": "D05", "title": "D05", "width": "90px", "className": "text-right" },
+                        { "data": "Currency", "title": "Currency", "width": "90px" },
+                        { "data": "e_c_c_n", "title": "ECCN", "width": "70px" },
+                        { "data": "hts_code2", "title": "Hts Code2", "width": "60px" },
+                        { "data": "country1", "title": "Country1", "width": "80px" },
+                        { "data": "country2", "title": "Country2", "width": "80px" },
+                        { "data": "Box_Weight", "title": "Box Weight", "width": "70px" },
+                        { "data": "Delivery_Date", "title": "Delivery Date", "width": "80px" },
+                        { "data": "RR_Code", "title": "RR Code", "width": "60px" },
+                        { "data": "RE_Code", "title": "RE Code", "width": "60px" },
+                        { "data": "WT_ID", "title": "WT ID", "width": "60px" },
+                        { "data": "Pre_Reg", "title": "Pre Reg", "width": "60px" }
+                    ]
+
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        //$(api.column(3).footer()).html(thousands_separators(api.column(3).data().sum()));
+                        $(api.column(4).footer()).html(thousands_separators(api.column(4).data().sum()));
+                        //$(api.column(8).footer()).html(COLUMN_FORMAT.formatDecimal(api.column(8).data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                        var h = getHeight(37);
+
+                    MakeFrameGrid('lstDetail', _lstDetail, h, columnWidth, 'btnLine', true, true, footerfunc, false, $('#line').text(), false);
+
+
+                    });
+
+            function SendMsg(hdrId, rptName) {
+                $.ajax({
+                    type: 'GET',
+                    datatype: 'JSON',
+                    url: '/Inbound/B2BSendMessage',
+                    data: { hdrId: hdrId, rptName: rptName },
+                    success: function (data) {
+                        $('#msg').modal('show')
+
+                        document.getElementById("msgbody");
+                        if (data == "OKOK") {
+                            $('.modal-body').append("Reproccessed Successfully.")
+
+                        }
+                        else {
+                            $('.modal-body').append("Reproccessed Fail.")
+
+
+                        }
+
+
+
+
+                    }, //all Ok
+                    error: function () {
+                    } // some errormodal-body
+                });
+
+                $('#Msgbtn').click(function () {
+                    location.reload();
+                });
+            }
+
+        </script>
+    }
+    else
+    {
+        @section js{
+
+            <script type="text/javascript">
+
+
+
+                var COLUMN_FORMAT =
+                {
+                    formatDecimal: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(4));
+                    },
+                    formatTwoDecimal: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : val.toFixed(2);
+                    },
+                    formatNumber: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : thousands_separators(val.toFixed(0));
+                    },
+
+                    formatNumberForZero: function (data, type, row) {
+                        var val = +data;
+                        return val === 0 ? '' : val.toFixed(0);
+                    },
+
+                };
+
+                    $('#button').empty();
+                    var qrytool = '<a id="showQuery" class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=024' + '&rptTitle=Inbound Detail' + '&isDetail=Y' + '" title="How they do that" target="_blank">';
+                    qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+                    qrytool += '</a>';
+                    $('#button').append(qrytool);
+
+
+
+
+                    $(document).ready(function () {
+
+                        $('#HeadAtt').click(function () {
+                            var hdrId = '@Request.QueryString["hdrId"]'
+                            $('#Optionitem').modal('show');
+
+                            $.ajax({
+
+                                cache: false,
+                                type: 'GET',
+                                url: '/Inbound/GetAttribute',
+                                data: {
+                                    hdrId: hdrId
+                                },
+                                datatype: JSON,
+                                success: function (data) {
+
+
+
+                                    var columnDef = [
+
+                                        { "data": "ID", "title": "ID", "width": "80px", "visible": false },
+                                        { "data": "Message_Type", "title": "Msg. Type", "width": "150px" },
+                                        { "data": "Field_Name", "title": "Field Name", "width": "200px" },
+                                        { "data": "Value", "title": "Value" }
+
+                                    ]
+
+
+                                    ToggleDataList(true);
+                                    MakeDataGrid('lstattribute', data.lstattribute, 400, columnDef, false, false, false);
+                                    // MakeFrameGrid('lstattribute', data.lstattribute, 400, columnDef, 'button', true, false, false, false, $('#head_lstUnitLst').text(), false);
+
+                                    if (data["ErrorMessage"] != null) {
+                                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                                    }
+                                },
+                                onerror: function (r) { r },
+                                failure: function (r) { r }
+                            });
+
+                        });
+                    });
+
+                    //For Line Attribute
+                    $('#HeadAttLine').click(function () {
+
+                        $('#Optionitem1').modal('show')
+
+                    });
+
+                    $(document).ready(function () {
+                        $('#HeadAttLine').click(function () {
+                            var hdrId = '@Request.QueryString["hdrId"]'
+                            $('#Optionitem1').modal('show');
+
+                            $.ajax({
+
+                                cache: false,
+                                type: 'GET',
+                                url: '/Inbound/GetLineAttr',
+                                data: {
+                                    hdrId: hdrId
+                                },
+                                datatype: JSON,
+                                success: function (data) {
+                                    $('#filterString').append(data.filterString);
+
+
+                                    var columnDef = [
+
+                                        { "data": "ID", "title": "ID", "width": "80px", "visible": false },
+                                        { "data": "Field_Name", "title": "Field Name", "width": "200px" },
+                                        { "data": "Value", "title": "Value" }
+
+                                    ]
+
+
+                                    ToggleDataList(true);
+                                    MakeDataGrid('lstLineAttr', data.lstLineAttr, 400, columnDef, true, false, false);
+
+                                    if (data["ErrorMessage"] != null) {
+                                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                                    }
+                                },
+                                onerror: function (r) { r },
+                                failure: function (r) { r }
+                            });
+                        });
+
+                    });
+
+
+                    //For Serial Attribute
+                    $('#HeadAttSerial').click(function () {
+
+                        $('#Optionitem2').modal('show')
+
+                    });
+
+                    $(document).ready(function () {
+                        $('#HeadAttSerial').click(function () {
+                            var hdrId = '@Request.QueryString["hdrId"]'
+                            $('#Optionitem2').modal('show');
+
+                            $.ajax({
+
+                                cache: false,
+                                type: 'GET',
+                                url: '/Inbound/GetSerialAttr',
+                                data: {
+                                    hdrId: hdrId
+                                },
+                                datatype: JSON,
+                                success: function (data) {
+                                    $('#filterString').append(data.filterString);
+
+
+                                    var columnDef = [
+
+                                        { "data": "ID", "title": "ID", "width": "80px", "visible": false },
+                                        { "data": "Field_Name", "title": "Field Name", "width": "200px" },
+                                        { "data": "Value", "title": "Value" }
+
+                                    ]
+
+
+                                    ToggleDataList(true);
+                                    MakeDataGrid('lstSerialAttr', data.lstSerialAttr, 400, columnDef, true, false, false);
+
+                                    if (data["ErrorMessage"] != null) {
+                                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                                    }
+                                },
+                                onerror: function (r) { r },
+                                failure: function (r) { r }
+                            });
+
+
+                        });
+
+                        ToggleDataList(false);
+                        var _lstDetail = @Html.Raw(Json.Encode(Model.lstDetail));
+                    @*var _lstSerial = @Html.Raw(jsonModel);*@
+
+                        var columnWidth = [
+                            { "data": "Inmessage_Hdr_Id", "title": "Msg. Id", "width": "50px" },
+                            //{
+                            //    "data": "Line_No", "title": "Line No.", "width": "60px",
+                            //    render: function (data, type, row) {
+
+                            //        url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\Biztalk\\\\Inbound\\\\GetSerial?hdrId=' + row["Inmessage_Hdr_Id"] + '&lineNo=' + row["Line_No"] + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                            //        return url;
+                            //    }
+                            //},
+                            { "data": "HAS_LN", "title": "HAS_LN", "visible": false },
+                            {
+                                "data": "Line_No", "title": "Line No.", "width": "60px",
+                                render: function (data, type, row) {
+                                    var d = data.toString();
+                                    if (row["HAS_LN"] == 'N') {
+                                        url = row["Line_No"];
+                                    }
+                                    else {
+                                        url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\Biztalk\\\\Inbound\\\\GetSerial?hdrId=' + row["Inmessage_Hdr_Id"] + '&lineNo=' + row["Line_No"] + '\',\'left_panel_Bottom\')">' + d + '</a>';
+                                    }
+                                    return url;
+                                }
+                            },
+                            { "data": "Message_Line_No", "title": "Msg. Line No.", "width": "80px" },
+                            {
+                                "data": "Qty", "title": "Qty", "width": "40px", "className": "text-right",
+
+                                render: function (data, type, row) {
+
+                                    var val = COLUMN_FORMAT.formatNumber(data);
+                                    return val;
+                                }
+                            },
+                            { "data": "Qty_UOM", "title": "Qty UOM", "width": "60px" },
+                            { "data": "Part_no", "title": "Part No.", "width": "130px" },
+                            { "data": "Vendor_Part_No", "title": "Vendor Part No.", "width": "130px" },
+                            { "data": "Description", "title": "Desc.", "width": "150px" },
+                            {
+                                "data": "Price", "title": "Price", "width": "70px", "className": "text-right",
+
+                                render: function (data, type, row) {
+
+                                    var val = COLUMN_FORMAT.formatDecimal(data);
+                                    return val;
+                                }
+                            },
+                            { "data": "Tax", "title": "Tax", "width": "60px" },
+                            { "data": "Cust_Line_Id", "title": "Cust. Line Id", "width": "80px" },
+                            { "data": "Configuration_Id", "title": "Config. Id", "width": "60px" },
+                            { "data": "Hazardous", "title": "Hazardous", "width": "80px" },
+                            { "data": "Class_Code", "title": "Class Code", "width": "80px" },
+                            { "data": "Model_Catalog_No", "title": "Model Catalog No.", "width": "100px" },
+                            { "data": "Configuration_Code", "title": "Config. Code", "width": "80px" },
+                            { "data": "Box_Length", "title": "Box Length", "width": "80px" },
+                            { "data": "Box_Width", "title": "Box Width", "width": "70px" },
+                            { "data": "Box_Height", "title": "Box Height", "width": "70px" },
+                            { "data": "Notes1", "title": "Notes1", "width": "60px" },
+                            { "data": "Notes2", "title": "Notes2", "width": "60px" },
+                            { "data": "Notes4", "title": "Notes4", "width": "60px" },
+                            { "data": "C01", "title": "C01", "width": "80px" },
+                            { "data": "C02", "title": "C02", "width": "80px" },
+                            { "data": "C03", "title": "C03", "width": "80px" },
+                            { "data": "C04", "title": "C04", "width": "80px" },
+                            { "data": "C05", "title": "C05", "width": "80px" },
+                            { "data": "C06", "title": "C06", "width": "200px" },
+                            { "data": "C07", "title": "C07", "width": "100px" },
+                            { "data": "C08", "title": "C08", "width": "80px" },
+                            { "data": "C09", "title": "C09", "width": "80px" },
+                            { "data": "C10", "title": "C10", "width": "80px" },
+                            { "data": "N02", "title": "N02", "width": "80px" },
+                            { "data": "N03", "title": "N03", "width": "80px" },
+                            { "data": "N04", "title": "N04", "width": "80px" },
+                            { "data": "N05", "title": "N05", "width": "80px" },
+                            { "data": "D01", "title": "D01", "width": "80px" },
+                            { "data": "D02", "title": "D02", "width": "80px" },
+                            { "data": "DO4", "title": "DO4", "width": "80px" },
+                            { "data": "D05", "title": "D05", "width": "80px" },
+                            { "data": "Currency", "title": "Currency", "width": "90px" },
+                            { "data": "e_c_c_n", "title": "ECCN", "width": "70px" },
+                            { "data": "hts_code2", "title": "Hts Code2", "width": "60px" },
+                            { "data": "country1", "title": "Country1", "width": "80px" },
+                            { "data": "country2", "title": "Country2", "width": "80px" },
+                            { "data": "Box_Weight", "title": "Box Weight", "width": "70px" },
+                            { "data": "Delivery_Date", "title": "Delivery Date", "width": "80px" },
+                            { "data": "RR_Code", "title": "RR Code", "width": "60px" },
+                            { "data": "RE_Code", "title": "RE Code", "width": "60px" },
+                            { "data": "WT_ID", "title": "WT ID", "width": "60px" },
+                            { "data": "Pre_Reg", "title": "Pre Reg", "width": "60px" }
+                        ]
+
+                        //For Displaying  Footer Sum
+                        var footerfunc = function () {
+                            var api = this.api();
+                            //$(api.column(3).footer()).html(thousands_separators(api.column(3).data().sum()));
+                            $(api.column(4).footer()).html(thousands_separators(api.column(4).data().sum()));
+                            //$(api.column(8).footer()).html(COLUMN_FORMAT.formatDecimal(api.column(8).data().sum()));
+
+                        }
+
+
+                        ToggleDataList(true);
+                        var h = getHeight(37);
+
+                        MakeFrameGrid('lstDetail', _lstDetail, h, columnWidth, 'btnLine', true, true, footerfunc, false, $('#line').text(), false);
+
+                    });
+
+
+                function SendMsg(hdrId, rptName) {
+                    $.ajax({
+                        type: 'GET',
+                        datatype: 'JSON',
+                        url: '/Inbound/B2BSendMessage',
+                        data: { hdrId: hdrId, rptName: rptName },
+                        success: function (data) {
+                            $('#msg').modal('show')
+                            document.getElementById("msgbody");
+                            $('.modal-body').append(data)
+                            if (data == "Reprocessed Successfully") {
+                                $('.modal-body').css('color', '#02521c');
+                            }
+                            else {
+                                $('.modal-body').css('color', '#c71010');
+                            }
+
+                        }, //all Ok
+                        error: function () {
+                        } // some errormodal-body
+                    });
+
+                $('#Msgbtn').click(function () {
+                    location.reload();
+                });
+                }
+
+            </script>
+        }
+    }
+}
+
+
+

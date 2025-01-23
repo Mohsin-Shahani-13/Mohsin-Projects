@@ -1,0 +1,186 @@
+﻿@model IP.Areas.ListingReports.Models.WorkStationHistory
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstWorkStationHistory" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    @*<tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>*@
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var ischecked = $('#ischecked').is(':checked');
+        var _isAllDate = $('#isAllDate').is(':checked');
+        var _SerialNo = $('#serialNo').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/WorkStationHistory/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                ProgramName: _ProgramName,
+                ischecked: ischecked,
+                isAllDate: _isAllDate,
+                serialNo: _SerialNo
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "Program ID", "width": "40px", "visible": false },
+                        { "data": "ProgramName", "title": "Program", "width": "70px" },
+                        { "data": "Id", "title": "Order No.", "width": "90px" },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&Programid=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "PartDesc", "title": "Part No. Desc.", "width": "250px" },
+                        { "data": "RepairDescription", "title": "Repair Desc.", "width": "250px" },
+                        { "data": "FromWorkStation", "title": "From WorkStation", "width": "220px" },
+                        { "data": "ToWorkStation", "title": "To WorkStation", "width": "220px" },
+                        { "data": "WorkOrderResult", "title": "WorkOrder Result", "width": "100px" },
+                        { "data": "WorkstationResult", "title": "WorkStation Result", "width": "110px" },
+                        { "data": "Iteration", "title": "Iteration", "width": "70px" },
+                        {
+                            "data": "SerialNo", "title": "Serial No.", "width": "80px",
+                            render: function (data, type, row) {
+                                var d = data.toString();
+                                if (row["HAS_SN"] == 'N' || row["SerialNo"] == "*") {
+                                    url = row["SerialNo"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&Programid=' + row["ProgramID"] + '&partno=' + row["PartNo"] + '&page=list" target=_blank > ' + d + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "CustomerReference", "title": "Customer Ref.", "width": "100px",
+                            render: function (data, type, row) {
+
+                                var url = '<a href= "\\SupplyChain\\WO\\Detail?ID=' + row["Id"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },                                          
+                        { "data": "ROCustRef", "title": "RO Customer Ref.", "width": "100px" },
+                        { "data": "Code", "title": "Fault Code", "width": "100px" },
+                        { "data": "Description", "title": "Fault Desc.", "width": "250px" },
+                        { "data": "WorkType", "title": "Work Type", "width": "120px" },
+                        { "data": "FaultCode1", "title": "Fault Code 1", "width": "150px" },
+                        { "data": "FaultCode2", "title": "Fault Code 2", "width": "150px" }, 
+                        { "data": "RelIdPartNumber", "title": "REId Part No.", "width": "100px" },
+                        { "data": "By", "title": "Created By", "width": "100px" },
+                        { "data": "On", "title": "Created On", "width": "90px", "className": "text-right" },
+                        { "data": "LastActivityDate", "title": "Last Activity On", "width": "90px", "className": "text-right" },
+                        { "data": "StartDate", "title": "Start Date", "width": "90px", "className": "text-right" },
+                        { "data": "EndDate", "title": "End Date", "width": "90px", "className": "text-right" }
+
+                    ]
+                    //For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //    $(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                    //}
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstWorkStationHistory', data.lstWorkStationHistory, 0, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+

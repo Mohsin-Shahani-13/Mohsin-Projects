@@ -1,0 +1,136 @@
+﻿@model IP.Areas.Meta.Models.MetaDekit
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstMetaDekit" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                        <th></th>
+                        <th></th>
+                        @*<th></th>
+                        <th></th>*@
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                        <th></th>
+                        <th></th>
+                        @*<th></th>
+                        <th></th>*@
+
+                    </tr>
+                   
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var PartNo = $('#PartNo').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MetaDekit/GetList',
+            data: {
+
+                programId: _programId,
+                ProgramName: _ProgramName,
+                PartNo: PartNo
+              
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ORDER_NO", "title": "ORDER_NO", "width": "60px" },
+                        { "data": "FAMILY", "title": "FAMILY", "width": "100px" },
+                        
+                        {
+                            "data": "KIT_PART_NO", "title": "KIT_PART_NO.", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["KIT_PART_NO"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "KIT_DESCRIPTION", "title": "KIT_DESCRIPTION", "width": "200px"},
+                        { "data": "DEKIT_QTY", "title": "DEKIT_QTY", "width": "70px", "className": "text-right" },
+                      
+                        { "data": "COMP_PART_NO", "title": "COMP_PART_NO", "width": "80px" },
+                        { "data": "COMP_DESCRIPTION", "title": "COMP_DESCRIPTION", "width": "200px" },
+                        { "data": "COMP_QTY", "title": "COMP_QTY", "width": "70px", "className": "text-right"},
+                        { "data": "KIT_REC_DATE", "title": "KIT_REC_DATE", "width": "120px", "className": "text-right" },
+                        { "data": "DEKIT_DATE", "title": "DEKIT_DATE", "width": "120px", "className": "text-right" }
+
+                    ];
+
+                    ToggleDataList(true);
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                       $(api.column(4).footer()).html(thousands_separators(api.column(4, { search: 'applied' }).data().sum()));
+                        $(api.column(7).footer()).html(thousands_separators(api.column(7, { search: 'applied' }).data().sum()));
+
+                    }
+                    MakeDataGrid('lstMetaDekit', data.lstMetaDekit, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

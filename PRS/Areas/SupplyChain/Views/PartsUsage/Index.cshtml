@@ -1,0 +1,270 @@
+﻿@model IP.Areas.SupplyChain.Models.PartsUsage
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+
+    textarea {
+        resize: none !important;
+    }
+
+    .notexport {
+        text-align: center;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstPartsUsage" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        @if (@ViewBag.type == "PartUsageByOverall")
+                        {
+                          <th class="notexport"></th>
+                        }
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport" ></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|'|)/gm, "");
+
+                var header = "Part No.";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        var COLUMN_FORMAT =
+        {
+            formatDecimal: function (data, type, row) {
+                var val = +data;
+                return val === 0 ? '' : thousands_separators(val.toFixed(4));
+            },
+            formatTwoDecimal: function (data, type, row) {
+                var val = +data;
+                return val === 0 ? '' : val.toFixed(2);
+            },
+            formatNumber: function (data, type, row) {
+                var val = +data;
+                return val === 0 ? '' : thousands_separators(val.toFixed(0));
+            },
+
+            formatNumberForZero: function (data, type, row) {
+                var val = +data;
+                return val === 0 ? '' : val.toFixed(0);
+            },
+
+        };
+
+
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var partNo = $('#partNo').val();
+        var fromDt = $('#fromDt').val();
+        var toDt = $('#toDt').val();
+        var programId = $('#ddProgram').val();
+        var ProgramName = $("#ddProgram option:selected").text();
+        var type = $('#rptType').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/PartsUsage/GetList',
+            data: {
+                partNo: partNo,
+                fromDt: fromDt,
+                toDt: toDt,
+                programId: programId,
+                ProgramName: ProgramName,
+                type: type
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (type == "PartUsageByOverall") {
+                    var columnDef = [
+
+                        { "data": "ProgramId", "title": "ProgramID", "width": "100px", "visible": false },
+                        { "data": "ProgramName", "title": "Program", "width": "80px" },
+                        { "data": "PartNo", "title": "Part No.", "render": $.fn.dataTable.render.ellipsisAdr1(30), "width": "230px" },
+                        { "data": "CommentTextForExport", "title": "Part No.", "visible": false },
+                        //{
+                        //    "data": "partno", "title": "Part No.", "width": "120px",
+                        //    render: function (data, type, row) {
+                        //        var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                        //        return url;
+                        //    }
+                        //},
+                        {
+                            "data": "CompPartNo", "title": "Comp. Part No.", "width": "150px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["CompPartNo"] + '&ProgramId=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "CompPartDesc", "title": "Description" },
+                        {
+                            "data": "QtyUsed", "title": "Qty Used", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "QtyProcessed", "title": "Qty Processed", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        { "data": "UsagePerc", "title": "Usage %", "width": "80px", "className": "text-right" },
+                        { "data": "CompPartCost", "title": "Part Cost", "width": "80px", "className": "text-right"  },
+                        { "data": "UsageCost", "title": "Cost", "width": "80px", "className": "text-right"  },
+                        { "data": "ForDate", "title": "Last Activity On", "width": "90px", "className": "text-right", "visible": false }
+
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(6).footer()).html(thousands_separators(api.column(6).data().sum()));
+                        $(api.column(7).footer()).html(thousands_separators(api.column(7).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstPartsUsage', data.lstPartsUsage, 0, columnDef, true, false, footerfunc);
+                    //MakeFrameGrid('lstPartsUsage', data.lstPartsUsage, 800, columnDef, true, true, true, footerfunc, false, false, false);
+                }
+
+                else {
+                    var columnDef = [
+
+                        { "data": "ProgramId", "title": "ProgramID", "width": "100px", "visible": false },
+                        { "data": "ProgramName", "title": "Program", "width": "80px" },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "200px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+
+                        {
+                            "data": "CompPartNo", "title": "Comp. Part No.", "width": "150px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["CompPartNo"] + '&ProgramId=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "CompPartDesc", "title": "Description" },
+                        {
+                            "data": "QtyUsed", "title": "Qty Used", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "QtyProcessed", "title": "Qty Processed", "width": "40px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumber(data);
+                                return val;
+                            }
+                        },
+                        { "data": "UsagePerc", "title": "Usage %", "width": "50px", "className": "text-right" },
+                        { "data": "CompPartCost", "title": "Part Cost", "width": "80px", "className": "text-right" },
+                        { "data": "UsageCost", "title": "Cost", "width": "80px", "className": "text-right"},
+                        { "data": "ForDate", "title": "Last Activity On", "width": "90px", "className": "text-right", "visible": false }
+
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(5).footer()).html(thousands_separators(api.column(5).data().sum()));
+                        $(api.column(6).footer()).html(thousands_separators(api.column(6).data().sum()));
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstPartsUsage', data.lstPartsUsage, 0, columnDef, true, false, footerfunc);
+                    //MakeFrameGrid('lstPartsUsage', data.lstPartsUsage, 800, columnDef, true, true, true, footerfunc, false, false, false);
+                }
+
+
+
+
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="77" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+</script>

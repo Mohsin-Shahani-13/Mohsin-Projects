@@ -1,0 +1,174 @@
+﻿@model IP.Areas.ListingReports.Models.ReceiptAndCreditREFURB
+@{
+    ViewBag.Title = "RefurbNewRepack";
+    Layout = null;
+}
+
+
+<div id="parentDiv1" class="container-fluid" style="width:30%; float:left;">
+    <div id="dataList1" class="box panel panel-default">
+        <input id="rptCode" type="hidden" value="@Request.QueryString["rptCode"]" />
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+
+            <h6 class="box-title"><strong>REFURB New and REPACK - Summary </strong><strong></strong></h6>
+        </div>
+        <div class="box-body" id="lstP1">
+            <table id="lstSummary" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total:</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="parentDiv2" class="container-fluid" style="width:70%; float:left;">
+    <div id="dataList2" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool">
+                @*title="Option Page" onclick="$('#option').modal('show');"*@
+                <span class="fa fa-list fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>REFURB New and REPACK - Detail</strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body" id="lstP2">
+            <table id="lstDetail" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <!-- Optional footer content -->
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var rptType = $("#rptType option:selected").val();
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/ReceiptAndCreditREFURB/GetRefurbNewRepack',
+            data: {
+                programId: programId,
+                ProgramName: ProgramName,
+                rptType: rptType,
+                frmDt: fDate,
+                toDate: tDate
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').text(data.filterString);
+
+
+
+                var columnDefSummary = [
+                    { "data": "ProcessType", "title": "Process Type", "width": "80px" },
+                    { "data": "Commodity", "title": "Commodity" },
+                    { "data": "Value", "title": "Value", "width": "60px", "className": "text-right" },
+                ]
+
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(2).footer()).html(thousands_separators(api.column(2, { search: 'applied' }).data().sum()));
+
+                }
+                ToggleDataList(true);
+                MakeDataGrid('lstSummary', data.lstRefurbNewRepackSummary, 0, columnDefSummary, false, true, footerfunc);
+
+
+
+                var columnDefDetial = [
+                    { "data": "ID", "title": "ID", "width": "40px", "visible": false },
+                    { "data": "ProgramID", "title": "ProgramID", "width": "40px", "visible": false },
+                    {
+                        "data": "CustomerReference", "title": "Customer Ref.", "width": "90px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\SupplyChain\\RO\\Detail?Id=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "ProcessType", "title": "Process Type", "width": "80px" },
+                    { "data": "Commodity", "title": "Commodity", "width": "200px" },
+                    {
+                        "data": "PartNo", "title": "Part No.", "width": "90px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "Description", "title": "Description" },
+                    {
+                        "data": "SerialNo", "title": "Serial No.", "width": "90px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "receiptdate", "title": "Receipt Date", "width": "90px", "className": "text-right" },
+                    { "data": "Username", "title": "Username", "width": "100px" },
+                ]
+
+
+
+                ToggleDataList(true);
+                MakeDataGrid('lstDetail', data.lstRefurbNewRepack, 0, columnDefDetial, true, true, false);
+
+                $('#lstSummary_paginate .first, #lstSummary_paginate .previous, #lstSummary_paginate .next, #lstSummary_paginate .last').empty();
+
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+

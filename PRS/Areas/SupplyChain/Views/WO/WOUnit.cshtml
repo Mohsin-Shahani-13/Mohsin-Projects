@@ -1,0 +1,114 @@
+﻿@*@{
+        ViewBag.Title = "WOUnit";
+    }
+
+    <h2>WOUnit</h2>*@
+@model IP.Areas.SupplyChain.Models.WO
+@{
+    ViewBag.Title = "WOUnit";
+    Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery);
+}
+
+<style>
+    /*   .box-header {
+        padding: 4px;
+    }*/
+    .babygridheight {
+        width: 100%;
+    }
+</style>
+<div id="dataList" class="box panel panel-default">
+    <input id="rptcode" type="hidden" value="008" />
+    <div class="box ">
+        <div class="box-header with-border bg-blue-gradient">
+            <h6 class="box-title" id="head_lstWOUnit"><strong>@ViewBag.ReportTitle</strong><strong id="filterString">@ViewBag.data</strong></h6>
+            <div id="button_WOUnit" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body" id="WoUnitH" style="height:79%">
+            <table id="lstWOUnit" class="table table-bordered table-striped text-sm table-hover">
+                <thead>
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot style="background-color:white;">
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+            var _lstWOUnit = @Html.Raw(Json.Encode(Model.lstWOUnit));
+
+            var tableHeader = $('.table').innerHeight();
+            var topHeader = $('.box-header').innerHeight();
+            var browserHeight = window.innerHeight;
+            var gridHeight = browserHeight - tableHeader - topHeader - 8;
+
+            // Set Columns Width
+        var columnWidth = [
+            {"data": "ID", "title": "ID", "width": "80px", "visible": false},
+            { "data": "SerialNo", "title": "Serial No.", "width": "80px" },
+            { "data": "QtyConsumed", "title": "Consumed", "width": "40px", "className": "text-right" },
+            { "data": "QtyIssued", "title": "Issue", "width": "40px", "className": "text-right" },
+            { "data": "Location", "title": "Location", "width": "60px" },
+            { "data": "Fault", "title": "Fault", "width": "80px" },
+            { "data": "Repair", "title": "Repair", "width": "110px" },
+            { "data": "Section", "title": "Section", "width": "120px" },
+            { "data": "Username", "title": "Created By", "width": "60px" },
+            {
+                "data": "CreatedOn", "title": "Created On",  "width": "90px", "className": "text-right",
+
+            },
+            {
+                "data": "LastActivityOn", "title": "Last Activity On", "width": "110px", "className": "text-right",
+
+            }
+            ]
+        //For Displaying  Footer Sum
+        var footerfunc = function () {
+            var api = this.api();
+            $(api.column(2).footer()).html(thousands_separators(api.column(2).data().sum()));
+            $(api.column(3).footer()).html(thousands_separators(api.column(3).data().sum()));
+        }
+
+        ToggleDataList(true);
+        //MakeFrameGrid('lstROUnit', _lstROUnit, 0, columnWidth, true, false, false, false, false, $('#head_lstROUnit').text(), true, false);
+        MakeMeBabyGrid('lstWOUnit', _lstWOUnit, 0, columnWidth, 'button_WOUnit', true, $('#head_lstWOUnit').text(), footerfunc,'WoUnitH');
+
+    });
+
+   
+</script>
+
+
+

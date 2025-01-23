@@ -1,0 +1,310 @@
+﻿@model IP.Areas.Jobs.Models.SSIS
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+    
+}
+<style>
+    #parentDiv {
+        /* display: block;*/
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    #lstSSIS tr {
+        white-space: nowrap;
+    }
+    textarea {
+        resize: none !important;
+    }
+    .view-report {
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        text-align: center;
+        width: 40px;
+        height: 20px;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <input id="rptcode" type="hidden" value="021" />
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                    <span class="fa fa-filter fa-lg white"></span>
+                </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle >  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right" style="margin-top:2PX;">
+            </div>
+        </div>
+        <div class="box-body text-sm">
+            <table id="lstSSIS" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        @*<th></th>*@
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+
+        @*<div class="row section-color">
+                <div id="left_panel_Bottom" class="col-md-12 section-padding">
+                    <div id="leftsection" class="box panel panel-default leftsection" style="text-align: center;  height:54%; background-color: white; padding-top: 90px;">
+                        <h4>Click hyperlinks on above section to load data</h4>
+                    </div>
+                </div>
+            </div>*@
+    </div>
+
+</div>
+<script>
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "Notify Operator";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    $.fn.dataTable.render.ellipsisAdr2 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                var header = "Message";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+    $.fn.dataTable.render.ellipsisAdr3 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|%|;|'|\/|")/gm, "");
+
+                var header = "Command";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === '0' ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+        var jobName = $('#jobName').val();
+        var status = $('#ddlStatus option:selected').text();
+        //var statusid = $('#ddlStatus option:selected').val();
+        var ProgramId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var jobStatus = $('#jobStatus option:selected').text();
+        
+        $('#option').modal('hide');
+        var isSingleRow = false;
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SSIS/GetList',
+            datatype: JSON,
+            data: {
+                jobName: jobName,
+                status: status,
+                ProgramId: ProgramId,
+                ProgramName: ProgramName,
+                jobStatus: jobStatus
+            },
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                var empName = data.empName;
+                console.log(data.empName);
+                if (!isSingleRow) {
+                    var columnDef = [
+                        //{
+                        //    "title": "Run", "width": "50px", "className": "text-center",
+                        //    render: function (data, type, row) {
+                        //         //&& empName == "farhan-winit_ext"
+                        //        var url = '';
+                        //        if (row['JobName'] == "WinIT - VF_Orders") {
+                        //            url = '<span onclick="RunJob(\'' + row['JobName'] + '\');" > ' +
+                        //                '<button  class="view-report">Run</button></span>'
+                        //        }
+                        //        else {
+
+                        //        }
+
+                        //        return url;
+                        //    }
+                        //},
+                        { "data": "ServerName", "title": "Server Name", "width": "90px" },
+                        { "data": "database_name", "title": "Database Name", "width": "130px" },
+                        { "data": "JobName", "title": "Package Name", "width": "80px" },
+                        
+                        { "data": "Description", "title": "Program", "width": "150px" },
+                        { "data": "step_id", "title": "Step Id", "width": "70px", "className": "text-right" },
+                        { "data": "step_name", "title": "Step Name", "width": "110px" },
+                        {
+                            "data": "Status", "title": "Status", "width": "80px",
+                            render: function (data, type, row) {
+
+                                console.log(row["Status"])
+
+                                if (row["Status"] == 'Succeeded') {
+
+                                    var url = '<span style="color:green;font-weight:bolder">' + data + '</span>'
+
+                                }
+
+                                else if (row["Status"] == 'Running') {
+                                    var url = '<span style="color:blue;font-weight:bolder">' + data + '</span>'
+
+                                }
+                                else if (row["JobStatus"] == 'Failed') {
+                                    var url = '<span style="color:red;font-weight:bolder">' + data + '</span>'
+
+                                }
+                                else if (row["Status"] == 'Disabled') {
+                                    var url = '<span style="color:#E69500;font-weight:bolder">' + data + '</span>'
+
+                                }
+                                else {
+                                    var url = '<span>' + data + '</span>'
+                                }
+                                return url;
+
+                            }
+                        },
+                        { "data": "Message", "title": "Message", "width": "110px", "render": $.fn.dataTable.render.ellipsisAdr2(30) },
+                        { "data": "Message", "title": "Message", "width": "110px", "visible": false },
+                        { "data": "LastRunOn", "title": "Last Run On", "width": "220px", "className": "text-right" },
+                        { "data": "NextRunOn", "title": "Next Run On", "width": "220px", "className": "text-right" },
+                        { "data": "run_duration", "title": "Run Duration", "width": "130px", "className": "text-right" },
+                        { "data": "JobStatus", "title": "Enabled", "width": "90px", "className": "text-center" },
+                        {
+                            "data": "retry_attempts", "title": "Retry Attempts", "width": "100px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "retry_interval", "title": "Retry Interval", "width": "100px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        { "data": "Notify", "title": "Notify", "width": "150px" },
+                        { "data": "notifyOperator", "title": "Notify Operator", "width": "110px", "render": $.fn.dataTable.render.ellipsisAdr1(20)},
+                        { "data": "notifyOperator", "title": "Notify Operator", "width": "110px", "visible": false },
+                        { "data": "command", "title": "Command", "width": "110px", "render": $.fn.dataTable.render.ellipsisAdr3(20) },
+                        { "data": "command", "title": "Command", "width": "110px", "visible": false },
+                    ]
+                    //For Displaying  Footer Sum
+                    //var footerfunc = function () {
+                    //    var api = this.api();
+                    //    $(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                    //}
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstSSIS', data.lstSSIS, 0 , columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    //function RunJob(JobName) {
+    //    $.ajax({
+
+    //        cache: false,
+    //        type: 'GET',
+    //        url: '/SSIS/RunJob',
+    //        data: {
+    //            jobName: JobName,
+    //        },
+    //        datatype: JSON,
+    //        success: function (data) {
+                
+    //            if (data.Status) {
+    //                alert('Pakage: ' + JobName + " Run successfully.");
+    //                //setTimeout(LoadData, 5000);
+    //            }
+    //        },
+    //    });
+    //}
+</script>
+
+
+

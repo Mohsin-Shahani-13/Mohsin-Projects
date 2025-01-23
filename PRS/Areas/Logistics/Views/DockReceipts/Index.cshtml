@@ -1,0 +1,213 @@
+﻿@model IP.Areas.Logistics.Models.DockReceipts
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<style>
+
+    .leftsection {
+        text-align: center;
+        padding-top: 90px;
+        height: 42%;
+    }
+
+
+
+
+    .box-body {
+        padding-bottom: 10px !important;
+    }
+
+    .text_decoration {
+        color: #0089db;
+        text-align: right;
+        text-decoration: underline;
+    }
+
+    .text_decoration_footer {
+        color: #0089db;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div class="row section-color">
+        <div class="col-md-12">
+            <div id="dataList" class="box panel panel-default">
+                <input id="rptcode" type="hidden" value="021" />
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right" style="margin-top:2PX;">
+                    </div>
+                </div>
+                <div class="box-body text-sm">
+                    <table id="lstDockReceipts" class="table table-bordered table-striped text-sm table-hover" style="width:100%;">
+                        <thead class="sorted-asc">
+                            <tr>
+                                <th></th>
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th class="notexport"></th>
+
+                                <th></th>
+                                <th></th>
+                                <th></th>
+
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                        <tfoot style="background-color:white;">
+                            <tr>
+                                <th style="text-align:left;">Total :</th>
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th class="notexport"></th>
+
+                                <th></th>
+                                <th></th>
+                                <th></th>
+
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="row section-color">
+                    <div id="left_panel_Bottom" class="col-md-12 section-padding">
+                        <div id="leftsection" class="box panel panel-default leftsection" style="text-align: center;  height:54%; background-color: white; padding-top: 90px;">
+                            <h4>Click hyperlinks on above section to load data</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    //    type="text/javascript">
+    //var COLUMN_FORMAT =
+    //{
+    //    formatDecimal: function (data, type, row) {
+    //        var val = +data;
+    //        return val === 0 ? '' : thousands_separators(val.toFixed(4));
+    //    },
+    //    formatTwoDecimal: function (data, type, row) {
+    //        var val = +data;
+    //        return val === 0 ? '' : val.toFixed(2);
+    //    },
+    //    formatNumber: function (data, type, row) {
+    //        var val = +data;
+    //        return val === 0 ? '' : thousands_separators(val.toFixed(0));
+    //    },
+
+    //    formatNumberForZero: function (data, type, row) {
+    //        var val = +data;
+    //        return val === 0 ? '' : val.toFixed(0);
+    //    },
+
+    //};
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+
+
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/DockReceipts/GetList',
+            data: {
+
+                programId: _programId,
+                ProgramName: _ProgramName
+            },
+
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        {
+                            "data": "DockLog", "title": "Dock Log", "width": "40px", "className": "text-center",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="text_decoration" onclick="OpenView(\'\\\\Logistics\\\\DockReceipts\\\\GetDetail?ROHeaderId=' + row["ROHeaderId"] + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "ProgramID", "title": "Program Id", "width": "50px", "visible": false },
+                        { "data": "Name", "title": "Program", "width": "60px" },
+                        { "data": "ROHeaderId", "title": "RO Header Id", "width": "80px", "visible": false },
+                        {
+                            "data": "CustomerReference", "title": "Customer Ref.", "width": "150px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\SupplyChain\\RO\\Detail?Id=' + row["ROHeaderId"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "ThirdPartyReference", "title": "Third Party Ref.", "width": "160px" },
+                        { "data": "StatusID", "title": "Status", "width": "120px" },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "QtyToReceive", "title": "To Recv.", "width": "40px", "className": "text-right" },
+                        { "data": "QtyReceived", "title": " Rcvd ", "width": "40px", "className": "text-right" },
+                        { "data": "ROCreateDate", "title": "RO Created On", "width": "70px", "className": "text-right" }
+                    ];
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(8).footer()).html(thousands_separators(api.column(8, { search: 'applied' }).data().sum()));
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9, { search: 'applied' }).data().sum()));
+                        //$(api.column(13).footer()).html(thousands_separators(api.column(13, { search: 'applied' }).data().sum()));
+
+                    }
+                }
+                        ToggleDataList(true);
+
+                        var h = getHeight(50);
+                        //MakeFrameGrid('lstyield', data.lstyield, h, columnDef, 'buttons', true, true, footerfunc, false, $('#YieldbyStation').text(), true);
+
+                MakeDataGrid('lstDockReceipts', data.lstDockReceipts, 270, columnDef, true, true, footerfunc);
+
+
+                        if (data["ErrorMessage"] != null) {
+                            $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                        }
+                    },
+                        onerror: function (r) { r },
+                        failure: function (r) { r }
+                });
+    }
+
+</script>

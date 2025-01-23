@@ -1,0 +1,302 @@
+﻿@model IP.Areas.ListingReports.Models.ReceiptAndCreditREFURB
+
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+
+    #loadingIndicator img {
+        width: 35px;
+        height: 35px;
+        margin-left: 10px;
+    }
+</style>
+
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr class="hidden">
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddlProgram", null, new { id = "ProgramID", @name = "ddlProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td class="pad" colspan="4" id="RptType">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="REFURB Receiving and Crediting", Value = "REFURB Receiving and Crediting" },
+                   new SelectListItem{ Text="REFURB New and REPACK", Value = "REFURB New and REPACK" },
+                   new SelectListItem{ Text="REFURB Processed to FGI", Value = "REFURB Processed to FGI" },
+                   new SelectListItem{ Text="REFURB Receive and Scrap", Value = "REFURB Receive and Scrap" },
+                   new SelectListItem{ Text="REPAIR Receiving and Crediting", Value = "REPAIR Receiving and Crediting" },
+                   new SelectListItem{ Text="REPAIR Processed to FGI", Value = "REPAIR Processed to FGI" },
+                   new SelectListItem{ Text="REPAIR Received and Tested", Value = "REPAIR Received and Tested" },
+                   new SelectListItem{ Text="REPAIR Received and Packed", Value = "REPAIR Received and Packed" }
+
+
+                }, new { @class = "form-control" })
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+            <strong>From:</strong>
+            <div class='input-group date' id='dtpFrom'>
+                @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="pad">
+            <strong>To:</strong>
+            <div class='input-group date' id='dtpTo'>
+                @Html.TextBoxFor(model => model.toDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+    </tr>
+</table>
+<br />
+@*/////OPTION PAGE BUTTONS///////*@
+<table width="100%">
+    <tr>
+        <td width="70" align="right">
+            <a id="btnExcel" role="button" class="btn btn-primary" title="Download in Excel" onclick="DownloadExcel()">Download</a>
+        </td>
+        <td>
+            <span id="loadingIndicator" style="display:none;">
+                <img src="/Content/images/Loading21.gif" alt="Loading..." />
+            </span>
+        </td>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value="@Request.QueryString["rptCode"]" />
+
+<script>
+
+
+
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+
+    $('#btnGo').click(function () {
+
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    //For Date Picker
+    dateFrom();
+    dateTo();
+    function dateFrom() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        //var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('fromDt').value = someFormattedDate;
+    }
+    function dateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('toDt').value = someFormattedDate;
+    }
+
+    $("#dtpTo, #dtpFrom").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '-365d',
+        endDate: maxDate
+    });
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+
+        if (fDate.length <= 0 || tDate.length <= 0 || !isDate(fDate) || !isDate(tDate) || fDate > tDate) {
+            $('#lblMsg').append('Enter a valid date');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function Go() {
+    var programId = $('#ProgramID').val();
+    var ProgramName = $("#ProgramID option:selected").text();
+    var rptType = $("#rptType option:selected").val();
+    var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+
+        $('#option').modal('hide');
+
+    if (rptType == 'REFURB Receiving and Crediting')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\Index?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+    else if (rptType == 'REFURB New and REPACK')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\RefurbNewRepack?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '207-2')
+    }
+    else if (rptType == 'REFURB Processed to FGI')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\RefurbProcessFGI?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '207-3')
+    }
+    else if (rptType == 'REFURB Receive and Scrap')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\RefurbRecvScrap?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '207-4')
+    }
+
+    else if (rptType == 'REPAIR Receiving and Crediting')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\RepairRecvCredit?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '207-5')
+    }
+    else if (rptType == 'REPAIR Processed to FGI')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\RepairProcessFGI?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '207-6')
+    }
+    else if (rptType == 'REPAIR Received and Tested')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\RepairRecvTested?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '207-7')
+    }
+    else if (rptType == 'REPAIR Received and Packed')
+    {
+        OpenPage('\\ListingReports\\ReceiptAndCreditREFURB\\RepairRecvPack?programId=' + programId + '&ProgramName=' + ProgramName + '&rptType=' + rptType + '&frmDt=' + fDate + '&toDate=' + tDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '207-8')
+    }
+}
+    function DownloadExcel() {
+        $('#lblMsg').empty();
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var rptType = $("#rptType option:selected").val();
+
+        $('#loadingIndicator').show();
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            global: false,
+            url: '/ReceiptAndCreditREFURB/ExportDetailReports',
+            data: {
+                programId: programId,
+                ProgramName: ProgramName,
+                rptType: rptType,
+                frmDt: fDate,
+                toDate: tDate
+            },
+            datatype: JSON,
+            success: function (response) {
+                if (response.fileContent) {
+
+                    var blob = b64toBlob(response.fileContent, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = response.fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    //console.log("Success")
+                } else {
+                    $('#lblMsg').empty();
+                    $('#lblMsg').html(response.message);
+                }
+                $('#loadingIndicator').hide();
+            },
+            error: function () {
+
+            }
+        });
+    }
+    function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+        const byteCharacters = atob(b64Data);
+        const byteArrays = [];
+
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        const blob = new Blob(byteArrays, { type: contentType });
+        return blob;
+    }
+</script>
+
+

@@ -1,0 +1,306 @@
+﻿@model IP.Areas.SupplyChain.Models.RMADiscrepancy
+
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td class="pad" colspan="4">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="Summary", Value = "Summary",  },
+                   new SelectListItem{ Text="Detail", Value = "Detail" },
+
+
+                }, new { @id = "rptName", @class = "form-control" })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+
+            <strong>RO Create Date From:</strong>
+            <div class='input-group date' id='ROCreatefromDt' style="width:240px">
+                @Html.TextBoxFor(model => model.CreatefromDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="pad">
+            <strong>RO Create Date To:</strong>
+            <div class='input-group date' id='ROCreateToDt' style="width:240px">
+                @Html.TextBoxFor(model => model.CreateToDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="dateFont ">
+            <div>
+                <br />
+                <br />
+                <label for="_isAllDate" style="margin-left:0px">
+                    <input type="checkbox" id="isAllDate" name="isAllDate" onclick="EnableDisableOrdCreat(this)" />
+                    All
+                </label>
+            </div>
+        </td>
+    </tr>
+    @*<tr>
+        <td class="pad">
+
+            <strong>RO Received Date From:</strong>
+            <div class='input-group date' id='ROReceivedfromDt'>
+                @Html.TextBoxFor(model => model.ReceivedfromDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="pad">
+            <strong>RO Received Date To:</strong>
+            <div class='input-group date' id='ROReceivedToDt'>
+                @Html.TextBoxFor(model => model.ReceivedToDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+    </tr>*@
+    @*<tr>
+    </tr>*@
+    @*<tr>
+            <td colspan="4" class="pad">
+                @Html.LabelFor(model => model.program_Id, htmlAttributes: new { @class = "col-4 col-form-lable" })
+                @Html.DropDownList("ddlProgram", null, new { id = "ddlProgram", @name = "ddlProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+
+            </td>
+        </tr>*@
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.boxNo, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            <input type="text" class="form-control" id="boxNo" name="boxNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.custRef, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="custRef" name="custRef" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.serialNo, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            <input type="text" class="form-control" id="serialNo" name="serialNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+
+    $("#ROCreatefromDt, #ROCreateToDt, #ROReceivedfromDt, #ROReceivedToDt ").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#ROCreatefromDt, #ROCreateToDt, #ROReceivedfromDt, #ROReceivedToDt ").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    ROCreateDateFrom();
+    ROCreateDateTo();
+    //ROReceivedDateFrom();
+    //ROReceivedDateTo();
+
+    function ROCreateDateFrom() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        //var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('CreatefromDt').value = someFormattedDate;
+    }
+    function ROCreateDateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('CreateToDt').value = someFormattedDate;
+    }
+    function ROReceivedDateFrom() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        //var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('ReceivedfromDt').value = someFormattedDate;
+    }
+    function ROReceivedDateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('ReceivedToDt').value = someFormattedDate;
+    }
+
+    $("#ROCreatefromDt, #ROCreateToDt, #ROReceivedfromDt, #ROReceivedToDt ").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '-500d',
+        endDate: maxDate
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var ROCreatefromDt = $('#CreatefromDt').val();
+        var ROCreateToDt = $('#CreateToDt').val();
+        //var ROReceivedfromDt = $('#ReceivedfromDt').val();
+        //var ROReceivedToDt = $('#ReceivedToDt').val();
+
+        if (ROCreatefromDt.length <= 0 || ROCreateToDt.length <= 0 || !isDate(ROCreatefromDt) || !isDate(ROCreateToDt) || ROCreatefromDt > ROCreateToDt) {
+            $('#lblMsg').append('Enter a valid Receiving date');
+            return false;
+        }
+        //else if (ROReceivedfromDt.length <= 0 || ROReceivedToDt.length <= 0 || !isDate(ROReceivedfromDt) || !isDate(ROReceivedToDt) || ROReceivedfromDt > ROReceivedToDt)
+        //{
+        //    $('#lblMsg').append('Enter a valid Dock Log date');
+        //    return false;
+        //}
+
+        else {
+
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+
+    function EnableDisableOrdCreat(isAllDate) {
+        var isAllDate = $('#isAllDate').is(':checked');
+        document.getElementById("CreatefromDt").disabled = isAllDate;
+        var nodes1 = document.getElementById("CreatefromDt").getElementsByTagName('*');
+        document.getElementById("CreateToDt").disabled = isAllDate;
+        var nodes1 = document.getElementById("CreateToDt").getElementsByTagName('*');
+        for (var i = 0; i < nodes1.length; i++) {
+            nodes1[i].disabled = isAllDate;
+        }
+    };
+
+    function Go() {
+       
+        var programId = $('#ddProgram').val();
+        var ProgramName = $('#ddProgram option:selected').text();
+        var rpt_name = $('#rptName option:selected').text();
+        var isAllDate = $('#isAllDate').is(':checked');
+        var ROCreatefromDt = $('#CreatefromDt').val();
+        var ROCreateToDt = $('#CreateToDt').val();
+        //var ROReceivedfromDt = $('#ReceivedfromDt').val();
+        //var ROReceivedToDt = $('#ReceivedToDt').val();
+        var box_no = $('#boxNo').val();
+        var cust_ref = $('#custRef').val();
+        var serial_no = $('#serialNo').val();
+
+        $('#option').modal('hide');
+
+        //OpenPage('\\SupplyChain\\RMADiscrepancy\\Index?CreateFDate=' + ROCreatefromDt + ' &CreateTDate=' + ROCreateToDt + '&serialNo=' + serial_no + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&custRefer=' + cust_ref + '&boxNo=' + box_no + '&rptName=' + rpt_name + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        
+        if (rpt_name == "Summary") {
+
+            //for Summary
+            OpenPage('\\SupplyChain\\RMADiscrepancy\\Summary?CreateFDate=' + ROCreatefromDt + ' &CreateTDate=' + ROCreateToDt + '&isAllDate=' + isAllDate + '&serialNo=' + serial_no + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&custRefer=' + cust_ref + '&boxNo=' + box_no + '&rptName=' + rpt_name + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        }
+        else {
+
+            //for Detail
+            OpenPage('\\SupplyChain\\RMADiscrepancy\\Detail?CreateFDate=' + ROCreatefromDt + ' &CreateTDate=' + ROCreateToDt + '&isAllDate=' + isAllDate + '&serialNo=' + serial_no + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&custRefer=' + cust_ref + '&boxNo=' + box_no + '&rptName=' + rpt_name + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        }
+
+    }
+
+</script>

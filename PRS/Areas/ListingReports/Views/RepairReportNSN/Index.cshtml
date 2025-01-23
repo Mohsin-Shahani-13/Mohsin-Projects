@@ -1,0 +1,167 @@
+﻿@model IP.Areas.ListingReports.Models.RepairReportNSN
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstRepairReportNSN" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        @*<th></th>*@
+                        @*<th></th>*@
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <tfoot>
+                    <tr>
+                        @*<th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>*@
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/RepairReportNSN/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef =
+                        [
+                            { "data": "ID", "title": "Program ID", "width": "0px", "visible": false },
+                            { "data": "Name", "title": "Program", "width": "50px" },
+                            { "data": "CustomerReference", "title": "Customer Ref.", "width": "100px" },
+                            { "data": "ThirdPartyReference", "title": "Third Party Ref.", "width": "100px" },
+                            {
+                                "data": "SerialNo", "title": "Serial No.", "width": "120px",
+                                render: function (data, type, row) {
+
+                                    var url = '<a href= \\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                            },
+                            {
+                                "data": "PartNo", "title": "Part No.", "width": "90px",
+                                render: function (data, type, row) {
+                                    var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                            },
+                            { "data": "ModelNo", "title": "Model No.", "width": "80px" },
+                            { "data": "CustomerID", "title": "Customer Id", "width": "100px" },
+                            { "data": "RMR", "title": "RMR", "width": "120px" },
+                            { "data": "FR", "title": "FR", "width": "80px" },
+                            { "data": "DN", "title": "DN", "width": "80px" },
+                            { "data": "RODate", "title": "RO Date", "width": "70px", "className": "text-right" },
+                            { "data": "ShipmentDate", "title": "Shipment Date", "width": "100px", "className": "text-right" },
+                            { "data": "ReturnCount", "title": "Return Count", "width": "80px", "className": "text-right" },
+                            { "data": "WarrantyStatus", "title": "Warranty Status", "width": "120px", "className": "text-center" },
+                            { "data": "FaultDescription", "title": "Unit FC", "width": "170px" },
+                            { "data": "RepairDescription", "title": "Unit RP", "width": "140px" },
+                            { "data": "Remark", "title": "Remarks", "width": "180px" },
+                            { "data": "NokiaPONo", "title": "Nokia PO No.", "width": "110px" },
+                            { "data": "NokiaDispatchDate", "title": "Nokia Dispatch Date", "width": "150px", "className": "text-right" },
+                            { "data": "RCTNo", "title": "RCT No.", "width": "80px" },
+                            { "data": "NokiaShipmentNo", "title": "Nokia Shipment No.", "width": "130px" },
+                            { "data": "ReconextDN", "title": "Reconext DN", "width": "100px" },
+                            { "data": "TAT", "title": "TAT", "width": "50px", "className": "text-right" }
+                        ]
+
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                        //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGridCSV('lstRepairReportNSN', data.lstRepairReportNSN, 0, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+

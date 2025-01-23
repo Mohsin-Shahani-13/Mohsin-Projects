@@ -1,0 +1,520 @@
+﻿@model IP.Models.LogQueries
+@{
+    ViewBag.Title = "Summary";
+    Layout = null;
+}
+
+
+<style>
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+    .pad{
+        width:400px;
+    }
+    .hideMe {
+        display:none;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool" title="Option Page" id="btnOptionitem">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    @*<input type="button" value="Create" onclick="location.href='@Url.Action("option", "LogQueries")'" />*@
+                    <h6 class="box-title" id="head_lstLogQueries"><strong>@ViewBag.ReportTitle</strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right">
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="lstLogQueries" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="border-bottom-width:0px;">Report</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th style="border-right-width:1px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="right_panel" class="col-md-8">
+                <div id="rightsection" class="" style="margin-top:35%; margin-left:400px; padding-right:10px;">
+                    <h4>Click Count hyperlinks on left section to load data</h4>
+                </div>
+            </div>
+            <div id="OptionValueCase" class="col-md-8 hideMe">
+                <div id="OptionValue" class="" style="margin-top:35%; margin-left:400px; padding-right:10px;">
+                    <h4>Click Count hyperlinks on left section to load data</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="Optionitem" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#0073b7; color:white;">
+                <h5 class="modal-title" id="exampleModalLabel"><strong>Activity logs</strong></h5>
+                <button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-25px;">&times;</button>
+            </div>
+            @*<div class="modal-body">
+        </div>*@
+            <table>
+                <tr>
+                    <td class="pad" colspan="4">
+
+                        <strong>From:</strong>
+                        <div class='input-group date' id='dtpFrom'>
+                            @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="pad" colspan="5">
+                        <strong>To:</strong>
+                        <div class='input-group date' id='dtpTo'>
+                            @Html.TextBoxFor(model => model.toDt, htmlAttributes: new { @class = "form-control" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <div id="lblMsg" class="optionMsg">
+                        </div>
+                    </td>
+                    <td width="70" align="right">
+                        <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+                    </td>
+                    <td width="100" align="center">
+                        <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+                    </td>
+
+                </tr>
+
+            </table>
+            <br />
+        </div>
+    </div>
+</div>
+<script>
+
+    var fromDt = '';
+    var toDt = '';
+
+    $(document).ready(function () {
+        $('#Optionitem').modal('hide')
+        $('#lstLogQueries').empty();
+        LoadData(fromDt, toDt);
+    });
+
+    ToggleDataList(false);
+    function LoadData(fromDt, toDt) {
+        //var link = "~/Views/LogQueries/Index.cshtml";
+        $.ajax({
+            
+            cache: false,
+            type: 'GET',
+            url: '/LogQueries/GetList',
+            data: {
+                fromDt: fromDt,
+                toDt: toDt
+            },
+            datatype: JSON,
+            success: function (data) {
+                var frmDt = data.fromDt;
+                var toDt = data.toDt;
+                $('#filterString').empty();
+                $('#filterString').append(data.filterString);
+
+                dataLst(data.lstLogQueries, frmDt, toDt);
+
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+
+    function dataLst(list, frmDt, toDt) {
+        
+        $('#Optionitem').modal('hide')
+       
+        var columnWidth = '';
+       
+
+        let datalst = [];
+        datalst = list.slice();
+       
+         columnWidth = [
+            { "title": "Name", "width": "100px" },
+            {
+                "title": "Count", "width": "60px", "className": "text-right",
+                render: function (data, type, row) {
+                    var url = '<a class="Part_Undrln"  href="#" onclick="OpenView(\'\\\\LogQueries\\\\UnitList?RptName=' + row[0] + '&fromDt=' + frmDt + '&toDt=' + toDt + '&qty=In Trans.' + '&RptCode=' + row[2] + '\',\'right_panel\')">' + data + '</a>';
+                   
+                    return url;
+                }
+            },
+            { "title": "Rpt Code", "width": "100px", "visible": false }
+
+        ]
+        var h = getHeight(96);
+        //For Displaying  Footer Sum
+        var footerfunc = function () {
+            var api = this.api();
+            $(api.column(0).footer()).html(thousands_separators(api.column(0).data().sum()));
+        }
+      
+        ToggleDataList(true);
+     // MakeFrameGrid('lstLogQueries', datalst, 710, columnWidth, 'buttons', true, true, footerfunc, true, $('#head_lstLogQueries').text(), true);
+      //  MakeFrameGrid('lstLogQueries', dataViewBagiewBagiewBagst, 20, columnWidth, 'buttons', true, false, footerfunc);
+        MakeLogGrid('lstLogQueries', datalst, 0, columnWidth, true, false, false);
+       
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+   
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    //For Date Picker
+    dateFrom();
+    dateTo();
+    function dateFrom() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For From Date
+        newdate.setDate(newdate.getDate() - 90);
+
+        //var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('fromDt').value = someFormattedDate;
+    }
+    function dateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate());
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('toDt').value = someFormattedDate;
+    }
+
+    $("#dtpTo, #dtpFrom").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '-364d',
+        endDate: maxDate
+    });
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var fromDt = $('#fromDt').val();
+        var toDt = $('#toDt').val();
+
+        if (fromDt.length <= 0 || toDt.length <= 0 || !isDate(fromDt) || !isDate(toDt) || fromDt > toDt) {
+            $('#lblMsg').append('Enter a valid date');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    $('#btnOptionitem').click(function () {
+        $('#Optionitem').modal('show')
+    });
+
+    $('#btnGo').click(function () {
+        //$('#right_panel').show();
+        //$('#right_panel').replaceWith(' <div id="rightsection" class="" style="margin-top:20%; margin-left:56%;"><h4> Click Count hyperlinks on left section to load data</h4></div>');
+        $('#right_panel').hide();
+        $('#OptionValueCase').show();
+        var fromDt = $('#fromDt').val();
+        var toDt = $('#toDt').val();
+        
+        LoadData(fromDt, toDt);
+    });
+
+    function MakeLogGrid(tableId, data, tableHeight, columns, search, isScrollX, footerFunction, detailed, reportTitleId, rowSelection, lstHeight) {
+        var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+        var isDetailed = detailed === undefined ? false : true;
+        var reportTitle = '';
+
+        if (reportTitleId === undefined)
+            reportTitle = $('.box-title').text();
+        else
+            reportTitle = reportTitleId;
+
+        var gridHeight = 0;
+
+        isScrollX = isScrollX === undefined ? false : true;
+        if (search === undefined) { search = true; }
+
+        var gridButtonsClass = '';
+        var gridSearchBoxClass = '';
+        if (isDetailed === true) {
+            gridButtonsClass = 'btn-header btn-box-tool';
+            gridSearchBoxClass = 'bg-white  txtSearch';
+            gridButtonSize = 20;
+        }
+        else {
+            gridButtonsClass = 'btn-header btn-box-tool';
+            gridSearchBoxClass = 'btn-box-tool bg-white txtSearch';
+            gridButtonSize = 20;
+        }
+
+        //For SQL Documentation
+
+        var rptDtlCode, rptDtlTitle, qrytool;
+        if (isDetailed === true) {
+            rptDtlCode = $('#rptcode').val();
+            rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+            if (rptDtlTitle === "")
+                rptDtlTitle = reportTitle;
+
+            qrytool = '<a id="showQuery" class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '&isDetail=Y' + '" title="How they do that" target="_blank">';
+            qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            qrytool += '</a>';
+
+            $('#buttons').empty();
+           // $('#buttons').append(qrytool);
+        }
+        else {
+            //var rptCode = $('#rptCode').val(); // for sql docs.
+            //var rptTitle = $('#rptTitle').val(); // for sql docs.
+            //if (rptCode === undefined) {
+            //    rptDtlCode = $('#rptcode').val();
+            //    rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+            //    qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '&isDetail=N' + '" title="How they do that" target="_blank">';
+            //    qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            //    qrytool += '</a>';
+
+            //    $('#buttons').empty();
+            //    $('#buttons').append(qrytool);
+            //}
+            //else {
+            //    qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptCode + '&rptTitle=' + rptTitle + '&isDetail=N' + '" title="How they do that" target="_blank">';
+            //    qrytool += '<span class="fa-stack sqlDoc"><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            //    qrytool += '</a>';
+
+            //    $('#buttons').empty();
+            //    $('#buttons').append(qrytool);
+            //}
+        }
+        $('#buttons').empty();
+        if (search === true) {
+            var boxtool = '<input class="' + gridSearchBoxClass + '" id="txtSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+            $('#buttons').append(boxtool);
+        }
+
+        var table = $('#' + tableId).DataTable({
+            order: [],
+            createdRow: rowSelection,         // add Parameter for row selection in PO Detail // Added By Tahir
+            data: data,
+            columns: columns,
+            paging: true,
+            ordering: true,
+            searching: search,
+            deferRender: true,
+            destroy: true,
+            pagingType: 'full',
+            pageLength: 100,
+            scrollCollapse: false,
+            scrollX: isScrollX,
+            //scrollY: gridHeight,
+
+            footerCallback: footerFunction,
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                oPaginate: {
+                    sNext: '<i class="fa fa-forward"></i>',
+                    sPrevious: '<i class="fa fa-backward"></i>',
+                    sFirst: '<i class="fa fa-step-backward"></i>',
+                    sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            },
+            "dom": "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-3'i><'#designedBy.col-sm-3'><'col-sm-6'p>>",
+            buttons: [
+                {
+                    extend: 'copyHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Copy',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        //columns: ':visible'
+                        columns: 'th:not(.notexport)' // Excluding columns while exporting
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Export to excel',
+                    title: reportTitle,
+                    filename: 'DataExport', //Added By Tahir
+                    exportOptions: {
+                        //columns: ':visible'
+                        columns: 'th:not(.notexport)'
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        var excelColumns = [];
+
+                        header = $("row[r=2]", sheet);
+
+                        cols = header.find("c");
+                        cols.each(function () {
+                            t = $(this).find("t").text();
+                            if (t.includes("Serial") || t.includes("Customer Ref."))
+                                excelColumns.push($(this).attr("r"));
+                        });
+                        $(excelColumns).each(function () {
+                            var cell = this.substring(0, 1);
+                            $('row:gt(1) c[r^="' + cell + '"]', sheet).each(function () {
+                                $(this).removeAttr('s');
+                                $(this).attr('t', 'inlineStr');
+                                $(this).find('v').replaceWith('<is><t>' + $(this).text() + '</t></is>');
+                            });
+                        });
+
+                    }
+                },
+                {
+                    extend: 'print',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Print',
+                    title: '',
+                    messageTop: function () { return '<h4>' + reportTitle + '</h4>'; },
+                    filename: 'DataExport',
+                    exportOptions: {
+                        // columns: ':visible'
+                        columns: 'th:not(.notexport)'
+                    }
+                }
+            ],
+            initComplete: function () {
+                $('#txtSearch').focus();
+            },
+            select: true
+        });
+        table.buttons().container()
+            .appendTo('#buttons');
+
+        table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+        table.button(0).nodes().addClass(gridButtonsClass);
+
+        table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(1).nodes().addClass(gridButtonsClass);
+
+        table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(2).nodes().addClass(gridButtonsClass);
+
+        var dsgndby = $('.modal-footer > #designedby ').html();
+
+        if (dsgndby === "") {
+            $('#designedBy').html($('.desgndBy').html());
+        }
+
+        var layoutHeader = $('nav').innerHeight();
+        var cardHeader = $('.box-header').innerHeight();
+        var tableHeader = $('.dataTables_scrollHead').innerHeight();
+        var tableFooter = 0;
+        var cardFooterH = 30;
+
+        if (isFooter === true)
+            tableFooter = $('.dataTables_scrollFoot').innerHeight();
+
+
+        var parentHeight = $('#' + lstHeight).innerHeight();
+        if (parentHeight == undefined)
+            parentHeight = window.innerHeight;
+        else
+            parentHeight = $('#' + lstHeight).innerHeight();
+
+        var browserHeight = parentHeight;
+        if (tableHeight === 0) {
+            if (layoutHeader === undefined)
+                gridHeight = browserHeight - (cardHeader + tableHeader + tableFooter + cardFooterH);
+            else
+                gridHeight = browserHeight - (layoutHeader + cardHeader + tableHeader + tableFooter + cardFooterH);
+        }
+        else { gridHeight = tableHeight; }
+
+        var topHeader = $('#topHeader').innerHeight();
+        if (topHeader > 0)
+            gridHeight = gridHeight - (topHeader + 1);
+
+        $('.dataTables_scrollBody').css('height', gridHeight + 'px');
+        table.columns.adjust().draw();
+
+        $('.dataTables_filter').hide();
+        $('#txtSearch').on('keyup change', function () {
+            table.search(this.value).draw();
+        });
+
+        return table;
+    }
+
+</script>

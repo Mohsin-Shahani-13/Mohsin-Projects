@@ -1,0 +1,120 @@
+﻿@model IP.Models.DashboardModel
+@{
+    ViewBag.Title = "BigTvValve";
+    Layout = null;
+}
+<html>
+<head>
+    <title></title>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        span {
+            color: black;
+            background-color: white;
+            font-size: 15em;
+            text-align: center;
+            margin-top: 20vh;
+            padding: 0 15px 0 15px;
+            border-radius: 9px;
+        }
+
+        h6 {
+            text-align: center;
+            color: limegreen;
+            margin-top: 2vh;
+            font-size: 30px;
+        }
+
+        div {
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid" @*style="height:100%;"*@>
+        <div class="row">
+            <div class="col-md-12">
+                <h6 id="DBTitle"></h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <strong style="display: flex; justify-content: center; align-items: center;">
+                    <span id="counter" style="">
+
+                    </span>
+                </strong>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
+<script src="~/Scripts/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        LoadData();
+
+        setInterval(function () {
+            LoadData()
+        }, 300000);
+    });
+
+    function LoadData() {
+
+        var programId = '@HttpContext.Current.Session["ProgramIdForDB"].ToString()';
+
+        // Check if the value exists before sending
+        if (programId) {
+            // Send an AJAX request to the controller
+            $.ajax({
+                cache: false,
+                url: '/Dashboard/GetPackingCounter',  // Update this URL to match your controller and action
+                type: 'GET',
+                data: { programId: programId },
+                datatype: JSON,
+                success: function (response) {
+                    updateTime();
+                     // Use the response data to update the HTML
+                    //$('#DBTitle').text(response.DBTitle);
+                    if (response.Counter == '0') {
+                        $('#counter').text('0');
+                    }
+                    else {
+
+                         $('#counter').text(response.Counter);
+                    }
+
+            },
+                error: function (error) {
+                    console.error("Error sending data:", error);
+                }
+            });
+        } else {
+            console.warn("No value found in local storage for 'counterValue'.");
+        }
+    }
+    function updateTime() {
+        // Get the user's local current date and time
+        const now = new Date();
+
+        // Format the date and time based on user's local timezone
+        const formattedTime = new Intl.DateTimeFormat('default', {
+            dateStyle: 'short',    // Adjust as per requirement
+            timeStyle: 'short',    // Adjust as per requirement
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        }).format(now);
+        //console.log(formattedTime)
+        // Display the formatted date and time in the HTML element
+        document.getElementById('DBTitle').textContent = "Valve - Packing Counter Last Refreshed Date Time " + formattedTime;
+    }
+
+    // Update the time immediately and then refresh every second
+    
+    //setInterval(updateTime, 5000);
+
+</script>

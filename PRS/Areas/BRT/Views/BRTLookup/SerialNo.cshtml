@@ -1,0 +1,109 @@
+﻿@model IP.Areas.BRT.Models.BRTLookup
+@{
+    ViewBag.Title = "SerialNo";
+    Layout = null;
+}
+
+
+<style>
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="0043-3" />
+    <div class="row section-color">
+
+        <div id="dataList" class="box panel panel-default">
+            <div class="box-header with-border bg-blue-gradient">
+                <button type="button" class="btn btn-box-tool">
+                    <span class="fa fa-th-list fa-lg white"></span>
+                </button>
+                <h6 class="box-title" id="head_lstUnitLst"><strong>@ViewBag.ReportTitle</strong><strong id="filterString"></strong></h6>
+                <div id="buttons">
+
+                </div>
+            </div>
+            <div class="box-body">
+                <table id="lstSerial" class="table table-bordered table-striped text-sm table-hover" width="100%;">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th style="border-right-width:1px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th>Total :</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        ToggleDataList(false);
+        LoadData();
+        function LoadData() {
+
+            var _lstSerial = @Html.Raw(Model.serializer.Serialize((Model.lstSerial)));
+
+
+            if (_lstSerial.length > 0) {
+                $('#lstSerial > tbody').empty();
+        }
+            var columnDef = [
+                { "title": "ProgramID", "width": "100px", "visible": false },
+                {
+                        "title": "Serial No.",
+                        render: function (data, type, row) {
+                            var url;
+                            if (row[0] == '*')
+                            {
+                                url = row[0];
+                            }
+                            else
+                            {
+                                url = '<a href= "\\ListingReports\\\PartsSerial\\Detail?serialNo=' + row[1] + '&ProgramId=' + row[0] + '&page=list" target=_blank > ' + data + '</a>';
+                            }
+                           return url;
+                        }
+                    },
+               
+                { "title": "Qty On Hand", "width": "50px", "className": "text-right" }
+               
+
+
+                ];
+
+            //For Displaying  Footer Sum
+            var footerfunc = function () {
+                var api = this.api();
+                $(api.column(2).footer()).html(thousands_separators(api.column(2).data().sum()));
+               
+
+            }
+
+            //var tableHeader = $('.table').innerHeight();
+            //var topHeader = $('.box-header').innerHeight();
+            //var browserHeight = window.innerHeight;
+            //var gridHeight = browserHeight - (tableHeader + topHeader);
+
+            ToggleDataList(true);
+            MakeFrameGrid('lstSerial', _lstSerial, 220, columnDef, false, false, false, footerfunc, false, $('#box-title').text(), false, false);
+          //  MakeDataGrid('lstSerial', _lstSerial, 150, columnDef, false, false, footerfunc);
+        }
+        });
+
+</script>
+
+

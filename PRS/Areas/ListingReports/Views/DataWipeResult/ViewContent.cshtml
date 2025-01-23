@@ -1,0 +1,9 @@
+﻿@model IP.Areas.Biztalk.Models.OutboundTransactionDetail
+@{
+    ViewBag.Title = "View Content";
+    Layout = null;
+    Response.ContentType = ViewBag.ContentType;
+}
+
+@Html.Raw(ViewBag.Data)
+

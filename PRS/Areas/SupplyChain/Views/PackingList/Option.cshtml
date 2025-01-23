@@ -1,0 +1,97 @@
+﻿@model IP.Areas.SupplyChain.Models.PackingList
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.PalletBoxNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="PalletBoxNo" name="PalletBoxNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<div>
+    <table width="100%">
+        <tr>
+            <td align="center">
+                <div id="lblMsg" class="optionMsg">
+                </div>
+            </td>
+            <td width="70" align="right">
+                <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+            </td>
+            <td width="100" align="center">
+                <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+            </td>
+        </tr>
+    </table>
+    <input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+</div>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#PalletBoxNo').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    function OptionsIsValid() {
+
+        var PalletBoxNo = $('#PalletBoxNo').val();
+
+        $('#lblMsg').empty();
+
+        if (PalletBoxNo == "") {
+            $('#lblMsg').append('Please input the Value');
+
+            return false;
+        }
+
+        if (PalletBoxNo != "" ) {
+            $('#lblMsg').empty();
+            return true;
+        }
+        //if (PalletBoxNo == "" || LocationNo != "" && PartNo == "") {
+        //    $('#lblMsg').empty();
+        //    return true;
+        //}
+    }
+
+    function Go() {
+
+        var PalletBoxNo = $('#PalletBoxNo').val();
+
+        $('#option').modal('hide');
+        //OpenPage('\\ListingReports\\PartInquiry\\Index?PalletBoxNo=' + PalletBoxNo + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+       // var url = '<a href= "../Externals/ReportViewer.aspx?PalletBoxNo=' + PalletBoxNo + '&rptName=PackingList" target=_blank> ' + data + '</a>';
+        //return url;
+        //OpenPage('../Externals/ReportViewer.aspx?PalletBoxNo=' + PalletBoxNo + '&rptName=PackingList')
+        //window.open('../Externals/ReportViewer.aspx?PalletBoxNo=' + PalletBoxNo + '&rptName=PackingList');
+        OpenPage('\\SupplyChain\\PackingList\\index?PalletBoxNo=' + PalletBoxNo + '&rptName=PackingList' + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+
+    }
+</script>
+
+
+

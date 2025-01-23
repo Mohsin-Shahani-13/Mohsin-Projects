@@ -1,0 +1,73 @@
+﻿@model IP.Areas.ListingReports.Models.VFNERSPickList
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td class="pad" colspan="4" id="RptType">
+            <label>Time Frame:</label>
+            @Html.DropDownList("Type", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="Last Hour", Value = "LastHour" },
+                   new SelectListItem{ Text="Past 24 Hours", Value = "Past24Hours" }
+
+                }, new { @class = "form-control" })
+        </td>
+    </tr>
+    
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function Go() {
+        var Type = $("#Type option:selected").val();
+        var TypeText = $("#Type option:selected").text();
+        var programId = $('#ddProgram').val();
+        var ProgramName = $("#ddProgram option:selected").text();
+
+          $('#option').modal('hide');
+        OpenPage('\\ListingReports\\VFNERSPickList\\Index?Type=' + Type + '&TypeText=' + TypeText + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+

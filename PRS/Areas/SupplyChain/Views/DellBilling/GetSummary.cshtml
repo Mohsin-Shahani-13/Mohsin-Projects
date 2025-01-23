@@ -1,0 +1,134 @@
+﻿@model IP.Areas.SupplyChain.Models.DellBilling
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    tr {
+        white-space: nowrap;
+    }
+</style>
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div> 
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstDellBillingSummary" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot style="background-color:white;">
+                    <tr>
+
+                        <th>Total: </th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var _programId = $('#ddProgram').val();
+        var _programName = $("#ddProgram option:selected").text();
+        var _trackingNo = $('#trackingNo').val();
+        var _rptType = $("#rptType option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DellBilling/GetSummaryList',
+            data: {
+                programId: _programId,
+                programName: _programName,
+                trackingNo: _trackingNo,
+                rptType: _rptType
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [
+                    { "data": "ProgramID", "title": "ProgramID", "width": "50px", "visible":false },
+                    { "data": "Program", "title": "Program", "width": "50px" },
+                    { "data": "Dell Charge Code", "title": "Dell Charge Code", "width": "100px" },
+                    { "data": "PO NUMBER", "title": "PO No.", "width": "80px" },
+                    { "data": "TERMS", "title": "Terms", "width": "70px" },
+                    { "data": "SHIP", "title": "Ship", "width": "80px" },
+                    { "data": "TRACKING", "title": "Tracking No.", "width": "100px" },
+                    { "data": "QTY", "title": "Qty", "width": "50px", "className": "text-right" },
+                    { "data": "COMMODITY", "title": "Commodity", "width": "100px" },
+                    { "data": "WARRANTY CODE", "title": "Warranty Code", "width": "100px" },
+                    { "data": "SHIP TYPE", "title": "Ship Type", "width": "80px" },
+                    { "data": "COST", "title": "Cost", "width": "70px", "className": "text-right" },
+                    { "data": "AMOUNT", "title": "Amount", "width": "80px", "className": "text-right" }
+                ];
+                ToggleDataList(true);
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(7).footer()).html(thousands_separators(api.column(7, { search: 'applied' }).data().sum()));
+                }
+                MakeDataGrid('lstDellBillingSummary', data.lstDellBillingReport, 0, columnDef, true, true, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+
+

@@ -1,0 +1,444 @@
+﻿@model IP.Models.DBIngenicoSecond
+@{
+    ViewBag.Title = "Ingenico Second";
+    Layout = null;
+}
+
+<style>
+    .even {
+        background-color: #080808 !important;
+        color: limegreen !important;
+    }
+
+    .odd {
+        background-color: black !important;
+        color: limegreen !important;
+    }
+
+    table > thead > tr > th {
+        background-color: #202020 !important;
+    }
+
+    .yellow_clr {
+        background-color: #C3C300;
+        color: black;
+    }
+
+    .red_clr {
+        background-color: red;
+        color: white;
+    }
+
+    .green_clr {
+        background-color: limegreen;
+        color: black;
+    }
+
+    #LstHrs_paginate {
+        visibility: hidden;
+    }
+
+    #LstMT1_paginate {
+        visibility: hidden;
+    }
+
+    #lstTarget_paginate {
+        visibility: hidden;
+    }
+
+    #lstWIP_paginate {
+        visibility: hidden;
+    }
+
+    #lstWIP_info {
+        visibility: hidden;
+    }
+
+    #LstHrs_info {
+        visibility: hidden;
+    }
+
+    #LstMT1_info {
+        visibility: hidden;
+    }
+
+    #lstTarget_info {
+        visibility: hidden;
+    }
+
+    table > thead > tr > th {
+        color: white !important;
+    }
+
+    .redFore_clr {
+        color: red;
+    }
+
+    .greenFore_clr {
+        color: limegreen;
+    }
+
+    .wipRed_clr {
+        font-size: 40px;
+        font-weight: bold;
+        color: whitesmoke;
+        background: red; /* fallback for old browsers */
+    }
+
+    .wipGreen_clr {
+        font-size: 40px;
+        font-weight: bold;
+        color: black;
+        background: limegreen; /* fallback for old browsers */
+    }
+</style>
+<div class="container-fluid" style="background-color:black">
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-4">
+            <div class="box-body" style="background-color: black">
+                <table id="LstHrs" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 25px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                </table>
+            </div>
+        </div>
+
+        <div class="col-sm-8">
+            <h6 id="DBShift" class="greenFore_clr" style="font-size:60px; text-align:center; padding-top:28px;"></h6>
+
+            <h6 id="DBRT" class="greenFore_clr" style="font-size:60px; text-align:center;"></h6>
+        </div>
+    </div>
+    <div class="row" style="padding-left:10px;padding-right:10px">
+        <div class="col-sm-12">
+            <div class="box-body" style="background-color: black">
+                <table id="LstMT1" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 25px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                    <thead class="sorted-asc">
+                        <tr style="font-size:22px;">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <div class="box-body" style="background-color: black">
+                <table id="lstTarget" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 25px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                    <thead class="sorted-asc">
+                        <tr style="font-size:22px;">
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <div class="box-body" style="background-color: black">
+                <table id="lstWIP" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 25px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                    <thead class="sorted-asc">
+                        <tr style="font-size:22px;">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <div class="col-sm-3 col-lg-3 col-md-4  text-center" style="width:100%;">
+                <h6 id="WIPTOOHigh" style="font-size:40px; text-align:center;font-weight:bold;height:55px; padding-top:7px;"></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        setInterval(function () {
+            cache_clear()
+        }, 180000);
+    });
+    function cache_clear() {
+        LoaData();
+    }
+    ToggleDataList(false);
+    LoaData();
+
+    function LoaData() {
+        var columnDef0 = '';
+        var columnDef1 = '';
+        var columnDef3 = '';
+        var columnDef4 = '';
+
+        $('#DBShift').text('');
+        $('#DBRT').text('');
+        $('#WIPTOOHigh').text('');
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/DBIngenicoSecond/GetList',
+            data: {
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#DBRT').append(data.RefreshTime);
+                $('#DBShift').append(data.Shift);
+
+                if (data.lstMst[0]) {
+                    columnDef0 = [
+
+                        { "title": "", "width": "150", "targets": 0 },
+                        { "title": "", "width": "100", "targets": 1, "className": "text-center" },
+                    ];
+                }
+                if (data.lstMst[1]) {
+                    columnDef1 = [
+
+                        { "targets": 0 },
+                        { "title": "Packing", "width": "155px", "className": "text-center", "targets": 1 },
+                        { "title": "Rep Level 2", "width": "155px", "className": "text-center", "targets": 2 },
+                        { "title": "Rep Level 3", "width": "155px", "className": "text-center", "targets": 3 },
+                        { "title": "Final Test", "width": "155px", "className": "text-center", "targets": 4 },
+                        { "title": "Activation", "width": "155px", "className": "text-center", "targets": 5 },
+                        { "title": "Cleaning", "width": "155px", "className": "text-center", "targets": 6 },
+                        { "title": "Quality", "width": "155px", "className": "text-center", "targets": 7 },
+                    ];
+                }
+
+                if (data.lstMst[2]) {
+                    columnDef3 = [
+
+                        { "targets": 0 },
+                        {
+                            "width": "155px", "className": "text-center", "targets": 1,
+                            render: function (data, type, row) {
+                                if (row[0] == 'ACTUAL SHIFT TARGET') {
+                                    var url = '<div class=greenFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                                if (row[0] == 'TO DO') {
+                                    var url = '<div class=redFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                            }
+                        },
+                        {
+                            "width": "155px", "className": "text-center", "targets": 2,
+                            render: function (data, type, row) {
+                                if (row[0] == 'ACTUAL SHIFT TARGET') {
+                                    var url = '<div class=greenFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                                if (row[0] == 'TO DO') {
+                                    var url = '<div class=redFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                            }
+                        },
+                        {
+                            "width": "155px", "className": "text-center", "targets": 3,
+                            render: function (data, type, row) {
+                                if (row[0] == 'ACTUAL SHIFT TARGET') {
+                                    var url = '<div class=greenFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                                if (row[0] == 'TO DO') {
+                                    var url = '<div class=redFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                            }
+                        },
+                        {
+                            "width": "155px", "className": "text-center", "targets": 4,
+                            render: function (data, type, row) {
+                                if (row[0] == 'ACTUAL SHIFT TARGET') {
+                                    var url = '<div class=greenFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                                if (row[0] == 'TO DO') {
+                                    var url = '<div class=redFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                            }
+                        },
+                        {
+                            "width": "155px", "className": "text-center", "targets": 5,
+                            render: function (data, type, row) {
+                                if (row[0] == 'ACTUAL SHIFT TARGET') {
+                                    var url = '<div class=greenFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                                if (row[0] == 'TO DO') {
+                                    var url = '<div class=redFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                            }
+                        },
+                        {
+                            "width": "155px", "className": "text-center", "targets": 6,
+                            render: function (data, type, row) {
+                                if (row[0] == 'ACTUAL SHIFT TARGET') {
+                                    var url = '<div class=greenFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                                if (row[0] == 'TO DO') {
+                                    var url = '<div class=redFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                            }
+                        },
+                        {
+                            "width": "155px", "className": "text-center", "targets": 7,
+                            render: function (data, type, row) {
+                                if (row[0] == 'ACTUAL SHIFT TARGET') {
+                                    var url = '<div class=greenFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                                if (row[0] == 'TO DO') {
+                                    var url = '<div class=redFore_clr>' + data + '</div>';
+                                    return url;
+                                }
+                            }
+                        },
+                    ];
+                }
+                if (data.lstMst[3]) {
+                    columnDef4 = [
+
+                        { "targets": 0 },
+                        {
+
+                            "title": "Packing", "width": "155px", "className": "text-center", "targets": 1,
+                            render: function (data, type, row) {
+                                var url = '';
+                                if (row[1] > 20)
+                                    url = '<div class=red_clr>' + data + '</div>';
+                                else if (row[1] >= 11 && row[1] <= 20)
+                                    url = '<div class=yellow_clr>' + data + '</div>';
+                                else if (row[1] >= 1 && row[1] <= 10)
+                                    url = '<div class=green_clr>' + data + '</div>'
+                                else
+                                    url = '<div class=greenFore_clr>' + data + '</div>'
+                                return url;
+                            }
+                        },
+                        { "title": "Rep Level 2", "width": "155px", "className": "text-center", "targets": 2 },
+                        { "title": "Rep Level 3", "width": "155px", "className": "text-center", "targets": 3 },
+
+                        {
+
+                            "title": "Final Test", "width": "155px", "className": "text-center", "targets": 4,
+                            render: function (data, type, row) {
+                                var url = '';
+                                if (row[4] > 30)
+                                    url = '<div class=red_clr>' + data + '</div>';
+                                else if (row[4] >= 16 && row[4] <= 30)
+                                    url = '<div class=yellow_clr>' + data + '</div>';
+                                else if (row[4] >= 1 && row[4] <= 15)
+                                    url = '<div class=green_clr>' + data + '</div>'
+                                else
+                                    url = '<div class=greenFore_clr>' + data + '</div>'
+                                return url;
+                            }
+                        },
+
+                        {
+
+                            "title": "Activation", "width": "155px", "className": "text-center", "targets": 5,
+                            render: function (data, type, row) {
+                                var url = '';
+                                if (row[5] > 20)
+                                    url = '<div class=red_clr>' + data + '</div>';
+                                else if (row[5] >= 11 && row[5] <= 20)
+                                    url = '<div class=yellow_clr>' + data + '</div>';
+                                else if (row[5] >= 1 && row[5] <= 10)
+                                    url = '<div class=green_clr>' + data + '</div>'
+                                else
+                                    url = '<div class=greenFore_clr>' + data + '</div>'
+                                return url;
+                            }
+                        },
+
+
+                        {
+
+                            "title": "Cleaning", "width": "155px", "className": "text-center", "targets": 6,
+                            render: function (data, type, row) {
+                                var url = '';
+                                if (row[6] > 20)
+                                    url = '<div class=red_clr>' + data + '</div>';
+                                else if (row[6] >= 11 && row[6] <= 20)
+                                    url = '<div class=yellow_clr>' + data + '</div>';
+                                else if (row[6] >= 1 && row[6] <= 10)
+                                    url = '<div class=green_clr>' + data + '</div>'
+                                else
+                                    url = '<div class=greenFore_clr>' + data + '</div>'
+                                return url;
+                            }
+                        },
+
+                        {
+
+                            "title": "Quality", "width": "155px", "className": "text-center", "targets": 7,
+                            render: function (data, type, row) {
+                                var url = '';
+                                if (row[7] > 20)
+                                    url = '<div class=red_clr>' + data + '</div>';
+                                else if (row[7] >= 11 && row[7] <= 20)
+                                    url = '<div class=yellow_clr>' + data + '</div>';
+                                else if (row[7] >= 1 && row[7] <= 10)
+                                    url = '<div class=green_clr>' + data + '</div>'
+                                else
+                                    url = '<div class=greenFore_clr>' + data + '</div>'
+                                return url;
+                            }
+                        },
+                    ];
+
+                }
+
+                // ToggleDataList(true);
+                MakeDataGrid('LstHrs', data.lstMst[0], 0, columnDef0, false, false, false);
+                MakeDataGrid('LstMT1', data.lstMst[1], 0, columnDef1, false, false, false);
+                MakeDataGrid('lstTarget', data.lstMst[2], 0, columnDef3, false, false, false);
+                MakeDataGrid('lstWIP', data.lstMst[3], 0, columnDef4, false, false, false);
+
+                $('#WIPTOOHigh').append(data.WIPStatus);
+                if (data.WIPStatus == "WIP TOO HIGH") {
+                    $('#WIPTOOHigh').addClass('wipRed_clr');
+                }
+                else {
+                    $('#WIPTOOHigh').addClass('wipGreen_clr');
+                }
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+
+</script>

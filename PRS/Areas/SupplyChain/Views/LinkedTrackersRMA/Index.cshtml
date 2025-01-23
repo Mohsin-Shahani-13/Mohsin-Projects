@@ -1,0 +1,148 @@
+﻿@model IP.Areas.SupplyChain.Models.LinkedTrackersRMA
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstLinkedTrackersRMA" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+
+                        @*<th></th>*@
+                        @*<th></th>
+        <th></th>*@
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        
+        var _programId = $('#ddProgram').val();
+        var _programName = $("#ddProgram option:selected").text();
+        var DISPOSITION = $('#DISPOSITION').val();
+        var _partNo = $('#partNo').val();
+
+        
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/LinkedTrackersRMA/GetList',
+            data: {
+                programID: _programId,
+                programName: _programName,
+                DISPOSITION: DISPOSITION,
+                partNo: _partNo
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "ProgramID", "width": "100px", "visible": false },
+                        { "data": "CreateDate", "title": "CreateDate", "width": "100px", "className": "text-right" },
+                        { "data": "Tracker", "title": "Tracker", "width": "100px" },
+                        { "data": "DISPOSITION", "title": "Disposition", "width": "100px" },
+                        { "data": "TrackingNo", "title": "Tracking No.", "width": "150px" },
+                        {
+                            "data": "FRU", "title": "Part No.", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["FRU"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                           { "data": "HAS_SN", "title": "HAS_SN", "visible": false },
+                        { "data": "serial", "title": "Serial No.", "width": "100px",
+                            render: function (data, type, row) {
+                                var d = data.toString();
+                                if (row["serial"] == "*" || row["HAS_SN"] == 'N') {
+                                    url = row["serial"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["serial"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["FRU"] + '&page=list" target=_blank > ' + d + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "PLUS_ORDER", "title": "Plus Order", "width": "100px" },
+                        { "data": "Customer_PO", "title": "Customer PO", "width": "120px" },
+                        { "data": "TCODE OEM NAME", "title": "TCode OEM Name", "width": "200px" },
+                        { "data": "LocationNo", "title": "Location No.", "width": "120px" },
+                        { "data": "INWARRANTY", "title": "In Warranty", "width": "100px" },
+                        {
+                            "data": "RETCNT", "title": "RETCNT", "width": "80px",
+                            render: function (data, type, row) {
+                                var val = data === '' ? '0' : data;
+                                return val;
+                            }},
+                        { "data": "Description", "title": "Description", "width": "150px" },
+                        { "data": "MFGDATE", "title": "Mfg Date", "width": "100px", "className": "text-right" },
+                        { "data": "MANUF_PART", "title": "Manuf. Part", "width": "120px" },
+                        { "data": "INT_SERIAL", "title": "Int Serial", "width": "150px" },
+                        { "data": "COO", "title": "COO", "width": "80px", "className": "text-center" }
+                    ];
+                    ToggleDataList(true);
+                    MakeDataGrid('lstLinkedTrackersRMA', data.lstLinkedTrackersRMA, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+
+

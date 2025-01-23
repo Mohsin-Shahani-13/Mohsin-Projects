@@ -1,0 +1,61 @@
+﻿@model IP.Areas.Jobs.Models.HighCPUConsumedSP
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td colspan="2" class="pad">
+            @Html.LabelFor(model => model.ServerNames, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddlServers", null, new { id = "ddlServers", @name = "ddlServers", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.ProcName, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="ProcName" name="ProcName" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#ProcName').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function Go() {
+        var server = $('#ddlServers option:selected').text();
+        var ProcName = $('#ProcName').val();
+        $('#option').modal('hide');
+        OpenPage('\\Jobs\\HighCPUConsumedSP\\Index?server=' + server + '&ProcName=' + ProcName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+

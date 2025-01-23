@@ -1,0 +1,731 @@
+﻿@model IP.Models.CodeTableListing
+@{
+    ViewBag.Title = "detail";
+    Layout = null;
+
+
+    string FilterString = Model.filterString;
+}
+<style>
+
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+
+    .leftsection {
+        text-align: center;
+        /*padding-top: 50px;*/
+    }
+
+    /*remove sql doc button added by mohsin*/
+    #showQuery {
+        visibility: hidden;
+        position: absolute;
+    }
+
+    .modal-backdrop.in {
+        filter: alpha(opacity=0);
+        opacity: .0;
+    }
+
+    .modal-backdrop {
+        position: relative;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1040;
+        background-color: #000;
+    }
+
+    textarea {
+        resize: none !important;
+    }
+
+    .notexport {
+        text-align: center;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="panel panel-default">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool">
+                        <span class="fa fa-th-list fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle</strong><strong>@FilterString</strong></h6>
+                    <div id="buttons" class="box-tools pull-right fixed">
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="lstData" class="table table-bordered table-striped text-sm">
+                        <thead>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*---Modal--*@
+
+<div class="modal fade" id="imgmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="align-content:center">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width:60%; margin: 0 auto;">
+            <div class="modal-header" style="background-color:#0073b7; color:white;">
+                <h5 class="modal-title" id="exampleModalLabel"><strong>Picture</strong></h5>
+                <button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-25px;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="showimage">
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*---Modal--*@
+
+<div class="modal fade" id="datamodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="align-content:center">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width:90%; margin: 0 auto;">
+            <div class="modal-header" style="background-color:#0073b7; color:white;">
+                <h5 class="modal-title" id="exampleModalLabel"><strong>Data</strong></h5>
+                <button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-25px;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="showdata">
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*---Modal--*@
+
+<div class="modal fade" id="datamodel2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="align-content:center">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width:90%; margin: 0 auto;">
+            <div class="modal-header" style="background-color:#0073b7; color:white;">
+                <h5 class="modal-title" id="exampleModalLabel"><strong>Child Tracking Number</strong></h5>
+                <button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-25px;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ShowDataForTrackingNumber">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    
+    function DisplayImage(ImageDataID) {
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/CodeTableListing/GetImage',
+            data: {
+                imageDataId: ImageDataID
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#commentsheader').html('Picture' + '<button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-7px;">&times;</button>');
+                if (data.ImageBase64String !== null) {
+                    $('#commentsbody').html('<img src="data:image/png;base64,' + data.ImageBase64String + '" width="100%" height="35%"/>');
+                } else {
+                    $('#commentsbody').html('Image not available.');
+                }
+                $('#comments').modal('show');
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+    function ShowData(item) {
+        $('#datamodel').modal('show');
+        $('.showdata').html('<textarea rows="15" cols="70" name="usrtxt" white-space: no-wrap;>"'+decodeURI(item)+ '"</textarea > ');
+        //// $('#myFunction').modal('hide');
+        $('#datamodel').modal();
+    }
+
+    function ShowDataForTrackingNumber(item) {
+        $('#datamodel2').modal('show');
+        $('.ShowDataForTrackingNumber').html('<textarea rows="15" cols="70" name="usrtxt" white-space: no-wrap;>"'+ item +'"</textarea > ');
+        //// $('#myFunction').modal('hide');
+        $('#datamodel2').modal();
+    }
+
+    $.fn.dataTable.render.ellipsisAdr1 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|'|)/gm, "");
+                //str = str.replaceAll(/'/g, '"');
+                //var header = data;
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="ShowDataForTrackingNumber(\''+ str +'\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    $.fn.dataTable.render.ellipsisAdr2 = function (cutoff) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r|'|)/gm, "");
+                //str = str.replaceAll(/'/g, '"');
+                //var header = data;
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="ShowData(\'' + str + '\')"> Show Data</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    $(document).ready(function () {
+
+    ToggleDataList(false);
+    LoadData();
+   @using Newtonsoft.Json;
+        function LoadData() {
+      @using Newtonsoft.Json;
+
+
+        var _lstData = @Html.Raw(JsonConvert.SerializeObject(Model.lstData));
+        var _lstDataColumn = @Html.Raw(Json.Encode(Model.lstDataColumn)); // column headers
+        var _lstfilterString = @Html.Raw(Json.Encode(Model.filterString));
+
+        var th = '<tr>'; //create th for headers
+
+        $.each(_lstDataColumn, function (index, value) {
+
+            th += '<th id=idx' + index + '>' + value + ' </th>'; // for table headers
+        });
+
+            th += '</tr>'; // th end
+
+        //$('#filterString').append(data._lstfilterString);
+
+        $('#lstData >thead').append(th); // th header append to thead
+
+        var columnDef = [];
+            for (i = 0; i <= _lstDataColumn.length - 1; i++) {
+
+              // for picture model
+
+                if (_lstDataColumn[i][0].includes("Picture")) {
+
+                    columnDef.push({
+                        "className": "text-center", "width": "60px", "targets": i,
+                        render: function (data, type, row, index) {
+
+                            //  var rowData = document.getElementById('idx' + i).innerText
+                            var url = '';
+                            url = '<a href="#" onClick=DisplayImage("' + row[11] + '")>View Image</a>';
+                            return url;
+                        }
+                    });
+
+                }
+                else if (_lstDataColumn[i][0].includes("TrackingNo")) {
+
+                    columnDef.push({
+
+                        "width": "90px", "targets": i,
+                        render: function (data, type, row, index) {
+
+                              //var rowData = document.getElementById('idx' + i).innerText;
+                            var item = (data);
+                            var url = '';
+                                                    /// Conditions for FEDEX/////
+
+                                if (row[8] == "FEDEX") {
+
+                                    url = '<a href="https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=' + row[1] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                else if (row[5] == "FEDEX") {
+
+                                    url = '<a href="https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=' + row[4] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    //Condition for SO Shipment Info View///
+                                else if (row[6] == "FEDEX" && row[5] != 'NA' && row[5] != "OTHER") {
+
+                                    url = '<a href="https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=' + row[5] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                else if (row[9] == "FEDEX") {
+
+                                    url = '<a href="https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=' + row[8] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                else if (row[4] == "FEDEX") {
+
+                                    url = '<a href="https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=' + row[5] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+
+                                                                 /// Conditions for UPS/////
+
+                                  //Condition for Cross Dock View///
+                                else if (row[9] == "UPS") {
+
+                                    url = '<a href="https://www.ups.com/track?loc=en_US&tracknum=' + row[8] + '&requester=ST/trackdetails' + '" target=_blank > ' + data + '</a>';
+                                }
+                                    //Condition for Carrier Result View///
+                                else if (row[8] == "UPS") {
+
+                                    url = '<a href="https://www.ups.com/track?loc=en_US&tracknum=' + row[1] + '&requester=ST/trackdetails' + '" target=_blank > ' + data + '</a>';
+                                }
+
+                                     //Condition for SO Shipment Info View///
+
+                                else if (row[6] == "UPS" && row[5] != "NA" && row[5] != "OTHER") {
+
+                                    url = '<a href="https://www.ups.com/track?loc=en_US&tracknum=' + row[5] + '&requester=ST/trackdetails' + '" target=_blank > ' + data + '</a>';
+
+                                }
+
+                                else if (row[5] == "UPS") {
+
+                                    url = '<a href="https://www.ups.com/track?loc=en_US&tracknum=' + row[4] + '&requester=ST/trackdetails' + '" target=_blank > ' + data + '</a>';
+
+                                }
+
+                                else if (row[4] == "UPS") {
+
+                                    url = '<a href="https://www.ups.com/track?loc=en_US&tracknum=' + row[6] + '&requester=ST/trackdetails' + '" target=_blank > ' + data + '</a>';
+                                }
+                                else if (row[3] == "UPS") {
+
+                                    url = '<a href="https://www.ups.com/track?loc=en_US&tracknum=' + row[5] + '&requester=ST/trackdetails' + '" target=_blank > ' + data + '</a>';
+                                }
+                                            
+                                                            /// Conditions for DHL/////
+
+                                     //Condition for Cross Dock View///
+                                else if (row[9] == "DHL") {
+
+                                    url = '<a href="http://www.dhl.com/en/express/tracking.html?AWB=' + row[8] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    //Condition for Carrier Result View///
+                                else if (row[8] == "DHL") {
+
+                                    url = '<a href="http://www.dhl.com/en/express/tracking.html?AWB=' + row[1] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    //Condition for SO Shipment Info View///
+                                else if (row[6] == "DHL" && row[5] != "NA" && row[5] != "OTHER") {
+
+                                    url = '<a href="http://www.dhl.com/en/express/tracking.html?AWB=' + row[5] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                     ///Condition for  RO Dock Log View AND Carrier Result Details View////
+                                else if (row[5] == "DHL") {
+
+                                    url = '<a href="http://www.dhl.com/en/express/tracking.html?AWB=' + row[4] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    /// Condition for Carrier Schedule PickUp View///
+                                else if (row[4] == "DHL") {
+
+                                    url = '<a href="http://www.dhl.com/en/express/tracking.html?AWB=' + row[5] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+
+                                    /// Conditions for USPS/////
+
+                                    //Condition for Cross Dock View///
+                                else if (row[9] == "USPS") {
+
+                                    url = '<a href="https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=' + row[8] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    //Condition for Carrier Result View///
+                                else if (row[8] == "USPS") {
+
+                                    url = '<a href="https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=' + row[1] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    //Condition for SO Shipment Info View///
+                                else if (row[6] == "USPS" && row[5] != "NA" && row[5] != "OTHER") {
+
+                                    url = '<a href="https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=' + row[5] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    ///Condition for  RO Dock Log View AND Carrier Result Details View////
+                                else if (row[5] == "USPS") {
+
+                                    url = '<a href="https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=' + row[4] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+                                    /// Condition for Carrier Schedule PickUp View///
+                                else if (row[4] == "USPS") {
+
+                                    url = '<a href="https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=' + row[5] + '&locale=en_US&cntry_code=us' + '" target=_blank > ' + data + '</a>';
+
+                                }
+
+
+                                else if (item == null || item == "") {
+                                    url = '<span>' + item + '</span>';
+                                }
+
+                                else {
+                                    url = item ;
+                                }
+
+                            return url;
+                        }
+                    });
+
+                }
+                else if (_lstDataColumn[i][0].includes("ChildTrackingNumber")) {
+
+                    columnDef.push({
+
+                        "width": "90px", "targets": i, "render": $.fn.dataTable.render.ellipsisAdr1(35)
+                        });
+
+                }
+                else if (_lstDataColumn[i][0].includes("PDF")) {
+
+                    columnDef.push({
+
+                        "width": "90px", "targets": i, "render": $.fn.dataTable.render.ellipsisAdr2(10)
+                    });
+
+                }
+
+                else if (_lstDataColumn[i][0] == "Request" || _lstDataColumn[i][0] == "Response" || _lstDataColumn[i][0] == "PDF" || _lstDataColumn[i][0] == "ZPL" || _lstDataColumn[i][0] == "CommercialInvoice") {
+                    columnDef.push({
+                        "className": "notexport", "width": "90px", "targets": i,
+                        render: function (data, type, row, index) {
+
+                            //  var rowData = document.getElementById('idx' + i).innerText;
+                            var item = encodeURI(data);
+
+                            var url = '';
+
+                            if (item == null || item == "") {
+                                url = '<span>' + item + '</span>';
+                            }
+
+
+                            else {
+                                url = '<a href="#" onClick=ShowData("' + item + '")>Show Data...</a>';
+                            }
+
+                            return url;
+
+                        }
+
+                    });
+                }
+
+                else if (_lstDataColumn[i][0] == "_Request" || _lstDataColumn[i][0] == "_Response" || _lstDataColumn[i][0] == "_PDF" || _lstDataColumn[i][0] == "_ZPL" || _lstDataColumn[i][0] == "_CommercialInvoice") {
+                    columnDef.push({
+                        "className": "text-center", "width": "90px", "visible": false
+                    });
+                }
+
+                else if (_lstDataColumn[i][0].includes("Date")) {
+
+                    columnDef.push({
+
+                        "className": "text-right", "width": "110px", "targets": i,
+                    });
+
+                }
+
+                else if (_lstDataColumn[i][0].includes("LastLogon")) {
+
+                    columnDef.push({
+
+                        "className": "text-right", "width": "150px", "targets": i,
+
+                    });
+
+                }
+
+            else {
+                columnDef.push({
+                    "className": "text-left", "width": "50px", "targets": i,
+                });
+            }
+        }
+
+        ToggleDataList(true);
+          //  var h = getHeight(88);
+            MakeDynamicGrid('lstData', _lstData, 0, columnDef, true, true, false);
+    }
+      });
+
+
+
+    function MakeDynamicGrid(tableId, data, tableHeight, columns, search, isScrollX, footerFunction, detailed, reportTitleId, rowSelection, lstHeight) {
+        var startTime = performance.now();
+        var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+        var isDetailed = detailed === undefined ? false : true;
+        var reportTitle = '';
+
+        if (reportTitleId === undefined)
+            reportTitle = $('.box-title').text();
+        else
+            reportTitle = reportTitleId;
+
+        var gridHeight = 0;
+
+        isScrollX = isScrollX === undefined ? false : true;
+        if (search === undefined) { search = true; }
+
+        var gridButtonsClass = '';
+        var gridSearchBoxClass = '';
+        if (isDetailed === true) {
+            gridButtonsClass = 'btn-header btn-box-tool';
+            gridSearchBoxClass = 'bg-white  txtSearch';
+            gridButtonSize = 20;
+        }
+        else {
+            gridButtonsClass = 'btn-header btn-box-tool';
+            gridSearchBoxClass = 'btn-box-tool bg-white txtSearch';
+            gridButtonSize = 20;
+        }
+
+        //For SQL Documentation
+
+        var rptDtlCode, rptDtlTitle, qrytool;
+        if (isDetailed === true) {
+            rptDtlCode = $('#rptcode').val();
+            rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+            if (rptDtlTitle === "")
+                rptDtlTitle = reportTitle;
+
+            qrytool = '<a id="showQuery" class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '&isDetail=Y' + '" title="How they do that" target="_blank">';
+            qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            qrytool += '</a>';
+
+            $('#buttons').empty();
+            $('#buttons').append(qrytool);
+        }
+        else {
+            var rptCode = $('#rptCode').val(); // for sql docs.
+            var rptTitle = $('#rptTitle').val(); // for sql docs.
+            if (rptCode === undefined) {
+                rptDtlCode = $('#rptcode').val();
+                rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+                qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '&isDetail=N' + '" title="How they do that" target="_blank">';
+                qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+                qrytool += '</a>';
+
+                $('#buttons').empty();
+                $('#buttons').append(qrytool);
+            }
+            else {
+                qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptCode + '&rptTitle=' + rptTitle + '&isDetail=N' + '" title="How they do that" target="_blank">';
+                qrytool += '<span class="fa-stack sqlDoc"><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+                qrytool += '</a>';
+
+                $('#buttons').empty();
+                $('#buttons').append(qrytool);
+            }
+        }
+
+        if (search === true) {
+            var boxtool = '<input class="' + gridSearchBoxClass + '" id="txtSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+            $('#buttons').append(boxtool);
+        }
+
+        var table = $('#' + tableId).DataTable({
+            order: [],
+            createdRow: rowSelection,         // add Parameter for row selection in PO Detail // Added By Tahir
+            data: data,
+            columns: columns,
+            paging: true,
+            ordering: true,
+            searching: search,
+            deferRender: true,
+            destroy: true,
+            pagingType: 'full',
+            pageLength: 100,
+            scrollCollapse: false,
+            scrollX: isScrollX,
+            //scrollY: gridHeight,
+
+            footerCallback: footerFunction,
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                oPaginate: {
+                    sNext: '<i class="fa fa-forward"></i>',
+                    sPrevious: '<i class="fa fa-backward"></i>',
+                    sFirst: '<i class="fa fa-step-backward"></i>',
+                    sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            },
+            "dom": "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-3'i><'#designedBy.col-sm-7'><'col-sm-2'p>>",
+            buttons: [
+                {
+                    extend: 'copyHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Copy',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        //columns: ':visible'
+                        columns: 'th:not(.notexport)' // Excluding columns while exporting
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Export to excel',
+                    title: reportTitle,
+                    filename: 'DataExport', //Added By Tahir
+                    exportOptions: {
+                        //columns: ':visible'
+                        columns: 'th:not(.notexport)'
+                    },
+
+                    //Comment by mohsin due to "RangeError: Maximum call stack size exceeded"
+                    //customize: function (xlsx) {  
+                    //    var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    //    var excelColumns = [];
+
+                    //    header = $("row[r=2]", sheet);
+
+                    //    cols = header.find("c");
+                    //    cols.each(function () {
+                    //        t = $(this).find("t").text();
+                    //        if (t.includes("Serial") || t.includes("Customer Ref."))
+                    //            excelColumns.push($(this).attr("r"));
+                    //    });
+                    //    $(excelColumns).each(function () {
+                    //        var cell = this.substring(0, 1);
+                    //        $('row:gt(1) c[r^="' + cell + '"]', sheet).each(function () {
+                    //            $(this).removeAttr('s');
+                    //            $(this).attr('t', 'inlineStr');
+                    //            $(this).find('v').replaceWith('<is><t>' + $(this).text() + '</t></is>');
+                    //        });
+                    //    });
+
+                    //}
+                },
+                {
+                    extend: 'print',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Print',
+                    title: '',
+                    messageTop: function () { return '<h4>' + reportTitle + '</h4>'; },
+                    filename: 'DataExport',
+                    exportOptions: {
+                        // columns: ':visible'
+                        columns: 'th:not(.notexport)'
+                    }
+                }
+            ],
+            initComplete: function () {
+                $('#txtSearch').focus();
+            },
+            select: true
+        });
+        table.buttons().container()
+            .appendTo('#buttons');
+
+        table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+        table.button(0).nodes().addClass(gridButtonsClass);
+
+        table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(1).nodes().addClass(gridButtonsClass);
+
+        table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(2).nodes().addClass(gridButtonsClass);
+
+        var dsgndby = $('.modal-footer > #designedby ').html();
+
+        if (dsgndby === "") {
+            $('#designedBy').html($('.desgndBy').html());
+        }
+
+        var layoutHeader = $('nav').innerHeight();
+        var cardHeader = $('.box-header').innerHeight();
+        var tableHeader = $('.dataTables_scrollHead').innerHeight();
+        var tableFooter = 0;
+        var cardFooterH = 30;
+
+        if (isFooter === true)
+            tableFooter = $('.dataTables_scrollFoot').innerHeight();
+
+
+        var parentHeight = $('#' + lstHeight).innerHeight();
+        if (parentHeight == undefined)
+            parentHeight = window.innerHeight;
+        else
+            parentHeight = $('#' + lstHeight).innerHeight();
+
+        var browserHeight = parentHeight;
+        if (tableHeight === 0) {
+            if (layoutHeader === undefined)
+                gridHeight = browserHeight - (cardHeader + tableHeader + tableFooter + cardFooterH);
+            else
+                gridHeight = browserHeight - (layoutHeader + cardHeader + tableHeader + tableFooter + cardFooterH);
+        }
+        else { gridHeight = tableHeight; }
+
+        var topHeader = $('#topHeader').innerHeight();
+        if (topHeader > 0)
+            gridHeight = gridHeight - (topHeader + 1);
+
+        $('.dataTables_scrollBody').css('height', gridHeight + 'px');
+        table.columns.adjust().draw();
+
+        $('.dataTables_filter').hide();
+        $('#txtSearch').on('keyup change', function () {
+            table.search(this.value).draw();
+        });
+
+        var endTime = performance.now();
+        var elapsedTimeInSeconds = (endTime - startTime) / 1000;
+  
+        $.ajax({ 
+            cache: false,
+            type: 'POST',
+            url: '/Home/SaveLog',
+            data: {
+                gridExecutionTime: elapsedTimeInSeconds
+            },
+            success: function () {
+                //console.log('Value sent to controller!');
+            },
+            error: function () {
+                //console.log('Error sending value to controller!');
+            }
+        }); //Added by Huzaifa
+        return table;
+    }
+</script>

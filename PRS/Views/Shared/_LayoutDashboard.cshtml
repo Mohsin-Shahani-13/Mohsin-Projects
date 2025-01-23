@@ -1,0 +1,549 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Plus-RS</title>
+    @System.Web.Optimization.Styles.Render("~/Content/css")
+
+    <style>
+        .dropdown-list {
+            width: 140px;
+        }
+
+        a {
+            cursor: pointer;
+        }
+
+        .margin {
+            margin: 4px;
+            padding-top: 5px;
+            color: white;
+        }
+
+        .dropdown {
+            background-color: #29373D;
+            color: white;
+        }
+
+        .modal-width {
+            width: 80%;
+            height: 80%;
+            margin: 50px auto auto auto;
+        }
+
+        .modalcontent {
+            height: 80%;
+            border-radius: 0;
+        }
+
+        .logonUser {
+            margin-top: 8px;
+        }
+
+        .settingIcon {
+            margin-top: 2px;
+        }
+
+        /*Right Panel CSS*/
+        /*
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            right: 0;
+            background-color: #29373D;
+            color: white;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 50px;
+            padding-left: 5px;
+        }*/
+
+        /*End Right Panel CSS*/
+
+        .ribbon {
+            background-color: black;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .skins {
+            margin-top: 5px;
+            padding: 5px;
+        }
+
+        .blueBall {
+            color: #3C8DBC
+        }
+
+        .greenBall {
+            color: #00A65A
+        }
+
+        .redBall {
+            color: #DD4B39
+        }
+
+        .yellowBall {
+            color: #F39C12
+        }
+
+        .aquaBall {
+            color: #00C0EF
+        }
+
+        .close {
+            font-size: 30px;
+            font-weight: 500;
+            padding-left: 2px;
+            color: #FFFFFF !important;
+            text-shadow: #FFFFFF !important;
+        }
+
+        .content-wrap {
+            min-height: 100%;
+            background-color: #ecf0f5;
+        }
+
+        .lblDB {
+            height: 200px;
+            width: 400px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-top: -100px;
+            margin-left: -200px;
+            color: limegreen;
+        }
+
+        #lblMsg {
+            color: red;
+        }
+        body {
+            user-select: none;
+        }
+    </style>
+</head>
+<body id="main" class="hold-transition skin-blue sidebar-mini sidebar-collapse lte-fixed" onresize="resize_grid_height()" style="background-color:black; overflow-y: hidden;" onload="get_initial_attributes()">
+    <div class="wrapper" style="overflow:hidden">
+        <header class="main-header">
+            <!-- Logo -->
+            @*<a onclick="OpenPage('\\Dashboard\\Dashboard')" class="logo" style="text-decoration:none">
+                    <span class="logo-lg"><img src="~/Content/images/Octel_Logo.png" alt="NA" /></span>
+                </a>*@
+            <nav class="navbar navbar-static-top">
+                @*<label id="companyName" style="color:white; padding-top:5px; font-size:28px;"><span style="color:red;font-size:28px;">T</span>eleplan</label>*@
+
+                <img src="~/Content/images/logo_reco.png" style="padding-top:4px; padding-bottom:3px;" />
+                <div class="navbar-custom-menu">
+
+                    <ul id="nav" class="nav navbar-nav">
+                        <li class="margin" style="padding-top:10px;">
+                            @*@Html.LabelFor(model => model.DashboardType, htmlAttributes: new { @class = "col-4 col-form-lable" })*@
+                            @Html.DropDownList("DDSites", new SelectList(ViewBag.DDSites, "Value", "Text"), new { @id = "DDSites", @class = "form-control", @onchange = "DDSites" })
+                            <span id="lblMsg" class="optionMsg">
+                            </span>
+                        </li>
+                    </ul>
+
+                    <ul id="nav" class="nav navbar-nav">
+                        <li class="margin" style="padding-top:10px;">
+                            @*@Html.LabelFor(model => model.DashboardType, htmlAttributes: new { @class = "col-4 col-form-lable" })*@
+                            @Html.DropDownList("DDLDashboard", new SelectList(ViewBag.DDLDashboard, "Value", "Text"), new { @id = "DDLDashboard", @class = "form-control", @onchange = "DDLDashboard" })
+                        </li>
+                    </ul>
+
+                </div>
+
+                <!--<div class="navbar-custom-menu">
+                <ul id="nav" class="nav navbar-nav">
+                    <li class="margin" style="padding-top:10px;">
+
+                        <select id='DDLDashboard' class="dropdown-list">
+                            <option value="0">Select from list</option>-->
+                @*onclick="Navigate('Dashboard','/dashboard/DBIndex', '', '', '', '')"*@
+                <!--<option value="1">Ingenico DB 1</option>
+                    <option value="2">Ingenico DB 2</option>
+                    <option value="3">Ingenico DB 3</option>
+                </select>-->
+                @*<button class="btn btn-secondary btn-xs" style="color: black;" onclick="Navigate('DBIngenico','/DBIngenico/Index', '', '', '', '')" type="button">
+                        Ingenico
+                    </button>*@
+
+
+                <!--</li>
+                    </ul>
+                </div>-->
+            </nav>
+
+
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <!--<aside class="main-sidebar">-->
+        <!-- sidebar: style can be found in sidebar.less -->
+        <!--<section class="sidebar">-->
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <!--<ul id="IPMnu" class="sidebar-menu" data-widget="tree">
+                <li><a onclick="OpenPage('\\Dashboard\\Dashboard')"><i class="fa fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+            </ul>
+        </section>-->
+        <!-- /.sidebar -->
+        <!--</aside>-->
+        <!-- Content Wrapper. Contains page content -->
+        <div id="renderBody" class="content-wrap" style="background-color:black;">
+            <div id="lblDB" style="text-align:center; font-size:32px; margin-top:0%" class="col-lg-12 lblDB">Please select site and dashboard</div>
+            @RenderBody()
+        </div>
+
+
+        <div id="wait" style="width:100%;height:100%;left:0px;top:0px; text-align:center; vertical-align:middle" class="modal">
+            <img src='~/Content/images/loading2.gif' width="64" height="64" style="text-align:center; vertical-align:middle; margin-top:400px;" />
+        </div>
+
+        <div id="comments" class="modal fade" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div id="commentsheader" class="modal-header bg-blue-gradient option-title">
+
+                    </div>
+                    <div id="commentsbody" class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="MsgAlert" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-red-gradient option-title">
+                    <strong id="MsgType"></strong>
+                </div>
+                <div class="modal-body">
+                    <p id="MsgBody"></p>
+                </div>
+                <div class="modal-footer" style="padding:4px;">
+                    <button type="button" class="btn btn-default" id="MsgbtnNo" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input class="desgndBy" type="hidden" />
+    <input class="mnId" type="hidden" />
+    <input id="rptCode" name="rptCode" type="hidden" />
+    <input id="rptTitle" name="rptTitle" type="hidden" />
+
+
+    @System.Web.Optimization.Scripts.Render("~/bundles/jquery")
+    @RenderSection("js", false)
+
+    <script>
+        var site;
+        function ChangeTheme(bgColor) {
+            $('nav').css('background', bgColor);
+            $('aside').css('background', bgColor);
+        }
+
+        function TogglePanel() {
+
+            var width = document.getElementById("mySidenav").style.width;
+            if(width === '0px' || width === '')
+                document.getElementById("mySidenav").style.width = "200px";
+            else
+                document.getElementById("mySidenav").style.width = "0px";
+        }
+
+        @*var mnId = '';
+    var empname = '@Session["EmpName"]';
+    empname = empname.charAt(0).toUpperCase() + empname.substr(1).toLowerCase();
+
+    $('#userName').append('' + empname + '');
+    $('.dropdown-toggle').dropdown();
+
+    LoadMenus();
+        site = $('#ddlSites option:selected').val(); // Added by Tahir
+        $('#ddlSites').change(function () {
+            var ddlSites = $('#ddlSites');  // Added by Tahir
+            site = $('#ddlSites option:selected').val();  // Added by Tahir
+
+        $.ajax({
+            type: 'POST',
+            url: '/Home/GetSiteDtl',
+            data: { siteId: ddlSites.val() },
+            success: function (data) {
+
+                $('#IPMnu > li ~ li').remove();
+                LoadMenus();
+
+                $('#companyName').html(data);
+                $('#ddlSites').blur();
+                OpenPage('\\Dashboard\\Index');
+
+            },
+            fail: function () {
+                alert('fail');
+            },
+            error: function (r) {
+                alert('error');
+            }
+
+        });
+    });*@
+
+    //$('#ddlConnection').change(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: '/Home/ChangeCon',
+    //        data: {
+    //            conType: $('#ddlConnection').val()
+    //        },
+    //        datatype: JSON,
+    //        success: function (data) {
+    //            $('#IPMnu > li ~ li').remove();
+    //            LoadMenus();
+    //        }
+    //    });
+    //    $('#ddlConnection').blur();
+    //    OpenPage('\\Dashboard\\Index');
+
+    //});
+
+    //$('#ddlPicsConnection').change(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: '/Home/ChangePixCon',
+    //        data: {
+    //            con: $('#ddlPicsConnection').val()
+    //        },
+    //        datatype: JSON,
+    //        success: function (data) {
+
+    //        }
+    //    });
+    //    $('#ddlPicsConnection').blur();
+    //    OpenPage('\\Dashboard\\Index');
+    //});
+
+    $("[data-toggle=tooltip]").tooltip(); //MENU TOOL TIP
+
+    //var menuIds = [];
+
+    //function LoadMenus() {
+    //    $.ajax({
+    //        type: 'GET',
+    //        url: '/Home/GetMenus',
+    //        datatype: JSON,
+    //        success: function (data) {
+    //            if ($.isArray(data)) {
+    //                CreateMenuItem(data);
+    //            }
+    //            else {
+    //                $('#renderBody').html(data);
+    //            }
+    //        }
+    //    });
+    //}
+
+    function OpenLI(mnuID) {
+        if ($('#main').hasClass("sidebar-collapse")) {
+            //WHEN MENU BAR IS CLOSED
+            $("#IPMnu > li").attr("data-toggle", "push-menu");
+
+            if ($('#IPMnu > #' + mnuID + '').hasClass("menu-open")) {
+                $('#IPMnu > #' + mnuID + '').removeClass('menu-open');
+                $('#IPMnu > #' + mnuID + ' > ul').css({ display: "none" });
+            }
+            else {
+                $('#IPMnu > #' + mnuID + ' > ul').css({ display: "block" });
+            }
+        }
+        else {
+            //WHEN MENU IS OPEN, DO NOT CLOSE MENU BAR ON CLICK OF PARENT
+            $('#IPMnu > li').attr("data-toggle", "");
+        }
+    }
+
+        function CreateMenuItem(items, parentId) {
+        $.each(items, function (index, column) {
+            var mnuId = column.MnuId;
+            var mnuTitle = column.MnuTitle;
+            var mnuUrl = column.MnuHyperlink;
+            var mnuParent = column.MnuParent;
+            var mnuIcon = column.MnuIcon;
+            var mnuTarget = column.MnuTarget;
+            var rptCode = column.RptCode;
+            var mnuType = column.MnuType;
+            var MailTo = column.MailTo;
+            //$('#EmailTo').attr('href', emailTo);
+            //@*@ViewBag.id*@ = emailTo;
+            //$('#email').append(emailTo);
+
+            if (mnuUrl === '') {
+                var html = '';
+
+                if (mnuId === 0) {
+                    html = "<li class = 'treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' data-toggle='tooltip' title='" + mnuTitle + "'>" +
+                        "<i class='" + mnuIcon + "'/></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+                else if (site === '5' && mnuType === 'lcd') {  // Added by Tahir
+                    html = "<li class='treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' title='" + mnuTitle + "' data-toggle='tooltip'>" +
+                        "<i class='" + mnuIcon + "' ></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+                else if ((site === '8' || site === '9') && mnuType === 'itd') { // add site 9 for juarez (ITAD) show itad reports
+                    html = "<li class='treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' title='" + mnuTitle + "' data-toggle='tooltip'>" +
+                        "<i class='" + mnuIcon + "' ></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+                else if (mnuType !== 'lcd' && mnuType !== 'itd') {  // Added by Tahir
+                    html = "<li class='treeview' id='liParent" + mnuId + "' onclick='OpenLI(this.id);'>" +
+                        "<a href='#' title='" + mnuTitle + "' data-toggle='tooltip'>" +
+                        "<i class='" + mnuIcon + "' ></i>" +
+                        "<span style='padding-left:5px;'>" + mnuTitle + "</span>" +
+                        "<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>" +
+                        "</a><ul id='" + mnuId + "' class='treeview-menu'></ul></li>";
+                }
+            }
+            else {
+                html = '<li id = "' + mnuId + '"><a onclick="Navigate(\'' + mnuTarget + '\', \''
+                    + mnuUrl + '\',\'' + rptCode + '\',\'' + column.MnuTitleShort + '\',\''
+                    + column.DesignedBy + '\',\'' + column.MailTo + '\');" ><i class="fa fa-circle-o"></i>' + mnuTitle + '</a></li>';
+
+            }
+
+            if (mnuParent == '') {
+                $('#IPMnu').append(html);
+            } else {
+                $('#' + mnuParent).append(html);
+            }
+
+        });
+    }
+
+    function ActiveReport(rptCode, rptTitle) {
+        $('#rptCode').val(rptCode);
+        $('#rptTitle').val(rptTitle);
+    }
+
+    $(document).ready(function () {
+        $('#Clear').click(function () {
+                /*Clear all input type="text" box*/
+                $('#input[type="text"]').val('');
+                /*Clear textarea using id */
+            $('#txtCmnt').val('');
+            $('#lblMsg').empty();
+
+
+        });
+    });
+
+    $('#MsgAlert').modal({
+        backdrop: false,
+        show: false
+    });
+
+    $('#MsgAlert').on('shown.bs.modal', function () {
+        $('#MsgbtnNo').focus();
+    });
+
+
+    </script>
+
+</body>
+</html>
+<script type="text/javascript">
+    var old_browser_height = 0;
+    function resize_grid_height() {
+        var new_browser_height = window.innerHeight;
+        var grid_height = $('.dataTables_scrollBody').height();
+        if (isNaN(grid_height)) {
+            return;
+        }
+        if (new_browser_height > old_browser_height) {
+            var difference = new_browser_height - old_browser_height;
+            grid_height += difference;
+        }
+        else {
+            var difference = old_browser_height - new_browser_height;
+            grid_height -= difference;
+        }
+        $('.dataTables_scrollBody').css('height', grid_height + 'px');
+        old_browser_height = new_browser_height;
+    }
+    function get_initial_attributes() {
+        old_browser_height = window.innerHeight;
+    }
+
+    $("#DDLDashboard").change(function () {
+        var selectedVal = $(this).find(':selected').val();
+        var selectedText = $(this).find(':selected').text();
+        var programId = $('#DDSites :selected').val();
+        var site = $('#DDSites :selected').text();
+        var programName = '@HttpContext.Current.Session["DBProgram"].ToString()';
+
+            if (selectedVal == '0') {
+                OpenPage('\\dashboard\\DBIndex?');
+            }
+            else if (selectedVal == 'BigTv_DB' && selectedText != 'Total Shift Count') {
+                OpenPage('\\MetaDiagDB\\Index?selected=' + selectedVal + '&selectedText=' + selectedText + '&programId=' + programId + '&site=' + site + '&programName=' + programName);
+            }
+            else if (selectedVal == 'BigTv_DB' && selectedText == 'Total Shift Count') {
+                OpenPage('\\MetaDiagDB\\METACounterDB?selected=' + selectedVal + '&selectedText=' + selectedText + '&programId=' + programId + '&site=' + site + '&programName=' + programName);
+            }
+            else if (selectedVal == 'TrackingIssue') {
+                OpenPage('\\DBTrackingIssue\\Index?selected=' + selectedVal);
+            }
+            else {
+                OpenPage('\\dashboard\\DBIndex?');
+            }
+
+    });
+
+    $("#DDSites").change(function () {
+        var selectedVal = $('#DDLDashboard :selected').val();
+        var selectedText = $('#DDLDashboard :selected').text();
+        var programId = $('#DDSites :selected').val();
+        var site = $('#DDSites :selected').text();
+        var programName = '@HttpContext.Current.Session["DBProgram"].ToString()';
+
+        if (selectedVal == '0') {
+            OpenPage('\\dashboard\\DBIndex?');
+        }
+        else if (selectedVal == 'BigTv_DB' && selectedText != 'Total Shift Count') {
+            OpenPage('\\MetaDiagDB\\Index?selected=' + selectedVal + '&selectedText=' + selectedText + '&programId=' + programId + '&site=' + site + '&programName=' + programName );
+        }
+        else if (selectedVal == 'BigTv_DB' && selectedText == 'Total Shift Count') {
+            OpenPage('\\MetaDiagDB\\METACounterDB?selected=' + selectedVal + '&selectedText=' + selectedText + '&programId=' + programId + '&site=' + site + '&programName=' + programName);
+        }
+        else {
+            OpenPage('\\dashboard\\DBIndex?');
+        }
+
+    })
+    //$("#DDSites").change(function () {
+    //    var selectedSite = $('#DDSites :selected').val();
+    //    if (selectedSite == "0") {
+    //        $('#lblMsg').empty();
+    //        $('#lblMsg').append("Please select site");
+    //    }
+    //    else {
+    //        $('#lblMsg').empty();
+    //    }
+    //});
+
+
+</script>

@@ -1,0 +1,107 @@
+﻿@model IP.Areas.BRT.Models.BRTLookup
+@{
+    ViewBag.Title = "LocationByPart";
+    Layout = null;
+}
+<style>
+    .box-body {
+        border: 20px;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="0043-2" />
+    <div class="row section-color">
+        @*<div class="col-md-8">*@
+        <div id="dataList" class="box panel panel-default">
+            <div class="box-header with-border bg-blue-gradient">
+                <button type="button" class="btn btn-box-tool">
+                    <span class="fa fa-th-list fa-lg white"></span>
+                </button>
+                <h6 class="box-title" id="head_lstUnitLst"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+                <div id="buttons">
+
+                </div>
+            </div>
+            <div class="box-body">
+                <table id="lstLocationByPart" class="table table-bordered table-striped text-sm table-hover" width="100%;">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total :</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        ToggleDataList(false);
+        LoadData();
+        function LoadData() {
+
+            var COLUMN_FORMAT =
+            {
+                formatDecimal: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : thousands_separators(val.toFixed(4));
+                },
+                formatTwoDecimal: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : val.toFixed(2);
+                },
+                formatNumber: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : thousands_separators(val.toFixed(0));
+                },
+
+                formatNumberForZero: function (data, type, row) {
+                    var val = +data;
+                    return val === 0 ? '' : val.toFixed(0);
+                },
+
+            };
+            var _lstLocationByPart = @Html.Raw(Model.serializer.Serialize((Model.lstLocationByPart)));
+
+            if (_lstLocationByPart.length > 0) {
+                $('#lstLocationByPart > tbody').empty();
+        }
+                var columnDef = [
+                    { "title": "Location No." },
+                    {
+                        "title": "Qty On Hand", "width": "50px", "className": "text-right",
+
+                        render: function (data, type, row) {
+                            var val = COLUMN_FORMAT.formatNumber(data);
+                            return val;
+                        }
+                    }
+                ];
+
+            //For Displaying  Footer Sum
+            var footerfunc = function () {
+                var api = this.api();
+                $(api.column(1).footer()).html(thousands_separators(api.column(1).data().sum()));
+            }
+
+
+            ToggleDataList(true);
+            MakeFrameGrid('lstLocationByPart', _lstLocationByPart, 220, columnDef, false, false, false, footerfunc, false, $('#box-title').text(), false, false);
+
+        }
+        });
+
+</script>
+

@@ -1,0 +1,83 @@
+﻿@model IP.Areas.SupplyChain.Models.SummaryRR60
+
+@{
+    ViewBag.Title = "option";
+    Layout = null;
+}
+
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+
+    </tr>
+    <tr>
+        <td colspan="2" class="pad">
+            <label>Year:</label>
+            <select id='year' class="form-control">
+            </select>
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+
+    var dateDropdown = document.getElementById('year');
+
+    var currentYear = new Date().getFullYear();
+    var earliestYear = currentYear - 1;
+    while (currentYear >= earliestYear) {
+        var dateOption = document.createElement('option');
+        dateOption.text = currentYear;
+        dateOption.value = currentYear;
+        dateDropdown.add(dateOption);
+        currentYear -= 1;
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+
+
+ function Go() {
+
+     //var year = $('#ddyear option:selected').val();
+        var programId = $('#ddProgram').val();
+        var programName = $('#ddProgram option:selected').text();
+        var year = $('#year').val();
+        $('#option').modal('hide');
+     OpenPage('\\SupplyChain\\SummaryRR60\\Index?programId=' + programId + '&programName=' + programName + '&year=' + year + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        }
+</script>

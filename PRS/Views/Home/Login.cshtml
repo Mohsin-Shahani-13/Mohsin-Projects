@@ -1,0 +1,648 @@
+﻿@model IP.Models.cAuth
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+@*<link href="~/Content/css/login.css" rel="stylesheet" />*@
+<link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+
+<style>
+    .modal-header {
+        background-color: white !important;
+        color: white !important;
+    }
+
+    .tealColor {
+        background-color: #00b3b3;
+        color: white;
+    }
+
+    .green {
+        background-color: #44B254;
+    }
+
+    .blue {
+        background-color: #325FAB;
+    }
+
+    #slideshow {
+        margin: 0 auto;
+        padding-top: 50px;
+        height: 700px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .content {
+        margin: auto;
+        width: 190px;
+        perspective: 1000px;
+        position: relative;
+        padding-top: 80px;
+    }
+
+
+
+
+    /*.modal-header {
+        cursor: move;
+    }*/
+
+    div.background {
+        background: url(klematis.jpg) repeat;
+        border: 2px solid black;
+    }
+
+    div.transbox {
+        margin: 30px;
+        background-color: #ffffff;
+        border: 1px solid black;
+        opacity: 0.6;
+        filter: alpha(opacity=60); /* For IE8 and earlier */
+    }
+
+        div.transbox p {
+            margin: 5%;
+            font-weight: bold;
+            color: #000000;
+        }
+
+    .modal {
+        text-align: center;
+        padding: 0 !important;
+    }
+
+        .modal:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+            margin-right: -4px;
+        }
+
+
+    .button {
+        background-color: #47AE50;
+        color: white;
+        border-radius: 3px;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        border: 1px solid transparent;
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 2px;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .header {
+        background-color: #325FAB;
+        color: white;
+        text-align: center;
+    }
+
+
+    .SeaGreenColor {
+        color: #00b3b3;
+    }
+
+    .forgotColor {
+        background-color: lightgray;
+    }
+
+    #name:focus {
+    }
+
+    .centered {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        /* bring your own prefixes */
+        transform: translate(-50%, -50%);
+    }
+
+
+
+
+
+    /* @@import url('https://fonts.googleapis.com/css?family=Playfair+Display:400,900|Poppins:400,500');*/
+
+    * {
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: #f6f6f6;
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+        height: 100vh;
+        margin: auto;
+        display: flex;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .app {
+        background-color: #fff;
+        width: 310px;
+        height: 460px;
+        margin: 2em auto;
+        border-radius: 5px;
+        padding: 1em;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 6px 31px -2px rgba(0, 0, 0, .3);
+    }
+
+    a {
+        text-decoration: none;
+        color: #257aa6;
+    }
+
+    p {
+        font-size: 13px;
+        color: #333;
+        line-height: 2;
+    }
+
+    .light {
+        text-align: right;
+        color: #fff;
+    }
+
+        .light a {
+            color: #fff;
+        }
+
+    /*.bg {
+        width: 420px;
+        height: 400px;
+        background: #325FAB;
+        position: absolute;
+        top: -5em;
+        left: 0;
+        right: 0;
+        margin: auto;
+        background-image: url("background.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        clip-path: ellipse(69% 46% at 48% 46%);
+    }*/
+
+    .bg {
+        width: 420px;
+        height: 400px;
+        background: #325FAB;
+        position: absolute;
+        top: -5em;
+        left: 0;
+        right: 0;
+        margin: auto;
+        clip-path: ellipse(69% 46% at 48% 46%);
+    }
+
+    form {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        text-align: center;
+        padding: 5em;
+    }
+
+    header {
+        width: 220px;
+        height: 220px;
+        margin: 1em auto;
+    }
+
+    form input {
+        width: 70%;
+        padding: 10px 12px;
+        /* margin: 0.7em auto;*/
+        /* border-radius: 100px;*/
+        border: none;
+        /* background: rgb(255,255,255,0.3);*/
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+        /* color: #fff;*/
+    }
+
+    input::placeholder {
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .inputs {
+        margin-top: -13em;
+        position: relative;
+    }
+
+    footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 2em;
+        text-align: center;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px 10px;
+        border-radius: 100px;
+        border: none;
+        background: #257aa6;
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+        color: #fff;
+    }
+
+    @@media screen and (max-width: 640px) {
+        .app {
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+        }
+
+        .bg {
+            top: -7em;
+            width: 450px;
+            height: 95vh;
+        }
+
+        header {
+            width: 90%;
+            height: 250px;
+        }
+
+        .inputs {
+            margin: 0;
+        }
+
+        input, button {
+            padding: 18px 15px;
+        }
+    }
+
+    .btnLogin {
+        transition: all .5s ease;
+        width: 100%;
+        border-radius: 30px;
+        color: #325FAB;
+        font-weight: 600;
+        background-color: #fff;
+        border: 1px solid #325FAB;
+        /* margin-top: 1.5em;
+        margin-bottom: 1em;*/
+    }
+
+        .btnLogin:hover {
+            background-color: #325FAB;
+            color: #fff;
+        }
+
+    .center {
+        margin: auto;
+        width: 50%;
+        padding: 10px;
+    }
+</style>
+
+
+<title>Plus-RS</title>
+<body id="mainDiv" style="background-color:#F3F2EF">
+    <!-- Modal HTML -->
+    <div class="container center">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="app">
+                    <div class="bg"></div>
+
+                    <header>
+                        @*<label style="position:relative;color:white;font-size:26px;">Sign in</label>*@
+                        <div style="position:relative; margin-left:20px">
+                            <img src="~/Content/Images/Plus.png" style=" height:40px;" />
+                        </div>
+                    </header>
+
+                    <div class="inputs" style="padding-top:25px;">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                @Html.TextBoxFor(model => model.SigninId, htmlAttributes: new { @autofocus = "autofocus", @class = "form-control", @placeholder = "Username", @id = "txtUserName" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                @Html.PasswordFor(model => model.Password, htmlAttributes: new { @class = "form-control", @placeholder = "Password", @id = "txtPwd", onkeydown = "GoLoginOnEnter()" })
+                                @Html.ValidationMessageFor(model => model.Password)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-server"></i></span>
+                                <select class="form-control select-input placeholder-active active focused" name="ddlDomain" id="ddlDomain">
+                                    <option value="reconext">Reconext</option>
+                                    <option value="teleplan">TGN</option>
+                                    <option value="Valuout">Valuout</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        @*<div align="center" style="font-size:13px;">
+
+                                @Html.Captcha(5)
+                            </div>*@
+                        <br />
+                        <br />
+                        @*<label style="font-size:12px; white-space:nowrap;float:right;padding-top:15px;">
+                                New user? <a title="Create new user" href="@Url.Action("Register", "Home")">Register</a>
+                            </label>*@
+                        <div class="form-group" style="padding-top:32px;">
+                            <button id="btnSubmit" type="submit" class="btnLogin" onkeydown="GoLoginOnEnter()">Sign In</button>
+
+                        </div>
+
+                        @*<div style="text-align:right; font-size:12px;">
+                                <a data-toggle="modal" href="#myModal">Forgot Password?</a>
+                            </div>*@
+                        <label id="copyright" style="font-size:12px; white-space:nowrap; padding-top:56px;">
+
+                        </label>
+                        @*<div class="form-group" style="padding-top:24px;">
+                                <label style="font-size:10px; white-space:nowrap; text-align:center;">
+                                    Copyright 2020 © Reconext, All Rights Reserved
+                                </label>
+                            </div>*@
+                    </div>
+
+
+                    <footer data-ani="pulse">
+                        <div id="lblMsg" class="optionMsg" style="text-align:center; color:red">
+
+                        </div>
+                        <div id="load" style='display: none;'>
+                            <img src='~/Content/images/Loading.gif' width="100" height="100" style="text-align:center; vertical-align:middle; margin-top:400px;" />
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal bd-example-modal-sm" tabindex="-1" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content modal-sm">
+                <div class="header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Forgot Password</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Username:</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter Username" autofocus="autofocus" />
+                    </div>
+                    @*<div class="form-group">
+                            <label>Vendor Id:</label>
+                            <input type="text" class="form-control" id="ProgramId">
+                        </div>*@
+                </div>
+                <div class="modal-footer">
+
+                    <button id="btnSend" type="button" class="button">Reset Password</button>
+                    <button id="btnCancel" data-dismiss="modal" class="cancel btn btn-default">Close</button>
+                </div>
+                <div class="optionMsg" style="text-align:center;height:20px;">
+                    <label id="lblMsgEmail" class="optionMsg">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Scripts/jquery.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+</body>
+
+<script>
+
+    function Login() {
+
+          if ($("#txtUserName").val()=="") {
+                $("#lblMsg").html("Username is required");
+                $("#txtUserName").focus();
+                return false;
+            }
+            if ($("#txtPwd").val() == "") {
+                $("#lblMsg").html("Password is required");
+                $("#txtPwd").focus();
+                return false;
+            }
+            else {
+
+                $(document).ajaxStart(function () {
+                    // Show image container
+                    $("#load").show();
+                });
+            var data = {
+                "username": $("#txtUserName").val(),
+                "password": $("#txtPwd").val(),
+                "ddlDomain": $("#ddlDomain").val()
+            };
+            $.ajax({
+                url: "/Home/ValidateUser",
+                type: "POST",
+                data: JSON.stringify(data),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (status) {
+                    $(document).ajaxComplete(function () {
+
+                        // Hide image container
+                        $("#load").hide();
+                    });
+                    $("#lblMsg").html(status.Message);
+                    if (status.Success) {
+                        window.location.href = '@Url.Action("Base","Home")';
+                    }
+                    else {
+                        $("#lblMsg").html(status.Message);
+                    }
+                },
+                error: function () {
+
+            }
+            });
+
+            }
+
+    }
+    function getCurrentYear() {
+        // Create a new Date object
+        var currentDate = new Date();
+
+        // Get the current year
+        var currentYear = currentDate.getFullYear();
+        var copyright = document.getElementById('copyright');
+        copyright.innerHTML = 'Copyright ' + currentYear + ' © Reconext, All Rights Reserved.';
+    }
+    //When press Enter
+    function GoLoginOnEnter() {
+
+        if (event.keyCode == 13) {
+            Login();
+        }
+    }
+
+    $(document).ready(function () {
+        getCurrentYear();
+        $("#btnSubmit").click(function () {
+            Login();
+        });
+    });
+    const notes = document.querySelectorAll('.ani-boxes > div')
+
+    for (var i = 0; i < notes.length; i++) {
+
+        notes[i].addEventListener('mouseenter', function (e) {
+            const ani = e.target.dataset.ani;
+            e.target.classList.add('animated', 'infinite', ani);
+            window.setTimeout(function () {
+                e.target.classList.remove('animated', 'infinite', ani);
+            }, 3000);
+        });
+    }
+</script>
+
+<script>
+
+    $("#btnSend").attr("disabled", false).removeClass("forgotColor");
+    function FieldsIsValid() {
+        var _userName = $('#name').val();
+        //var _ProgramId = $('#ProgramId').val();
+
+        if (_userName.length == 0) {
+            $('#lblMsgEmail').empty();
+            $('#lblMsgEmail').append("Enter Userame");
+            $('#lblMsgEmail').removeClass('SeaGreenColor');
+            return false;
+        }
+
+        //if (_ProgramId.length == 0) {
+        //    $('#lblMsgEmail').empty();
+        //    $('#lblMsgEmail').append("Enter Vendor Id");
+        //    $('#lblMsgEmail').removeClass('SeaGreenColor');
+        //    return false;
+        //}
+
+        else {
+            $('#lblMsgEmail').empty();
+            return true;
+        }
+    }
+    $(".cancel").click(function () {
+        $('#myModal').on('hidden.bs.modal', function () {
+            $("#btnSend").attr("disabled", false).removeClass("forgotColor");
+
+
+            $('#name').val('');
+            //$('#ProgramId').val('');
+            $('#name').empty();
+            //$('#ProgramId').empty();
+            $('#name').removeAttr('style');
+            //$('#ProgramId').removeAttr('style');
+            $('#lblMsgEmail').empty();
+        })
+    });
+    $("#btnSend").click(function () {
+
+        var retVal = FieldsIsValid();
+
+        if (retVal == true) {
+            $("#btnSend").attr("disabled", true).addClass('forgotColor');
+            $('#lblMsgEmail').empty();
+            $('#name').text('');
+            //$('#ProgramId').text('');
+            var _userName = $('#name').val();
+            //var _ProgramId = $('#ProgramId').val();
+
+            var dateObj = new Date();
+            var month = dateObj.getUTCMonth() + 1; //months from 1-12
+            var day = dateObj.getUTCDate();
+            var year = dateObj.getUTCFullYear();
+            var time = dateObj.getHours() + ":" + dateObj.getMinutes() + ":" + dateObj.getSeconds();
+
+            newdate = year + "/" + month + "/" + day + " " + time;
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("SendMail", "Home")',
+                data: {
+                    SignInId: _userName,
+                    //ProgramId: _ProgramId,
+                    requestedOn: newdate
+                },
+                datatype: JSON,
+                success: function (data) {
+
+                    $('#lblMsgEmail').empty();
+                    if (data.EmailMessage == "Email sent.") {
+                        $('#lblMsgEmail').append(data.EmailMessage);
+                        $('#lblMsgEmail').addClass('SeaGreenColor');
+
+                    }
+                    else {
+                        $('#lblMsgEmail').append(data.EmailMessage);
+                        $('#lblMsgEmail').removeClass('SeaGreenColor');
+                        $("#btnSend").attr("disabled", false).removeClass('forgotColor');
+                    }
+                }
+            });
+        }
+    });
+
+    $('#myModal').on('hidden.bs.modal', function () {
+        $("#btnSend").attr("disabled", false).removeClass("forgotColor");
+
+        $('#name').val('');
+        //$('#ProgramId').val('');
+        $('#name').empty();
+        //$('#ProgramId').empty();
+        $('#name').removeAttr('style');
+        //$('#ProgramId').removeAttr('style');
+        $('#lblMsgEmail').empty();
+
+    })
+
+
+</script>

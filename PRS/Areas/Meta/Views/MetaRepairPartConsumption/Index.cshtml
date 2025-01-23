@@ -1,0 +1,176 @@
+﻿@model IP.Areas.Meta.Models.MetaRepairPartConsumption
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+    textarea {
+        resize: none !important;
+    }
+
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstMetaRepairPartConsumption" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    //var xmlRowCount = 0;
+    //var serialNumbers;
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        var programId = $('#ddProgram option:selected').val();
+        var ProgramName = $('#ddProgram option:selected').text();
+        var files = $("#importFile").get(0).files;
+        var fileInput = $('#importFile')[0];
+        var formData = new FormData();
+        formData.append('programId', programId);
+        formData.append('ProgramName', ProgramName);
+        formData.append('importFile', files[0]);
+        
+
+        $.ajax({
+            type: 'POST',
+            url: '/MetaRepairPartConsumption/GetList',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $('#btnGo').addClass("disableanchor");
+                if (data.Status === 0 || data.Status === 3 || data.Status === 2) {
+                    $('#uploadModalMsg').text(data.Message);
+                    fileInput.value = "";
+                }
+                else {
+                    $('#option').modal('hide');
+                    fileInput.value = "";
+                    //xmlRowCount = data.xmlRowCount;
+                    //serialNumbers = data.serialNumbers;
+                    $('#filterString').append(data.filterString);
+
+                    var columnDef = [
+                        { "data": "ID", "title": "Id", "width": "80px", "visible": false },
+                        {
+                            "data": "PartNo", "title": "Part No.", "width": "70px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + programId + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "SerialNo", "title": "Serial No.", "width": "100px",
+                            render: function (data, type, row) {
+                                if (row["SerialNo"] == "*") {
+                                    url = row["SerialNo"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + programId + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+                        { "data": "StatusDescription", "title": "Status Desc.", "width": "70px" },
+                        { "data": "ComponentPartNo", "title": "Comp. Part No.", "width": "112px" },
+                        { "data": "QtyConsumed", "title": "Qty Consumed", "width": "91px", "className": "text-right" },
+                        { "data": "QtyIssued", "title": "Qty Issued", "width": "80px", "className": "text-right" },
+                        { "data": "LastActivityDate", "title": "Last Activity On", "width": "100px", "className": "text-right" },
+                        { "data": "FaultDescription", "title": "Fault Desc."},
+                        { "data": "RepairDescription", "title": "Repair Desc.", "width": "200px"}
+                    ]
+
+                    ToggleDataList(true);
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(5).footer()).html(thousands_separators(api.column(5, { search: 'applied' }).data().sum()));
+                        $(api.column(6).footer()).html(thousands_separators(api.column(6, { search: 'applied' }).data().sum()));
+                       
+
+                    }
+
+                    MakeDataGrid('lstMetaRepairPartConsumption', data.lstMetaRepairPartConsumption, 0, columnDef, true, false, footerfunc);
+                    //var buttonHtml = `
+                    //    <button class="btn-header btn-box-tool" tabindex="0" aria-controls="lstDownloadTestResult" type="button" title="Download All XML Files" onclick="DownloadFilesAsZip()">
+                    //<span>
+                    //    <span>
+                    //        <span class="fa-stack">
+                    //            <i class="fa fa-circle fa-stack-2x" style="color: rgb(31 30 29);"></i>
+                    //            <i class="fas fa-file-download fa-stack-1x" style="color: white;"></i>
+                    //        </span>
+                    //    </span>
+                    //</span>
+                    //    </button>
+                    //`;
+
+                    //$('.dt-buttons').prepend(buttonHtml);
+
+                    if (data["ErrorMessage"] != null) {
+                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                    }
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    
+
+</script>

@@ -1,0 +1,263 @@
+﻿@model IP.Areas.ListingReports.Models.EMCOnSiteDetailEnquiry
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 4px;
+       /* padding: 2px;*/
+        /*padding-top: 12px;*/
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        @*<td class="pad" id="programId">
+                <label>Site:</label>
+                @Html.DropDownList("programSite", new List<SelectListItem>
+                    {
+
+                       new SelectListItem{ Text="FRANKLIN", Value = "10049" },
+                       new SelectListItem{ Text="CORK", Value = "10050" },
+                       new SelectListItem{ Text="CHONBURI", Value = "10051" }
+
+                    }, new { @class = "form-control" })
+            </td>*@
+        <td class="pad">
+            @Html.LabelFor(model => model.serialNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="serialNo" name="serialNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+        <td class="pad">
+            @Html.LabelFor(model => model.BoxNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="BoxNo" name="BoxNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.palletNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="palletNo" name="palletNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+        <td class="pad">
+            @Html.LabelFor(model => model.PCBASerial, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="PCBASerial" name="PCBASerial" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.PCBABox, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="PCBABox" name="PCBABox" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+        <td class="pad">
+            @Html.LabelFor(model => model.PCBAPallet, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="PCBAPallet" name="PCBAPallet" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+            @*<label class="col-form-label">Search by Date:</label>*@
+            @Html.LabelFor(model => model.searchDate, new { @class = "col-form-label" })
+            <select id="searchByDate" class="form-control">
+                <option value="noDate">Select from list</option>
+                <option value="Received Date">Received Date</option>
+                <option value="Demated Date">Demated Date</option>
+                <option value="Box Date">Box Date</option>
+                <option value="Pallet Date">Pallet Date</option>
+                <option value="Shipped Date">Shipped Date</option>
+            </select>
+        </td>
+        <td class="pad" colspan="3">
+            <strong>From:</strong>
+            <div class='input-group date' id='dtpFrom' style="padding-top:5px;">
+                @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control", @readonly = "readonly" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td align="center">
+            <div id="lblMsg2" class="optionMsg">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="pad">
+            @Html.LabelFor(model => model.NumberOfDays, new { @class = "col-form-label" })
+            <select id="addDays" class="form-control" onkeydown="GoOnEnter()">
+            </select>
+        </td>
+        <td class="pad">
+            @Html.LabelFor(model => model.documentNo, new { @class = "col-form-label" })
+            <input type="text" class="form-control" id="documentNo" name="documentNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#serialNo').focus();
+    });
+    // Get the select element
+    var select = document.getElementById("addDays");
+
+    // Loop to generate options from 0 to 30
+    for (var i = 0; i <= 30; i++) {
+        // Create an option element
+        var option = document.createElement("option");
+
+        // Set the value and text of the option
+        option.value = i;
+        option.text = i;
+
+        // Append the option to the select element
+        select.appendChild(option);
+    }
+    $("#searchByDate").change(function () {
+        if ($(this).val() != 'noDate') {
+            $('#lblMsg').empty();
+        }
+        else {
+            $("#dtpFrom input").val('');
+            $('#lblMsg').empty();
+            $('#lblMsg2').empty();
+            $("#addDays").val('0');
+        }
+        
+    });
+
+    $('#fromDt').change(function () {
+        if ($(this).val() != '') {
+            $('#lblMsg2').empty();
+        }
+    });
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    $("#dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#dtpTo, #dtpFrom").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '-365d',
+        endDate: maxDate
+    });
+
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var searchDt = $("#searchByDate option:selected").val();
+        var fDate = $('#fromDt').val();
+        if (searchDt == 'noDate' && fDate == '' ) {
+            //$('#lblMsg').html('Select search date');
+            //$('#lblMsg2').html('Select date range');
+            return true;
+        }
+        else if (searchDt != 'noDate' && fDate == '') {
+            $('#lblMsg').empty();
+            $('#lblMsg2').html('Select date range');
+            return false;
+        }
+        else if (searchDt == 'noDate' && fDate != '') {
+            $('#lblMsg2').empty();
+            $('#lblMsg').html('Select search date');
+            return false;
+        }
+        else {
+            return true
+        }
+    }
+
+    function extractToDate() {
+        var daysToAdd = parseInt($("#addDays").val());
+        var fromDt = $('#fromDt').val();
+        var formattedDate = fromDt.split('.').join('-');
+        var toDate = new Date(formattedDate);
+        toDate.setDate(toDate.getDate() + daysToAdd + 1);
+        var toDateFormatted = toDate.getFullYear() + '.' + ('0' + (toDate.getMonth() + 1)).slice(-2) + '.' + ('0' + toDate.getDate()).slice(-2);
+
+        return toDateFormatted;
+    }
+
+
+    function Go() {
+
+        var programId = $("#programSite option:selected").val();
+        var site = $("#programSite option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = extractToDate();
+        //var tDate = $('#toDt').val();
+        var serialNo = $('#serialNo').val();
+        var BoxNo = $('#BoxNo').val();
+        var palletNo = $('#palletNo').val();
+        var PCBASerial = $('#PCBASerial').val();
+        var PCBABox = $('#PCBABox').val();
+        var PCBAPallet = $('#PCBAPallet').val();
+        var documentNo = $('#documentNo').val();
+        //var ProgramName = $("#ddProgram option:selected").text();
+        var searchByDate = $("#searchByDate option:selected").val();
+
+        $('#option').modal('hide');
+        OpenPage('\\ListingReports\\EMCOnSiteDetailEnquiry\\Index?frmDt=' + fDate + ' &toDate=' + tDate + '&programId=' + programId + '&site=' + site + '&serialNo=' + serialNo + '&BoxNo=' + BoxNo + '&palletNo=' + palletNo + '&PCBASerial=' + PCBASerial + '&PCBABox=' + PCBABox + '&PCBAPallet=' + PCBAPallet + '&documentNo=' + documentNo + '&searchByDate=' + searchByDate + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+
+
+

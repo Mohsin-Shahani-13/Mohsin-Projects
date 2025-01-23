@@ -1,0 +1,156 @@
+﻿@model IP.Areas.ListingReports.Models.VFNAWPDataComponents
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool">
+                @*title="Option Page" onclick="$('#option').modal('show');"*@
+                <span class="fa fa-list fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstVFNAWPDataComponents" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        @*<th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>*@
+                        @*<th></th>*@
+                        @*<th></th>*@
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <tfoot>
+                    <tr>
+                        @*<th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>*@
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        //$('#option').modal('hide');
+        var isSingleRow = false;
+        //var fDate = $('#fromDt').val();
+        //var tDate = $('#toDt').val();
+        //var _programId = $('#ProgramID').val();
+        //var _ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/VFNAWPDataComponents/GetList',
+            data: {
+
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef =
+                        [
+                            { "data": "WO Header", "title": "WO Header ID", "width": "90px", "visible": false},
+                            { "data": "ProgramID", "title": "Program Id", "width": "60px", "visible": false},
+                            { "data": "Reason", "title": "Reason" },
+                            {
+                                "data": "Unit PN", "title": "Unit Part No.", "width": "120px",
+                                render: function (data, type, row) {
+                                    var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["Unit PN"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                            },
+                            {
+                                "data": "SerialNo", "title": "Serial No.", "width": "130px",
+                                render: function (data, type, row) {
+
+                                    var url = '<a href= \\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["Unit PN"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                            },
+                            { "data": "Username", "title": "Username", "width": "120px" },
+                            { "data": "Location", "title": "Location", "width": "120px" },
+                            { "data": "HOLD DATE", "title": "Hold Date", "width": "90px", "className": "text-right" },
+                            { "data": "Comp1", "title": "Component 1", "width": "120px" },
+                            { "data": "Comp2", "title": "Component 2", "width": "120px" },
+                            { "data": "Comp3", "title": "Component 3", "width": "120px" },
+                            { "data": "Comp4", "title": "Component 4", "width": "120px" },
+                            { "data": "Comp5", "title": "Component 5", "width": "120px" },
+                            { "data": "Comp6", "title": "Component 6", "width": "120px" }
+                        ]
+
+
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+                        //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstVFNAWPDataComponents', data.lstVFNAWPDataComponents, 0, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+

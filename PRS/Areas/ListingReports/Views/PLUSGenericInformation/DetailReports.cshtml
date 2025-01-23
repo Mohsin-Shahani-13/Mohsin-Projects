@@ -1,0 +1,256 @@
+﻿@model IP.Areas.ListingReports.Models.PLUSGenericInformation
+@{
+    ViewBag.Title = "Detail";
+    Layout = null;
+    //Layout = cCommon.SwitchToDetailPage(Request.Url.PathAndQuery);
+
+
+    string FilterString = Model.filterString;
+}
+<style>
+    .text-sm {
+        padding-bottom: 2px;
+    }
+
+    .babygridheight {
+        width: 100%;
+    }
+
+    .more-text {
+        display: none;
+    }
+
+    tr {
+        white-space: nowrap;
+    }
+
+    .modal-backdrop.in {
+        filter: alpha(opacity=0);
+        opacity: .0;
+    }
+
+    .modal-backdrop {
+        position: relative;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1040;
+        background-color: #000;
+    }
+</style>
+<div id="dynamicGridsContainer">
+
+</div>
+
+
+<script>
+ // Assuming allTables is dynamically populated from the server
+var allTables = @Html.Raw(Json.Encode(Model.AllTableHashTables));
+var filterString = @Html.Raw(Json.Encode(Model.filterString));
+// Parent container for all grids
+var gridsContainer = $('#dynamicGridsContainer');
+
+// Iterate over all tables and dynamically generate grids
+allTables.forEach((tableData, index) => {
+    var gridId = `dynamicGrid${index}`;
+    var buttonId = `buttonContainer${index}`;
+    var title = '@ViewBag.ReportTitle' + " " + filterString;
+
+    // Append grid structure
+    gridsContainer.append(createGridStructure(gridsContainer.attr('id'), gridId, buttonId, title));
+
+    // Dynamically extract columns from the first item in the list
+    var columns = Object.keys(tableData[0]).map(key => ({
+        "data": key,
+        "title": key.replace(/([a-z])([A-Z])/g, '$1 $2'), // Add space for camelCase
+        "width": "150px"
+    }));
+
+    // Populate thead dynamically
+    var thead = columns.map(col => `<th>${col.title}</th>`).join('');
+    $(`#${gridId}_thead`).append(thead);
+
+    // Initialize the grid
+    MakeFrameGrids(
+        gridId,
+        tableData,
+        columns,
+        buttonId,
+        true,        // Enable search
+        true,        // Enable scrollX
+        false,       // No footer function
+        true,        // Is framed
+        title,       // Report title
+        false,       // Not SQL doc
+        true         // Show paging
+    );
+
+    //$('thead').css('width', '100%');
+});
+
+function MakeFrameGrids(tableId, data, columns, buttonId, search, isScrollX, footerFunction, isFramed, reportTitle, isSqlDoc, showPaging) {
+    var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+    isFramed = isFramed === undefined || isFramed === false ? false : true;
+    isScrollX = isScrollX === undefined ? false : true;
+    if (search === undefined) { search = true; }
+    reportTitle = reportTitle === undefined ? $('.box-title').text() : reportTitle;
+    showPaging = showPaging === undefined ? true : false;
+
+    var gridButtonsClass = '';
+    var gridSearchBoxClass = '';
+    gridButtonsClass = 'btn-header btn-box-tool';
+    gridSearchBoxClass = 'bg-white  txtSearch';
+    gridButtonSize = 20;
+
+    // DataTable initialization
+    var table = $('#' + tableId).DataTable({
+        data: data,
+        destroy: true,
+        columns: columns,
+        order: [],
+        bInfo: showPaging,
+        paging: showPaging,
+        ordering: true,
+        searching: search,
+        deferRender: true,
+        pagingType: 'full',
+        pageLength: 100,
+        scrollCollapse: false,
+        scrollX: isScrollX,
+        footerCallback: footerFunction,
+        language: {
+            emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+            zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            oPaginate: {
+                sNext: '<i class="fa fa-forward"></i>',
+                sPrevious: '<i class="fa fa-backward"></i>',
+                sFirst: '<i class="fa fa-step-backward"></i>',
+                sLast: '<i class="fa fa-step-forward"></i>'
+            }
+        },
+        dom: "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-5'i><'#designedBy.col-sm-3'><'col-sm-4'p>>",
+        buttons: [
+            {
+                extend: 'copyHtml5',
+                footer: true,
+                text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                titleAttr: 'Copy',
+                title: reportTitle,
+                filename: 'DataExport',
+                exportOptions: {
+                    columns: 'th:not(.notexport)' // Exclude columns with class 'notexport'
+                }
+            },
+            {
+                extend: 'excelHtml5',
+                footer: true,
+                text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                titleAttr: 'Export to excel',
+                title: reportTitle,
+                filename: 'DataExport',
+                exportOptions: {
+                    columns: 'th:not(.notexport)'
+                }
+            },
+            {
+                extend: 'print',
+                footer: true,
+                text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                titleAttr: 'Print',
+                title: '',
+                messageTop: function () {
+                    return '<h4>' + reportTitle + '</h4>';
+                },
+                exportOptions: {
+                    columns: 'th:not(.notexport)'
+                }
+            },
+            {
+                text: '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>',
+                titleAttr: 'How they do that',
+                action: function (e, dt, node, config) {
+                    // Construct SQL doc URL
+                    var rptId = '@ViewBag.RptId';
+
+                    var rptTitle = '@ViewBag.ReportTitle';
+                    if (!rptId || !rptTitle) {
+                        alert("Report Code or Title is missing.");
+                        return;
+                    }
+                    var sqlDocUrl = '\\SqlDocs\\Index?rptCode=' + encodeURIComponent(rptId) + '&rptTitle=' + encodeURIComponent(rptTitle) + '&isDetail=N';
+                    window.open(sqlDocUrl, '_blank'); // Open in new tab
+                }
+            }
+        ],
+        initComplete: function () {
+            $('#txtFrameSearch').focus();
+        },
+        select: true
+    });
+
+    // Append buttons only if not already appended
+    if (!$('#buttonContainer0 .btn-header').length) {
+        table.buttons().container().appendTo('#buttonContainer0');
+
+        table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+        table.button(0).nodes().addClass(gridButtonsClass);
+
+        table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(1).nodes().addClass(gridButtonsClass);
+
+        table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(2).nodes().addClass(gridButtonsClass);
+
+        table.button(3).nodes().removeClass('btn btn-default');
+        table.button(3).nodes().addClass(gridButtonsClass);
+    }
+
+    // Configure search
+    $('#txtFrameSearch' + tableId).on('keyup change', function () {
+        table.search(this.value).draw();
+    });
+
+    // Hide default search input
+    $('.dataTables_filter').hide();
+
+    // Force column width adjustment after table initialization
+    setTimeout(function () {
+        table.columns.adjust().draw();
+    }, 0);
+
+    return table;
+}
+    function createGridStructure(containerId, gridId, buttonId, title) {
+        return `
+    <div class="row box-body grid" style="background-color:white;">
+        <div class="row">
+            <div class="box babygridheight">
+                <div class="box-header bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool">
+                        <span class="fa fa-th-list fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title" id="${gridId}_title"><strong>${title}</strong></h6>
+                    <div id="buttonContainer0" class="box-tools pull-right"></div>
+                </div>
+                <div class="box-body text-sm" id="${gridId}_container">
+                    <table id="${gridId}" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                        <thead width="100%">
+                            <tr id="${gridId}_thead"></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    }
+
+</script>
+
+
+
+
+

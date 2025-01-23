@@ -1,0 +1,214 @@
+﻿@model IP.Areas.SupplyChain.Models.SOPickList
+@{
+    ViewBag.Title = "GetSOPickList";
+    Layout = null;
+}
+
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <table class="fullWidth" cellpadding="10" cellspacing="10" style="margin:10px">
+                <tr>
+                    <td>
+                        <textarea id="lstCustRef" placeholder="Enter Customer Ref." tabindex="0" style="width:600px; height:400px;">
+                            </textarea>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="isAll" checked />
+                        <label>All PDF Download</label>
+                    </td>
+                </tr>
+
+            </table>
+
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <div id="lblMsg" class="optionMsg">
+                        </div>
+                    </td>
+                    <td width="70" align="right">
+                        <a id="btnGo" role="button" tabindex="3" class="btn btn-primary">Confirm</a>
+                    </td>
+                    <td width="100" align="center">
+                        <a id="btnCancel" data-dismiss="modal" class="btn btn-default">Cancel</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-8">
+
+            <div id="dataList" class="box panel panel-default">
+                <div class="box-header with-border bg-blue-gradient">
+                    <h6 class="box-title"><strong>ERS Pick List </strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right">
+
+                    </div>
+                </div>
+                <div class="box-body" id="lstP">
+                    <table id="lstERSPickList" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                        <thead class="sorted-asc">
+                            <tr>
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="notexport"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+
+
+    var _lstCustRef;
+    ToggleDataList(false);
+    LoadData();
+    var lines = [];
+    function LoadData() {
+        
+        $('#tblBody').empty();
+      
+        var pane = $('#lstCustRef');
+        pane.val($.trim(pane.val()).replace(/\s*[\r\n]+\s*/g, '\n')
+            .replace(/(<[^\/][^>]*>)\s*/g, '$1')
+            .replace(/\s*(<\/[^>]+>)/g, '$1'));
+        $('#lstCustRef').focus();
+        $('#option').modal('hide');
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SOPickList/GetERSPickList',
+            data: {
+
+                custRef: _lstCustRef
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                _lstCustRef = "";
+
+                var columnDef = [
+
+                    { "data": "ID", "title": "SO Id", "width": "50px", "visible": false },
+                    { "data": "ProgramID", "title": "Program Id", "width": "60px" },
+                    { "data": "customerreference", "title": "Customer Ref.", "width": "120px" },
+                    { "data": "SHIPTOSITENAME", "title": "Ship To Site", "width": "120px" },
+                    { "data": "SHIPTOSITEID", "title": "Ship To Site ID", "width": "120px" },
+                    { "data": "PRCREATIONDATE", "title": "PRC Creation Date", "width": "100px", "className": "text-right" },
+                    { "data": "PRDETAILNOTES", "title": "PR Detail Notes", "width": "100px" },
+
+                    {
+                        "data": "Download", "title": "Download PDF", "width": "120px", "className": "text-center",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\Externals\\ReportViewer.aspx?CustRef=' + row["customerreference"] + '&rptName=ERSPickList' + '&page=list" target=_blank><i class="fa fa-download" aria-hidden="true" style="font-size: 18px; color: black"></i></a>';
+                            return url;
+                        }
+                    },
+
+                ];
+                //For Displaying  Footer Sum
+
+                ToggleDataList(true);
+                MakeDataGrid('lstERSPickList', data.lstERSPickList, 0, columnDef, true, true, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    $('#option').on('shown.bs.modal', function () {
+        $('#lstCustRef').focus();
+    });
+
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            $('#lstCustRef').focus();
+            Go();
+        }
+    });
+
+
+    $('#btnCancel').click(function () {
+
+        $('#lstCustRef').val('');
+        $('#lstCustRef').empty();
+        $('#lstCustRef').focus();
+    });
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+
+        var txtCustRef = $('#lstCustRef').val().trim();
+        if (txtCustRef.length <= 0 || txtCustRef == "") {
+            $('#lblMsg').append('Enter Customer Reference No.');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function Go() {
+
+        lines = [];
+        _lstCustRef = "";
+        $.each($('#lstCustRef').val().split(/\n/), function (i, line) {
+
+            if (line) {
+                lines.push(line);
+            } else {
+                lines.push("");
+            }
+        });
+
+
+
+        if ($("#isAll").prop('checked') == true) {
+            var _lstCustRefAll = lines.join(",").trim();
+            window.open("\\Externals\\ReportViewer.aspx?CustRef=" + _lstCustRefAll + "&rptName=ERSPickList'", '_blank');
+        }
+
+        else {
+            var _lstCustRefSingle = lines.slice();
+            _lstCustRef = '' + _lstCustRefSingle.join("', '").trim() + '';
+            LoadData();
+        }
+
+    }
+
+
+
+</script>
+
+

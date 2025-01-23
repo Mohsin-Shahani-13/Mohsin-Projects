@@ -1,0 +1,271 @@
+﻿@model IP.Models.DBIngenicoThird
+@{
+    ViewBag.Title = "Ingenico-Third";
+    Layout = null;
+}
+
+<style>
+    .even {
+        background-color: #080808 !important;
+        color: limegreen !important;
+    }
+
+    .odd {
+        background-color: black !important;
+        color: limegreen !important;
+    }
+
+    table > thead > tr > th {
+        background-color: #202020 !important;
+    }
+
+    #LstData_info {
+        visibility: hidden;
+    }
+
+    .red_clr {
+        color: red;
+    }
+
+    .yellow_clr {
+        color: yellow;
+    }
+
+    #LstData_paginate {
+        visibility: hidden;
+    }
+</style>
+
+<div class="container-fluid" style="background-color:black">
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <h6 id="DBTitle" style="font-size:30px; text-align:center;background-color:black; color:limegreen;" class="box-title"></h6>
+            <div class="box-body" style="background-color: black">
+                <table id="LstData" class="table no-border table-striped text-sm table-hover" width="100%" style="font-size: 28px; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ">
+                    <thead class="sorted-asc" style="font-size: 14px;">
+                        <tr style="font-size:16px;">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding-left:10px; padding-right:10px">
+        <div class="col-sm-12">
+            <div class="col-sm-3 col-lg-3 col-md-4  text-center" style="width:100%;background-color:#202020 ">
+                <h6 id="pageDS" style="font-size:30px; text-align:center;font-weight:bold;height:30px;color:whitesmoke; font-family:Arial;"></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    var childCount = 0;
+    $(document).ready(function () {
+        setInterval(function () {
+            cache_clear()
+        }, 30000);
+    });
+    function cache_clear() {
+        childCount = (childCount + 1);
+        LoaDataForThird();
+    }
+    ToggleDataList(false);
+    LoaDataForThird();
+
+    function LoaDataForThird() {
+        var tableHeader = $('.table').innerHeight();
+        var topHeader = $('.box-header').innerHeight();
+        var browserHeight = window.innerHeight;
+        var gridHeight = browserHeight - tableHeader - topHeader - 8;
+        $('#DBTitle').text('');
+        $('#pageDS').text('');
+        var title = '';
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/DBIngenicoThird/GetList',
+            data: {
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#DBTitle').append(data.DBTitle);
+                var title = data.shift
+                dataLst(data.lstIngenico, title);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function dataLst(data, title) {
+
+        var columnDef = '';
+        var childArray = [];
+
+        while (data.length > 0) {
+            childArray.push(data.splice(0, 15));
+        }
+
+        if (title == "Morning") {
+
+            columnDef = [
+
+                { "title": "Label", "width": "150px", "targets": 0 },
+                { "title": "WC", "width": "140px", "targets": 1 },
+                { "title": "User Name", "targets": 2 },
+                { "title": "Targets", "width": "80px", "className": "text-center", "targets": 3 },
+                { "title": "6:00 To 7:00", "width": "50px", "className": "text-center", "targets": 4 },
+                { "title": "7:00 To 8:00", "width": "50px", "className": "text-center", "targets": 5 },
+                { "title": "8:00 To 9:00", "width": "50px", "className": "text-center", "targets": 6 },
+                { "title": "9:00 To 10:00", "width": "50px", "className": "text-center", "targets": 7 },
+                { "title": "10:00 To 11:00", "width": "50px", "className": "text-center", "targets": 8 },
+                { "title": "11:00 To 12:00", "width": "50px", "className": "text-center", "targets": 9 },
+                { "title": "12:00 To 13:00", "width": "50px", "className": "text-center", "targets": 10 },
+                { "title": "13:00 To 14:00", "width": "50px", "className": "text-center", "targets": 11 },
+
+                {
+                    "title": "Total", "width": "80px", "className": "text-center", "targets": 12,
+
+                },
+                {
+                    "title": "To Do", "width": "130px", "className": "text-center", "targets": 13,
+                    render: function (data, type, row) {
+
+                        var url = '<span class=red_clr>' + data + '</span>';
+                        return url;
+                    }
+                },
+                {
+                    "title": "WIP", "width": "130px", "className": "text-center", "targets": 14,
+                    render: function (data, type, row) {
+
+                        var url = '<span class=yellow_clr>' + data + '</span>';
+                        return url;
+                    }
+                },
+
+            ];
+        }
+        else if (title == "Afternoon") {
+
+            columnDef = [
+
+
+                { "title": "Label", "width": "150px", "targets": 0 },
+                { "title": "WC", "width": "140px", "targets": 1 },
+                { "title": "User Name", "targets": 2 },
+                { "title": "Targets", "width": "80px", "className": "text-center", "targets": 3 },
+                { "title": "14:00 - 15:00", "width": "50px", "className": "text-center", "targets": 4 },
+                { "title": "15:00 - 16:00", "width": "50px", "className": "text-center", "targets": 5 },
+                { "title": "16:00 - 17:00", "width": "50px", "className": "text-center", "targets": 6 },
+                { "title": "17:00 - 18:00", "width": "50px", "className": "text-center", "targets": 7 },
+                { "title": "18:00 - 19:00", "width": "50px", "className": "text-center", "targets": 8 },
+                { "title": "19:00 - 20:00", "width": "50px", "className": "text-center", "targets": 9 },
+                { "title": "20:00 - 21:00", "width": "50px", "className": "text-center", "targets": 10 },
+                { "title": "21:00 - 22:00", "width": "50px", "className": "text-center", "targets": 11 },
+
+                {
+                    "title": "Total", "width": "80px", "className": "text-center", "targets": 12,
+                },
+                {
+                    "title": "To Do", "width": "130px", "className": "text-center", "targets": 13,
+                    render: function (data, type, row) {
+
+                        var url = '<span class=red_clr>' + data + '</span>';
+                        return url;
+                    }
+                },
+                {
+                    "title": "WIP", "width": "130px", "className": "text-center", "targets": 14,
+                    render: function (data, type, row) {
+
+                        var url = '<span class=yellow_clr>' + data + '</span>';
+                        return url;
+                    }
+                },
+
+            ];
+        }
+        else if (title == "Night") {
+
+            columnDef = [
+
+
+                { "title": "R Label", "width": "150px", "targets": 0 },
+                { "title": "WC", "width": "140px", "targets": 1 },
+                { "title": "User Name", "targets": 2 },
+                { "title": "Targets", "width": "80px", "className": "text-center", "targets": 3 },
+                { "title": "22:00 - 23:00", "width": "50px", "className": "text-center", "targets": 4 },
+                { "title": "23:00 - 24:00", "width": "50px", "className": "text-center", "targets": 5 },
+                { "title": "0:00 - 1:00", "width": "50px", "className": "text-center", "targets": 6 },
+                { "title": "1:00 - 2:00", "width": "50px", "className": "text-center", "targets": 7 },
+                { "title": "2:00 - 3:00", "width": "50px", "className": "text-center", "targets": 8 },
+                { "title": "3:00 - 4:00", "width": "50px", "className": "text-center", "targets": 9 },
+                { "title": "4:00 - 5:00", "width": "50px", "className": "text-center", "targets": 10 },
+                { "title": "5:00 - 6:00", "width": "50px", "className": "text-center", "targets": 11 },
+
+                {
+                    "title": "Total", "width": "80px", "className": "text-center", "targets": 12,
+
+                },
+                {
+                    "title": "To Do", "width": "130px", "className": "text-center", "targets": 13,
+                    render: function (data, type, row) {
+
+                        var url = '<span class=red_clr>' + data + '</span>';
+                        return url;
+                    }
+                },
+                {
+                    "title": "WIP", "width": "130px", "className": "text-center", "targets": 14,
+                    render: function (data, type, row) {
+
+                        var url = '<span class=yellow_clr>' + data + '</span>';
+                        return url;
+                    }
+                },
+
+            ];
+        }
+
+        var totalCounter = childArray.length; // No of Child array length
+        if (childCount >= totalCounter) { //Childcount Greater than TotalCount
+            childCount = 0;
+        }
+        ToggleDataList(true);
+        MakeDataGrid('LstData', childArray[childCount], 0, columnDef, false, false, false);
+        PageOf(childCount, totalCounter);
+
+
+    }
+    function PageOf(childCount, totalCounter) {
+
+        $('#pageDS').text('');
+        if (totalCounter > 0) {
+            childCount = (childCount + 1);
+        }
+        $('#pageDS').text(" Showing " + childCount + " of " + totalCounter);
+    }
+</script>

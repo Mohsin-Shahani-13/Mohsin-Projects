@@ -1,0 +1,94 @@
+﻿@model IP.Areas.Jobs.Models.RequiredIndexes
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td colspan="2" class="pad">
+            @Html.LabelFor(model => model.serverName, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddlServers", null, new { id = "ddlServers", @name = "ddlServers", @class = "form-control", @onkeydown = "GoOnEnter()" })
+            <br />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.database, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            <select id="ddDatabase" name="ddDatabase" class="form-control dropdownHeight" onkeydown="GoOnEnter()"> </select>
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#building').focus();
+    });
+  
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    GetServers();
+    function GetServers() {
+        var serverName = document.getElementById("ddlServers").value;
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/RequiredIndexes/GetDatabase',
+            data:
+            {
+                serverName: serverName
+            },
+
+            datatype: JSON,
+            success: function (data) {
+
+                $('#ddDatabase').html('');
+                var options = '';
+                options += '<option value="All">All</option>';
+                for (var i = 0; i < data.lstDatabase.length; i++) {
+                    options += '<option value="' + data.lstDatabase[i] + '">' + data.lstDatabase[i] + '</option>';
+                }
+                $('#ddDatabase').append(options);
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+
+        });
+
+    }
+
+
+    function Go() {
+        var serverName = $('#ddlServers option:selected').text();
+        var database = $('#ddDatabase option:selected').val();
+        $('#option').modal('hide');
+        OpenPage('\\Jobs\\RequiredIndexes\\Index?serverName=' + serverName + '&Database=' + database + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+

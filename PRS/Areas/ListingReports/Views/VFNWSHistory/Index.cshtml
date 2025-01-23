@@ -1,0 +1,157 @@
+﻿@model IP.Areas.ListingReports.Models.VFNWSHistory
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstVFNWSHistory" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <!--<tfoot>
+                    <tr>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>-->
+                @*<th></th>
+                    <th></th>
+                    <th></th>*@
+                <!--</tr>
+                </tfoot>-->
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        //var _programId = $('#ProgramID').val();
+        //var _ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/VFNWSHistory/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [
+
+                    {
+                        "data": "PartNo", "title": "Part No.", "width": "140px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + '10008' + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "SerialNo", "title": "Serial No.", "width": "110px",
+                        render: function (data, type, row) {
+
+                            var url = '<a href= \\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + '10008' + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
+
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "CustomerReference", "title": "Customer Ref.", "width": "115px"
+                        //render: function (data, type, row) {
+
+                        //    var url = '<a href= "\\SupplyChain\\WO\\Detail?ID=' + row["WH ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + '10008' + '&page=list" target=_blank > ' + data + '</a>';
+                        //    return url;
+                        //}
+                    },
+                    { "data": "Description", "title": "Description", "width": "260px" },
+                    { "data": "PROBLEM FOUND", "title": "Problem Found", "width": "120px" },
+                    { "data": "FAILURE MODE", "title": "Failure Mode", "width": "110px" },
+                    { "data": "REPAIR NOTES", "title": "Repair Notes", "width": "100px" },
+                    { "data": "LocationNo", "title": "Location No.", "width": "80px" },
+                    { "data": "RepairTypeDescription", "title": "Repair Type Desc.", "width": "140px" },
+                    { "data": "FromWS", "title": "From WS", "width": "100px" },
+                    { "data": "ToWS", "title": "To WS", "width": "100px" },
+                    { "data": "RESULT", "title": "Result", "width": "50px" },
+                    { "data": "Iteration", "title": "Iteration", "width": "40px", "className": "text-right" },
+                    { "data": "WH ID", "title": "WO Header Id", "width": "100px" },
+                    { "data": "WS Status", "title": "WS Status", "width": "70px" },
+                    { "data": "WO Status", "title": "WO Status", "width": "70px" },
+                    { "data": "Username", "title": "Username", "width": "30px" },
+                    { "data": "LastActivityDate", "title": "Last Activity On", "width": "110px", "className": "text-right" }
+
+                ]
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    //$(api.column(3).footer()).html(thousands_separators(api.column(3).data().sum()));
+                    //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+
+                }
+
+                ToggleDataList(true);
+                MakeDataGrid('lstVFNWSHistory', data.lstVFNWSHistory, 0, columnDef, true, true, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+

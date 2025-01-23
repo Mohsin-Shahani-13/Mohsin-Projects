@@ -1,0 +1,561 @@
+﻿@model IP.Areas.ListingReports.Models.Reverse
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<style>
+    tr th {
+        white-space: nowrap;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" @*title="Option Page" onclick="$('#option').modal('show');"*@>
+                <span class="fa fa-bars fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstReverse" class="table table-bordered table-striped text-sm table-hover" @*style="width:100%"*@>
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        @*<th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>*@
+                    </tr>
+                </thead>
+                <tfoot>
+                    @*<tr>
+                            <th>Total: </th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                        </tr>*@
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    function showModalForZPL(head, str) {
+        $('#commentsheader').html(head);
+        $('#commentsbody').html('<textarea rows="15" cols="78" name="usrtxt" wrap="hard"> "' + str + '" </textarea > ');
+        $('#comments').modal('show');
+    }
+    $.fn.dataTable.render.ellipsisAdr = function (cutoff, header) {
+        return function (data, type, row) {
+            if (type === 'display') {
+                var str = data.toString().replace(/(\r\n|\n|\r)/gm, "");
+
+                //var header = "Reported Problem";
+                return str.length < cutoff ?
+                    str :
+                    str.substr(0, cutoff - 1) + '<a href="#" onclick="showModalForZPL(\'' + header + '\', \'' + str + '\')"> See More</a>';
+            }
+            // Search, order and type can use the original data
+            return data;
+        };
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var isSinglerow = false;
+
+
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/Reverse/GetList',
+            data: {
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+                if (!isSinglerow) {
+
+                    var columnDef = [
+                        {
+                            "data": "Receiving Location",
+                            "title": "Receiving Location",
+                            "width": "120px"
+                        },
+                        {
+                            "data": "Encryption Key",
+                            "title": "Encryption Key",
+                            "width": "190px"
+                        },
+                        {
+                            "data": "Encryption Key2",
+                            "title": "Encryption Key2",
+                            "width": "170px"
+                        },
+                        {
+                            "data": "MDK Label",
+                            "title": "MDK Label",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Customer Site ID",
+                            "title": "Customer Site ID",
+                            "width": "170px"
+                        },
+                        {
+                            "data": "Ship to Site ID",
+                            "title": "Ship to Site ID",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "VHQ Instance Name",
+                            "title": "VHQ Instance Name",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Processor Name",
+                            "title": "Processor Name",
+                            "width": "225px"
+                        },
+                        {
+                            "data": "Customer Type",
+                            "title": "Customer Type",
+                            "width": "175px"
+                        },
+                        {
+                            "data": "MID",
+                            "title": "MID",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Lane ID",
+                            "title": "Lane ID",
+                            "width": "45px"
+                        },
+                        {
+                            "data": "IP Address",
+                            "title": "IP Address",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Gateway",
+                            "title": "Gateway",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Subnet",
+                            "title": "Subnet",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "DNS1",
+                            "title": "DNS1",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "DNS2",
+                            "title": "DNS2",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Reported Problem",
+                            "title": "Reported Problem",
+                            "width": "180px", "render": $.fn.dataTable.render.ellipsisAdr(18, "Reported Problem")
+                        },
+                        {
+                            "data": "Reported Problem",
+                            "title": "Reported Problem",
+                            "width": "250px", "visible": false
+                        },
+                        {
+                            "data": "Repair Comment",
+                            "title": "Repair Comment",
+                            "width": "200px", "render": $.fn.dataTable.render.ellipsisAdr(24, "Repair Comment")
+                        },
+                        {
+                            "data": "Repair Comment",
+                            "title": "Repair Comment",
+                            "width": "300px", "visible": false
+                        },
+                        {
+                            "data": "PR Number",
+                            "title": "PR Number",
+                            "width": "110px"
+                        },
+                        {
+                            "data": "Software Config No",
+                            "title": "Software Config No",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Software Config Name",
+                            "title": "Software Config Name",
+                            "width": "150px", "render": $.fn.dataTable.render.ellipsisAdr(15, "Software Config Name")
+                        },
+                        {
+                            "data": "Software Config Name",
+                            "title": "Software Config Name",
+                            "width": "150px", "visible": false
+                        },
+                        {
+                            "data": "Warranty Type",
+                            "title": "Warranty Type",
+                            "width": "100px"
+                        },
+                        {
+                            "data": "Software Config APP ID",
+                            "title": "Software Config APP ID",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Debit Key Slot 0",
+                            "title": "Debit Key Slot 0",
+                            "width": "180px"
+                        },
+                        {
+                            "data": "Debit Key Slot 1",
+                            "title": "Debit Key Slot 1",
+                            "width": "170px"
+                        },
+                        {
+                            "data": "Debit Key Slot 2",
+                            "title": "Debit Key Slot 2",
+                            "width": "170px"
+                        },
+                        {
+                            "data": "OS Version",
+                            "title": "OS Version",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Work Instructions",
+                            "title": "Work Instructions",
+                            "width": "130px"
+                        },
+                        {
+                            "data": "Clear Cert",
+                            "title": "Clear Cert",
+                            "width": "70px"
+                        },
+                        {
+                            "data": "Activation Required",
+                            "title": "Activation Required",
+                            "width": "155px"
+                        },
+                        {
+                            "data": "Request Type",
+                            "title": "Request Type",
+                            "width": "110px"
+                        },
+                        {
+                            "data": "MRA Code",
+                            "title": "MRA Code",
+                            "width": "150px"
+                        },
+                        {
+                            "data": "Incoming Part Num Description",
+                            "title": "Incoming Part Num Description",
+                            "width": "160px", "render": $.fn.dataTable.render.ellipsisAdr(18, "Incoming Part Num Description")
+                        },
+                        {
+                            "data": "Incoming Part Num Description",
+                            "title": "Incoming Part Num Description",
+                            "width": "80px", "visible": false
+                        },
+                        {
+                            "data": "Product Code Description",
+                            "title": "Product Code Description",
+                            "width": "195px"
+                        },
+                        {
+                            "data": "Incoming Unit Part Number",
+                            "title": "Incoming Unit Part Number",
+                            "width": "80px"
+                        },
+
+                        {
+                            "data": "Incoming Unit Serial Number",
+                            "title": "Incoming Unit Serial Number",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Condition",
+                            "title": "Condition",
+                            "width": "100px"
+                        },
+                        {
+                            "data": "Current Queue",
+                            "title": "Current Queue",
+                            "width": "170px"
+                        },
+                        {
+                            "data": "App ID",
+                            "title": "App ID",
+                            "width": "85px"
+                        },
+                        {
+                            "data": "Notes",
+                            "title": "Notes",
+                            "width": "230px", "render": $.fn.dataTable.render.ellipsisAdr(34, "Notes")
+                        },
+                        {
+                            "data": "Notes",
+                            "title": "Notes",
+                            "width": "220px", "visible": false
+                        },
+                        {
+                            "data": "Date into Repair",
+                            "title": "Date into Repair",
+                            "width": "80px",
+                            "className": "text-right"
+                        },
+                        {
+                            "data": "Ship to COW",
+                            "title": "Ship to COW",
+                            "width": "165px"
+                        },
+                        {
+                            "data": "Originator",
+                            "title": "Originator",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Bill To Site Name",
+                            "title": "Bill To Site Name",
+                            "width": "270px", "render": $.fn.dataTable.render.ellipsisAdr(30, "Bill To Site Name")
+                        },
+                        {
+                            "data": "Bill To Site Name",
+                            "title": "Bill To Site Name", "visible": false
+                        },
+                        {
+                            "data": "Bill To Site ID",
+                            "title": "Bill To Site ID",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Site Name",
+                            "title": "Site Name",
+                            "width": "220px",
+                            "render": $.fn.dataTable.render.ellipsisAdr(26, "Site Name")
+                        },
+                        {
+                            "data": "Site Name",
+                            "title": "Site Name", "visible": false
+                        },
+                        {
+                            "data": "Ship To Site",
+                            "title": "Ship To Site",
+                            "width": "120px"
+                        },
+                        {
+                            "data": "Header Number",
+                            "title": "Header Number",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Note",
+                            "title": "Note",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Repair Status",
+                            "title": "Repair Status",
+                            "width": "150px"
+                        },
+                        {
+                            "data": "Problem Found",
+                            "title": "Problem Found",
+                            "width": "160px"
+                        },
+                        {
+                            "data": "Problem Summary",
+                            "title": "Problem Summary",
+                            "width": "160px"
+                        },
+                        {
+                            "data": "TID",
+                            "title": "TID",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "Oracle_Customer",
+                            "title": "Oracle Customer No.",
+                            "width": "80px"
+                        },
+                        {
+                            "data": "InsertDate",
+                            "title": "InsertDate",
+                            "width": "100px",
+                            "className": "text-right"
+                        }
+
+
+                    ];
+
+                    ToggleDataList(true);
+                    //For Displaying footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(17).footer()).html(thousands_separators(api.column(17, { search: 'applied' }).data().sum()));
+                    }
+
+                    MakeDataGrid('lstReverse', data.lstReverse, 0, columnDef, true, true, footerfunc);
+                    // MakeDataGrid('lstSOPickList', data.lstSOPickList, 0, columnDef, true, true, false);
+
+                }
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>

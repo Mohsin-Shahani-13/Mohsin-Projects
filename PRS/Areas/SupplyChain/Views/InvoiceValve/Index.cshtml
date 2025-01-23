@@ -1,0 +1,199 @@
+﻿@model IP.Areas.SupplyChain.Models.InvoiceValve
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle Summary </strong><strong id="filterString"></strong></h6>
+
+
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstData" class="table table-bordered table-striped text-sm table-hover" >
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th class="notexport"></th>
+                        @*<th class="notexport"></th>*@
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @*<th></th>*@
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        @*<th></th>*@
+                        @*<th></th>*@
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    @*<tr>
+                            <th Total:></th>
+
+                            <th> </th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+
+
+                        </tr>*@
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var programId = $('#ddProgram').val();
+        var ProgramName = $("#ddProgram option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/InvoiceValve/GetList',
+            data: {
+                fromDt: fDate,
+                toDt: tDate,
+                programId: programId,
+                ProgramName: ProgramName
+
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+
+                        { "data": "OrderHeaderID", "title": "WO Id", "width": "40px" },
+
+
+                        { "data": "ProgramID", "title": "ProgramID", "width": "40px", "visible": false },
+                        //{ "data": "ProgramName", "title": "Program", "width": "50px", "visible": false },
+
+
+                        {
+                            "data": "serialno", "title": "Serial No.", "width": "80px",
+                            render: function (data, type, row) {
+                                if (row["Serial"] == "*") {
+                                    url = row["Serial"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?SerialNo=' + row["serialno"] + '&ProgramId=' + row["ProgramID"] + '&partNo=' + row["model"] + '&page=list" target=_blank > ' + data + '</a>';
+                                }
+                                return url;
+                            }
+                        },
+
+
+                        {
+                            "data": "CustomerReference", "title": "Customer Ref.", "width": "100px",
+
+                        },
+                        { "data": "rmarec", "title": "RMA Received On", "width": "100px", "className": "text-right" },
+                        { "data": "woclose", "title": "WO Close On", "width": "90px", "className": "text-right" },
+                        { "data": "tat", "title": "TAT", "width": "30px", "className": "text-right" },
+                        { "data": "ship", "title": "SO On", "width": "90px", "className": "text-right" },
+                        {
+                            "data": "incpart", "title": "Incoming Part No.", "width": "100px",
+                            //render: function (data, type, row) {
+                            //    var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["IncomingPartno"] + '&ProgramId=' + row["ID"] + '&page=list" target=_blank > ' + data + '</a>';
+                            //    return url;
+                            //}
+                        },
+                        { "data": "retreason", "title": "Return Reason", "width": "170px" },
+                        {
+                            "data": "model", "title": "Model", "width": "80px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["model"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+
+                        { "data": "RepairTypeDescription", "title": "Order Type", "width": "130px" },
+                        //{ "data": "RMAType", "title": "RMA Type", "width": "110px" },
+                        { "data": "cid", "title": "CID", "width": "140px", "className": "text-center" },
+                        { "data": "repairstatus", "title": "Repair Status", "width": "50px" },
+                        { "data": "warr", "title": "In Warranty", "width": "60px", "className": "text-center" },
+                        { "data": "InWarrantyOutGoing", "title": "In Warranty Out Going", "width": "80px", "className": "text-center" },
+                        { "data": "reid", "title": "REID", "width": "70px" },
+                        { "data": "repreturn", "title": "Rep. Return", "width": "60px", "className": "text-center" },
+                        { "data": "closedrep", "title": "Return Count", "width": "70px", "className": "text-right" },
+                        { "data": "rettat", "title": "Rep. Return TAT", "width": "70px", "className": "text-right" },
+                        { "data": "RepairLevel", "title": "Repair Level", "width": "90px" },
+
+
+
+                        //{ "data": "FaultDesc", "title": "Fault Desc.", "width": "50px" },
+                        //{ "data": "RepairStatus", "title": "Repair Status", "width": "70px" },
+
+                        { "data": "ro", "title": "ROH ID", "width": "70px", "visible": false },
+                        //{ "data": "ROUnitId", "title": "ROU ID", "width": "70px" }
+                        //{ "data": " MaxShippedOn", "title": "Shipped on", "width": "65px", "className": "text-right" },
+                        //{ "data": "RepRetTurnAro", "title": "Rep. Turn Aro.", "width": "50px", "className": "text-right"},
+                        { "data": "repairLvl", "title": "Repair Level", "width": "90px", "visible": false },
+
+                    ]
+
+                    ToggleDataList(true);
+
+                    // MakeDataGrid('lstData', data.lstData, 0, columnDef, true, true, false, true);
+
+                    MakeDataGrid('lstData', data.lstData, 0, columnDef, true, true);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+

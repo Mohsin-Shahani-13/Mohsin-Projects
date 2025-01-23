@@ -1,0 +1,128 @@
+﻿@model IP.Areas.ListingReports.Models.ECOCheck
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle > </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstECOCheck" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                @*<tfoot>
+                        <tr>
+                           
+                          
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>*@
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+
+
+
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var _partNo = $('#partNo').val();
+        var fDate = $('#fromDt').val();
+        var isAllDate = $('#isAllDate').is(':checked');
+       // var tDate = $('#toDt').val();
+        //var _programId = $('#ProgramID').val();
+        //var _ProgramName = $("#ProgramID option:selected").text();
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/ECOCheck/GetList',
+            data: {
+                partNo: _partNo,
+                frmDt: fDate,
+                isAllDate: isAllDate
+                //toDate: tDate,
+                //programId: _programId,
+                //ProgramName: _ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ID", "title": "ID", "width": "50px", "visible": false },
+                        { "data": "Col001", "title": "Part No." },
+                        { "data": "Col002", "title": "Rev", "width": "40px"  },
+                        { "data": "Col003", "title": "Col003", "width": "60px", "visible": false  },
+                        { "data": "Col004", "title": "Col004", "width": "60px", "visible": false  },
+                        { "data": "Col005", "title": "Col005", "width": "60px", "visible": false  },
+                        { "data": "Col006", "title": "Col006", "width": "60px", "visible": false  },
+                        { "data": "Col007", "title": "FG", "width": "70px"  },
+                        { "data": "Col008", "title": "Field / Returns", "width": "80px"  },
+                        { "data": "Col009", "title": "Change No.", "width": "70px"  },
+                        { "data": "Col010", "title": "Release On", "width": "60px", "className": "text-right"  }
+
+
+
+                    ]
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        //$(api.column().footer()).html(thousands_separators(api.column().data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstECOCheck', data.lstECOCheck, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+
+
+</script>
+

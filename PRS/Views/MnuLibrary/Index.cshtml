@@ -1,0 +1,516 @@
+﻿@model IP.Models.MnuLibrary
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+
+    var empId = ViewBag.EmpId;
+
+
+}
+<script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+<style type="text/css">
+    .grpClass {
+        font-weight: bold;
+        background-color: #6c9dc6 !important;
+        color: whitesmoke !important;
+    }
+
+    .subgrpClass {
+        font-weight: bold;
+        background-color: #94C7EE !important;
+        color: white !important;
+    }
+
+    .view-report {
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        text-align: center;
+        width: 30px;
+        height: 20px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+
+    .modal-backdrop {
+        position: relative !important;
+    }
+</style>
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool">
+                <span class="fa fa-th-list fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle</strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body">
+            <table id="lstMnuLib" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    ToggleDataList(false);
+    LoaData();
+
+    function LoaData() {
+
+        var conn_type = '@ViewBag.CONN_TYPE';
+        var linked_srvr = '@ViewBag.LinkedSrvr';
+        var ProgramNameforSite = '@ViewBag.programBySite';
+        //var arrProgram =
+        @*var programNameBySite = [];
+        programNameBySite = encodeURI('@ViewBag.ProgramNameforSite');*@
+        $('.modal-footer > #designedby').empty();
+        $('.desgndBy').html('<div id="lstMenus_info" role="status" aria-live="polite">' + '@Model.designedBy' + ' | <a id="MailTo" href="' + '@Model.mailTo' + '"  target="_blank" title="Click to report features and bugs">MailTo</a> </div>');
+
+        $.ajax({
+            url: '/MnuLibrary/GetList',
+            type: 'GET',
+
+            datatype: JSON,
+            success: function (data) {
+                var columnDef = [];
+                columnDef.push({ "visible": false });
+                columnDef.push({ "visible": false });
+                columnDef.push({ "visible": false });
+                columnDef.push({ "title": "Menu Category", "width": "100px" });
+                columnDef.push({ "title": "Fav", "width": "20px", "className": "text-center",
+                    render: function (data, type, row) {
+                        var url;
+                        if (row[6] == 'Yes' || row[6] == 'No') {
+                            if (row[4] == '1') {
+                                url = '<span onclick="DeleteRow(\'' + row[0] + '\');" > ' + '<button id="btnFav"  class="btn-link glyphicon glyphicon-star" style="font-size: 15px;width:20px;padding-left:3px;"></button></span>'
+                            }
+                            else {
+                                url = '<span onclick="InsertRow(\'' + row[11] + '\', \''
+                                    + row[5] + '\', \'' + row[0] + '\');" > ' + '<button id="btnFav"  class="btn-link glyphicon glyphicon-star-empty" style="font-size: 15px;width:20px;padding-left:3px;"></button></span>'
+                            }
+                        }
+                        else {
+                            return url = null;
+                        }
+                        return url;
+                    },
+                });
+                columnDef.push({ "title": "Menu Title" });
+
+                columnDef.push({ "title": "Is Live", "width": "50px", "className": "text-center" });
+                columnDef.push({ "title": "In Prod", "width": "50px", "className": "text-center",
+                    render: function (data, type, row) {
+                        var url = '';
+                        if (row[6] == 'Yes') {
+                            if (row[2] != '') {
+                                if (conn_type == 'PROD') {
+
+                                    if (row[7] == '1') {
+                                         // Designed by Muhammad Salman
+
+                                        // Check if a value exists in the Program array
+                                        if (ProgramNameforSite.indexOf(row[16]) !== -1 || row[16]=='*') {
+
+                                            url = '<a onclick="Navigate(\'' + row[15] + '\', \''
+                                                + row[2] + '\',\'' + row[11] + '\',\'' + row[12] + '\',\''
+                                                + row[13] + '\',\'' + row[14] + '\');" > ' + '<button class="view-report">Run</button>' + '</a>'
+
+                                        }
+
+
+                                    }
+                                    else {
+                                        url = '';
+                                    }
+                                }
+
+                                else {
+                                    if (row[2] != '') {
+                                        if (row[7] == '1') {
+                                            url = 'X';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        return url;
+                    },
+                });
+                columnDef.push({
+                    "title": "In Rept", "width": "50px", "className": "text-center",
+                    render: function (data, type, row) {
+                        var url = '';
+                        if (row[6] == 'Yes') {
+                            if (row[2] != '') {
+                                if (conn_type == 'REPT') {
+                                    if (row[8] == '1') {     // InRept
+                                        if (ProgramNameforSite.indexOf(row[16]) !== -1 || row[16] == '*') {
+                                            url = '<a onclick="Navigate(\'' + row[15] + '\', \''
+                                                + row[2] + '\',\'' + row[11] + '\',\'' + row[12] + '\',\''
+                                                + row[13] + '\',\'' + row[14] + '\');" > ' + '<button class="view-report">Run</button>' + '</a>'
+                                        }
+
+                                    }
+                                    else {
+                                        url = '';
+                                    }
+                                }
+                                else {
+                                    if (row[2] != '') {
+                                        if (row[8] == '1') {
+                                            url = 'X';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        return url;
+                    },
+                });
+                columnDef.push({
+                    "title": "In Tran", "width": "50px", "className": "text-center",
+                    render: function (data, type, row) {
+                        var url = '';
+                        if (row[6] == 'Yes') {
+                            if (row[2] != '') {
+                                if (conn_type == 'TRAN') {
+                                    if (row[9] == '1') {     // InTran
+
+                                        if (ProgramNameforSite.indexOf(row[16]) !== -1 || row[16] == '*') {
+
+                                            url = '<a onclick="Navigate(\'' + row[15] + '\', \''
+                                                + row[2] + '\',\'' + row[11] + '\',\'' + row[12] + '\',\''
+                                                + row[13] + '\',\'' + row[14] + '\');" > ' + '<button class="view-report">Run</button>' + '</a>'
+                                        }
+                                        else {
+                                            url = '';
+                                        }
+                                    }
+                                }
+                                else {
+                                    if (row[2] != '') {
+                                        if (row[9] == '1') {
+                                            url = 'X';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        return url;
+                    },
+                });
+                columnDef.push({
+                    "title": "In Test", "width": "50px", "className": "text-center",
+                    render: function (data, type, row) {
+                        var url = '';
+
+
+
+                        if (row[6] == 'Yes') {
+                            if (row[2] != '') {
+
+                                if (conn_type == 'TEST') {
+
+                                    if (row[10] == '1') { // InTest
+
+                                        if (ProgramNameforSite.indexOf(row[16]) !== -1 || row[16] == '*') {
+
+
+                                            url = '<a onclick="Navigate(\'' + row[15] + '\', \''
+                                                + row[2] + '\',\'' + row[11] + '\',\'' + row[12] + '\',\''
+                                                + row[13] + '\',\'' + row[14] + '\');" > ' + '<button class="view-report">Run</button>' + '</a>'
+                                        }
+
+
+                                        else {
+                                            url = '';
+                                        }
+                                    }
+                                }
+                                else {
+                                    if (row[2] != '') {
+                                        if (row[10] == '1') {
+                                            url = 'X';
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+
+                        return url;
+                    },
+                });
+
+                ToggleDataList(true);
+                MakeGroupGrid('lstMnuLib', data.lstMnuLibrary, 0, columnDef, true, false);
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function MakeGroupGrid(tableId, data, tableHeight, columns, search) {
+        var reportTitle = reportTitle = $('.box-title').text();
+        var gridHeight = 0;
+        if (search === undefined) { search = true; }
+
+        var gridButtonsClass = '';
+        var gridSearchBoxClass = '';
+
+        gridButtonsClass = 'btn-header btn-box-tool';
+        gridSearchBoxClass = 'btn-box-tool bg-white txtSearch';
+        gridButtonSize = 20;
+
+        //For SQL Documentation
+        var rptDtlCode, rptDtlTitle, qrytool;
+
+        var rptCode = $('#rptCode').val(); // for sql docs.
+        var rptTitle = $('#rptTitle').val(); // for sql docs.
+
+        if (rptCode === undefined){
+            rptDtlCode = $('#rptcode').val();
+            rptDtlTitle = reportTitle.substring(0, reportTitle.indexOf('>'));
+
+            qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptDtlCode + '&rptTitle=' + rptDtlTitle + '" title="How they do that" target="_blank">';
+            qrytool += '<span class="fa-stack sqlDoc" ><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            qrytool += '</a>';
+
+            $('#buttons').empty();
+            $('#buttons').append(qrytool);
+        }
+        else
+        {
+            qrytool = '<a id="showQuery"  class="btn-header btn-box-tool" href="\\SqlDocs\\Index?rptCode=' + rptCode + '&rptTitle=' + rptTitle + '" title="How they do that" target="_blank">';
+            qrytool += '<span class="fa-stack sqlDoc"><i class="fa fa-circle fa-stack-2x" style="color: rgb(221, 75, 57);"></i><i class="fa fa-database fa-stack-1x" style="color: white;"></i></span>';
+            qrytool += '</a>';
+            $('#buttons').empty();
+            $('#buttons').append(qrytool);
+        }
+
+        if (search === true) {
+            var boxtool = '<input class="' + gridSearchBoxClass + '" id="txtSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+            $('#buttons').append(boxtool);
+        }
+
+        var table = $('#' + tableId).DataTable({
+            order: [],
+            data: data,
+            columns: columns,
+            paging: true,
+            ordering: false,
+            searching: search,
+            deferRender: true,
+            destroy: true,
+            pagingType: 'full',
+            pageLength: 100,
+            scrollCollapse: false,
+            scrollX: true,
+            createdRow: function (row, data, dataIndex) {
+                if (data[2] == '' && data[1] == '') {
+                    $(row).addClass('grpClass');
+                }
+
+                if (data[2] == '' && data[1] != '') {
+                    $(row).addClass('subgrpClass');
+                }
+            },
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                oPaginate: {
+                    sNext: '<i class="fa fa-forward"></i>',
+                    sPrevious: '<i class="fa fa-backward"></i>',
+                    sFirst: '<i class="fa fa-step-backward"></i>',
+                    sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            },
+            "dom": "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-3'i><'#designedBy.col-sm-7'><'col-sm-2'p>>",
+            buttons: [
+                {
+                    extend: 'copyHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Copy',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        //columns: ':visible'
+                        columns: 'th:not(.notexport)' // Excluding columns while exporting
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Export to excel',
+                    title: reportTitle,
+                    filename: 'DataExport', //Added By Tahir
+                    exportOptions: {
+                        //columns: ':visible'
+                        columns: 'th:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Print',
+                    title: '',
+                    messageTop: function () { return '<h4>' + reportTitle + '</h4>'; },
+                    filename: 'DataExport',
+                    exportOptions: {
+                        // columns: ':visible'
+                        columns: 'th:not(.notexport)'
+                    }
+                }
+            ],
+            initComplete: function () {
+                $('#txtSearch').focus();
+            },
+            select: true
+        });
+        table.buttons().container()
+            .appendTo('#buttons');
+
+        table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+        table.button(0).nodes().addClass(gridButtonsClass);
+
+        table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(1).nodes().addClass(gridButtonsClass);
+
+        table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(2).nodes().addClass(gridButtonsClass);
+
+        var dsgndby = $('.modal-footer > #designedby ').html();
+
+        if (dsgndby === "") {
+            $('#designedBy').html($('.desgndBy').html());
+        }
+
+        var layoutHeader = $('nav').innerHeight();
+        var cardHeader = $('.box-header').innerHeight();
+        var tableHeader = $('.dataTables_scrollHead').innerHeight();
+        var tableFooter = 0;
+        var cardFooterH = 30;
+        var topHeader = $('#topHeader').innerHeight();
+
+        //if (isFooter === true)
+        //    tableFooter = $('.dataTables_scrollFoot').innerHeight();
+
+        var browserHeight = window.innerHeight;
+        if (tableHeight === 0) {
+            if (layoutHeader === undefined)
+                gridHeight = browserHeight - (cardHeader + tableHeader + tableFooter + cardFooterH);
+            else
+                gridHeight = browserHeight - (layoutHeader + cardHeader + tableHeader + tableFooter + cardFooterH);
+        }
+        else { gridHeight = tableHeight; }
+
+        if (topHeader > 0)
+            gridHeight = gridHeight - topHeader;
+
+        $('.dataTables_scrollBody').css('height', gridHeight + 'px');
+        table.columns.adjust().draw();
+
+        $('.dataTables_filter').hide();
+        $('#txtSearch').on('keyup change', function () {
+            table.search(this.value).draw();
+        });
+
+        return table;
+    }
+
+    function Navigate1(report_target, report_URL, report_code, report_title, report_designed_by, mailTo) {
+
+        if (report_URL.indexOf("contractId") > 1)
+            report_URL += '&rptCode=' + report_code;
+        else
+            report_URL += '?rptCode=' + report_code;
+
+        if (report_target == "option") {
+            ShowOption(report_title, report_URL, report_designed_by, undefined, mailTo);
+        }
+        else {
+            report_URL += "&menuTitle=" + report_title;
+            OpenPage(report_URL, report_designed_by, mailTo);
+        }
+        ActiveReport(report_code, report_title);
+        MenuHide();
+    }
+
+    function InsertRow(rptCode, rptTitle, MnuId) {
+
+        $.ajax({
+            url: "/MnuLibrary/GetFav",
+            type: 'POST',
+            data: ({
+                rptCode: rptCode,
+                rptTitle: rptTitle,
+                MnuId: MnuId
+            }),
+            datatype: "JSON",
+            success: function (data) {
+
+                $("#btnFav").replaceWith('<span><button class="btn-link glyphicon glyphicon-star" style="font-size: 15px;width:20px;padding-left:3px;"></button></span>')
+                LoaData();
+            }
+            });
+    };
+
+    function DeleteRow(MnuId) {
+        $.ajax({
+            url: "/MnuLibrary/DeleteFav",
+            type: 'POST',
+            data: ({
+                MnuId: MnuId
+            }),
+            datatype: "JSON",
+            success: function (data) {
+
+                $("#btnFav").replaceWith('<span><button class="btn-link glyphicon glyphicon-star-empty" style="font-size: 15px;width:20px;padding-left:3px;"></button></span>')
+                LoaData();
+            }
+        });
+    };
+
+    //function maintainScrollPosition() {
+    //    var div = document.getElementById("dvScroll");
+    //    var div_position = document.getElementById("div_position");
+    //    var position = parseInt('<%=Request.Form["div_position"] %>');
+    //    if (isNaN(position)) {
+    //        position = 0;
+    //    }
+    //    div.scrollTop = position;
+    //    div.onscroll = function () {
+    //        divdiv_position.value = div.scrollTop;
+    //    };
+    //}
+</script>

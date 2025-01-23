@@ -1,0 +1,107 @@
+﻿@model IP.Areas.ListingReports.Models.BoseREMAN
+@{
+    ViewBag.Title = "Get Detail";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="199-1" />
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+
+            <h6 class="box-title" id="head_lstUnitLst"><strong>@ViewBag.ReportTitle</strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body">
+            <table id="lstRemanDetail" class="table table-bordered table-striped text-sm" width="100%">
+                <thead>
+                </thead>
+                <tbody></tbody>
+                @*<tfoot></tfoot>*@
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+        $(document).ready(function () {
+            ToggleDataList(false);
+             var programId = '@Request.QueryString["programId"].ToString()';
+            var _lstRemanDetail = @Html.Raw(Json.Encode(Model.lstRemanDetail));  //datatable wiplist
+            var _lstDtlColHeader = @Html.Raw(Json.Encode(Model.lstDtlColHeader)); // column headers
+
+            var th = '<tr>'; //create th for headers
+            //var tft = '<tr>'; //create th for footers
+
+            $.each(_lstDtlColHeader, function (index, value) {
+
+
+                if (index == 0) {
+                    th += '<th id=idx' + index + ' >' + value + ' </th>'; // for table headers
+                }
+                else {
+                    th += '<th id=idx' + index + '>' + value + ' </th>'; // for table headers
+                }
+
+                //if (index == 0) {
+                //    tft += '<th Style="text-align:left">Total :</th>';
+                //}
+                //else if (index == 4) {
+                //    tft += '<th></th>';
+                //    //for table footer show total.
+                //}
+                //else {
+                //    tft += '<th></th>'; // for table footers
+                //}
+
+            });
+
+
+
+
+            th += '</tr>'; // th end
+            //tft += '</tr>' // th footer end
+            $('#lstRemanDetail >thead').append(th); // th header append to thead
+            //$('#lstRemanDetail >tfoot').append(tft); // th footer append to footer
+
+            var _columnDef = [];
+            
+            for (var i = 0; i < _lstDtlColHeader.length; i++) {
+                if (i === 0) { // Assuming column 0 contains the rows that need hyperlinks
+                    _columnDef.push({
+                        "className": "text-center",
+                        "width": "70px",
+                        "targets": i,
+                        "title": "Part No.",
+                        "render": function (data, type, row, meta) {
+                            if (row["PartNo"] != "") {
+                                // Create hyperlink
+                                //return '<a href="your-link-here/' + encodeURIComponent(data) + '">' + data + '</a>';
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row[0] + '&ProgramId=' + encodeURIComponent(programId) + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                            return data; // Return plain text for other rows
+                        }
+                    });
+                } else {
+                    _columnDef.push({
+                        "targets": i,
+                        "className": "text-center",
+                        "width": "70px"
+                    });
+                }
+            }
+            ToggleDataList(true);
+            var h = getHeight(83);
+            //MakeFrameGrid('lstDetail', lstDetail, 0, columnDef, 'buttons', true, false, false, false, $('#head_lstUnitLst').text(), true);
+            MakeDataGrid('lstRemanDetail', _lstRemanDetail, 0, _columnDef, true, true, false);
+        });
+
+
+</script>
+
+

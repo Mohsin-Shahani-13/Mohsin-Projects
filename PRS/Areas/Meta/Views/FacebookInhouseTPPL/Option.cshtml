@@ -1,0 +1,280 @@
+﻿@model IP.Areas.Meta.Models.FacebookInhouseTPPL
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            <label for="ProgramID" class="col-4 col-form-label">Program:</label>
+            @if (Session["ProgramIdBySiteForMeta"] != null)
+            {
+                <select id="ProgramID" class="form-control" name="ProgramID">
+                    <option value="@Session["ProgramIdBySiteForMeta"]">META</option>
+
+                </select>
+            }
+            @*@Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })*@
+        </td>
+    </tr>
+    @*<tr>
+            <td class="pad">
+
+                <strong>From:</strong>
+                <div class='input-group date' id='dtpFrom'>
+                    @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control" })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </td>
+            <td class="pad">
+                <strong>To:</strong>
+                <div class='input-group date' id='dtpTo'>
+                    @Html.TextBoxFor(model => model.toDt, htmlAttributes: new { @class = "form-control" })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </td>
+        </tr>*@
+    <tr>
+            <td colspan="4" class="pad">
+                @Html.LabelFor(model => model.PartNo, new { @class = "col-4 col-form-label" })
+                <input type="text" class="form-control" id="partNo" name="partNo" autofocus
+                       onkeydown="GoOnEnter()" />
+            </td>
+        </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.warehouse, new { @class = "col-4 col-form-label" })
+            <select id="ddlwarehouse" multiple="multiple" class="multiselect form-control" name="options[]">
+            </select>
+        </td>
+    </tr>
+    @*@if (ViewBag.Sites == "GRAPEVINE" || ViewBag.Sites == "PRAGUE")
+    {
+        <tr>
+            <td width="70" style="padding-right:5px;">
+                <a id="btnDownload" onclick="Download()" class="btn btn-primary" style="background-color: #53bd5c; margin-left: 12px; margin-top: 6px;">Download <i class='fas fa-file-download'></i></a>
+            </td>
+        </tr>
+        }*@
+    </table>
+<br />
+<table style="width:100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+
+        <td width="70" align="right">
+            <a id="btnDownload" onclick="Download()" role="button" class="btn btn-primary">Download</a>
+        </td>
+        @*<td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>*@
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+
+    </tr>
+    
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+
+<script>
+    var selectedValues = "";
+
+    LoadDropdown();
+
+    $("#ProgramID").change(function () {
+        LoadDropdown();
+    });
+
+    function LoadDropdown() {
+        var selectedValue = $('#ProgramID').val();
+            var dropdown = $('#ddlwarehouse');
+
+            // Destroy the multiselect before clearing the dropdown
+            dropdown.multiselect('destroy');
+
+            // Clear the dropdown
+            dropdown.empty();
+            if (selectedValue) {
+                $.ajax({
+                    url: '@Url.Action("GetWarehouse", "FacebookInhouseTPPL")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { ProgramId: selectedValue },
+                    success: function (data) {
+
+                        if (data.lstWarehouse != "") {
+
+                            $.each(data.lstWarehouse, function (key, value) {
+                                dropdown.append($('<option></option>').text(value[0]).val(value[0]));
+                            });
+                            ddlWarehouse(dropdown);
+
+                        } else {
+                            dropdown.append($('<option></option>').text('No data available').val('No data available'));
+                        }
+                    }
+                });
+            }
+    }
+    function ddlWarehouse(dropdown) {
+
+        // Initialize the multiselect plugin after populating the dropdown
+        selectedParts = '';
+        dropdown.multiselect({
+            includeSelectAllOption: false,
+           // selectAllText: 'All',
+            buttonWidth: '100%',
+            maxHeight: 300,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            filterPlaceholder: 'Search',
+            numberDisplayed: 4,
+            templates: {
+                ul: '<ul class="multiselect-container dropdown-menu" style="-ms-overflow-x: hidden; -ms-overflow-y: auto; max-height: 300px; width:100%;">"'
+            },
+
+            buttonText: function (options, select) {
+                if (options.length == 0) {
+                    return 'select from list';
+                }
+                else {
+                    if (options.prevObject.length == options.length) {
+                        selectedParts = 'All';
+                    } else {
+                        selectedParts = '';
+                        options.each(function () {
+                            var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
+                            selectedParts += "'" + label + "', ";
+                        });
+                        selectedParts = selectedParts.substr(0, selectedParts.length - 2);
+                    }
+
+
+
+                    if (options.length > this.numberDisplayed) {
+                        return options.length + ' ' + this.nSelectedText;
+                    }
+                    else {
+                        var selected = '';
+                        options.each(function () {
+                            var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
+                            selected += label + ", ";
+                        });
+                        return selected.substr(0, selected.length - 2);
+                    }
+                }
+            }
+        });
+
+
+        dropdown.multiselect('selectAll', true);
+        dropdown.multiselect('updateButtonText');
+    }
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+
+
+
+    function Download() {
+
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var _partNo = $('#partNo').val();
+        var _Warehouse = $('#ddlwarehouse').val().join(',');
+        var url = '/FacebookInhouseTPPL/Download?programId=' + _programId + '&ProgramName=' + _ProgramName + '&partNo=' + _partNo + '&warehouse=' + _Warehouse + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]';
+        //window.location.href = url;
+
+        
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            xhrFields: {
+                responseType: 'arraybuffer' 
+            },
+            
+            success: function (data, status, xhr) {
+                
+                
+                
+                    var contentDisposition = xhr.getResponseHeader('content-disposition');
+
+                    if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
+                    var filenameMatch = /filename=([^;]*)/.exec(contentDisposition);
+                    var filename = filenameMatch ? filenameMatch[1] : 'download';
+
+                
+                    var blob = new Blob([data], { type: xhr.getResponseHeader('content-type') });
+
+
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+
+                    link.download = filename.trim().replace(/^['"]+|['"]+$/g, '');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                        alert('File has been downloaded successfully.');
+                    } else {
+                        var textDecoder = new TextDecoder('utf-8');
+
+                        // Convert the ArrayBuffer to a string
+                        var text = textDecoder.decode(new Uint8Array(data));
+
+                        //console.log(text);
+                        alert('Error: ' + text);
+                }
+            },
+            error: function () {
+                
+                alert('Error downloading file');
+            }
+            
+        });
+
+    }
+
+    function Go() {
+        //var fDate = $('#fromDt').val();
+        //var tDate = $('#toDt').val();
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var partNo = $('#partNo').val();
+        var Warehouse = $('#ddlwarehouse').val().join(',');
+        //var Warehouse = $('#ddlwarehouse').val().join(',');
+
+        $('#option').modal('hide');
+        OpenPage('\\Meta\\FacebookInhouseTPPL\\Index?ProgramID=' + programId + '&ProgramName=' + ProgramName + '&partNo=' + partNo + '&warehouse=' + Warehouse + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+
+
+
+

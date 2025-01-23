@@ -1,0 +1,97 @@
+﻿@model IP.Areas.Jobs.Models.SSRS
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+        <tr>
+            <td colspan="4" class="pad">
+                @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+                @Html.DropDownList("ddlProgram", null, new { id = "ProgramID", @name = "ddlProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+            </td>
+        </tr>
+    @*<tr>
+        <td colspan="4" class="pad">
+            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
+        </td>
+    </tr>*@
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.ReportName, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="ReportName" name="ReportName" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+    <tr>
+        <td class="pad" colspan="2">
+            <label>Frequency:</label>
+            @Html.DropDownList("frequency", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="All", Value = "All",  },
+                   new SelectListItem{ Text="Once", Value = "Once" },
+                   new SelectListItem{ Text="Hourly", Value = "Hourly" },
+                   new SelectListItem{ Text="Daily", Value = "Daily" },
+                   new SelectListItem{ Text="Weekly", Value = "Weekly" },
+                   new SelectListItem{ Text="Monthly", Value = "Monthly" },
+
+
+                }, new { @id = "frequency", @class = "form-control" })
+        </td>
+        <td colspan="2" class="pad">
+            @Html.LabelFor(model => model.statusId, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddlReportStatus", null, new { id = "ddlStatus", @name = "ddlStatus", @class = "form-control", @onkeydown = "GoOnEnter()" })
+           
+        </td>
+    </tr>
+    <tr>
+       
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#ReportName').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            Go();
+        }
+    }
+    $('#btnGo').click(function () {
+        Go();
+    });
+
+    function Go() {
+        var ReportName = $('#ReportName').val();
+        var status = $('#ddlStatus option:selected').text();
+        //var statusid = $('#ddlStatus option:selected').val();
+        var ProgramId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var frequency = $('#frequency option:selected').val();
+        
+        $('#option').modal('hide');
+        OpenPage('\\Jobs\\SSRS\\Index?ReportName=' + ReportName + '&status=' + status + '&programId=' + ProgramId + '&ProgramName=' + ProgramName + '&frequency=' + frequency + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+
+

@@ -1,0 +1,58 @@
+﻿@model IP.Areas.Biztalk.Models.OutboundTransactionDetail
+@{
+    ViewBag.Title = "Message";
+    Layout = null;
+}
+    @*<script>
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/OutboundTransactionDetail/Message',
+            data: {
+                Message: Message
+                
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#xml').append(data);
+
+
+                var columnDef = [
+                    
+
+                ]
+
+
+                
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    </script>*@
+
+<script>
+    $(document).ready(function () {
+        // Load the XML data
+        $.ajax({
+            url: '/OutboundTransactionDetail/Message', // Specify your controller and action to retrieve XML data
+            dataType: 'xml',
+            success: function (data) {
+                // Convert XML data to JSON
+                var jsonData = $.xml2json(data);
+
+                // Create the DataTable using the JSON data
+                $('#xmlDataTable').DataTable({
+                    data: jsonData,
+                    columns: [
+                        // Define your columns here
+                        { data: 'Message' },
+                       
+                        // Add more columns as needed
+                    ]
+                });
+            }
+        });
+    });
+</script>

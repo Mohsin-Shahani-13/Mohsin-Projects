@@ -1,0 +1,181 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plus-RS</title>
+    <style>
+        /* Modal Styles */
+        /* Modal container */
+        .modal {
+            display: none; /* Initially hidden */
+            position: fixed; /* Fixed position at the top */
+            z-index: 1000; /* Sit on top of other content */
+            left: 50%; /* Center horizontally */
+            top: 10%; /* Position near the top */
+            transform: translateX(-50%); /* Center the modal horizontally */
+            width: 90%; /* Modal width */
+            max-width: 500px; /* Max width for responsiveness */
+            background-color: rgba(0, 0, 0, 0.7); /* Dark background */
+            padding: 20px;
+            transition: all 0.5s ease-in-out;
+            opacity: 0; /* Start as invisible */
+        }
+
+        /* Modal content */
+        .modal-content {
+            background-color: #fff; /* White background for contrast */
+            margin: 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+
+        /* Close Button */
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            float: right;
+            cursor: pointer;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        /* Modal sliding effect */
+        .modal.slide-down {
+            opacity: 1; /* Make visible */
+            top: 20%;
+        }
+
+        /* Style for confirm button */
+        #confirmBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+            #confirmBtn:hover {
+                background-color: #45a049;
+            }
+
+        /* Styling for the dropdown */
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .pad {
+            padding-bottom: 15px;
+            padding: 2px;
+            padding-top: 10px;
+        }
+
+        #lblMsg {
+            color: red;
+        }
+
+        body {
+            user-select: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+</head>
+<body id="main" class="hold-transition skin-blue sidebar-mini sidebar-collapse lte-fixed" style="background-color:black; overflow-y: hidden;">
+    <div class="wrapper" style="overflow:hidden">
+        <header class="main-header">
+            <nav class="navbar navbar-static-top">
+                <img src="~/Content/images/logo_reco.png" style="padding-top:4px; padding-bottom:3px;" />
+            </nav>
+        </header>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <table class="fullWidth" width="100%">
+                    <tr>
+                        <td colspan="4" class="pad">
+                            @Html.DropDownList("DDLProgram", new SelectList(ViewBag.DDLProgram, "Value", "Text"),
+                                new { @id = "DDLProgram", @class = "form-control", @tabindex = "1" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <div id="lblMsg" class="optionMsg text-danger"></div>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <table width="100%">
+                    <tr>
+                        <td width="70" align="right">
+                            <a id="confirmBtn" role="button" class="btn btn-primary" tabindex="2">Confirm</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        var modal = document.getElementById("myModal");
+        //var span = document.getElementsByClassName("close")[0];
+        var confirmBtn = document.getElementById("confirmBtn");
+
+        window.onload = function () {
+
+            modal.style.display = "block";
+            setTimeout(function () {
+                modal.classList.add("slide-down");
+            }, 10);
+            // Set focus on the dropdown when the modal opens
+            var dropdown = document.getElementById("DDLProgram");
+            if (dropdown) {
+                dropdown.focus();
+            }
+        }
+        // Add event listener for "Enter" key on the confirm button
+        confirmBtn.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.keyCode === 13) {
+                e.preventDefault(); // Prevent default behavior
+                confirmBtn.click(); // Trigger click event
+            }
+        });
+        confirmBtn.onclick = function () {
+            var dropdown = document.getElementById("DDLProgram");
+            var selectedValue = dropdown.value;
+
+            if (selectedValue === "Select Program" || selectedValue === "") {
+                document.getElementById('lblMsg').innerHTML = "";
+                document.getElementById('lblMsg').append('Please select a program');
+            } else {
+                document.getElementById('lblMsg').innerHTML = "";
+                modal.style.display = "none";
+
+                // Redirect to BigTv action with the selected program
+                window.location.href = '/Bigtv/Dashboard?program=' + encodeURIComponent(selectedValue);
+            }
+        };
+
+    </script>
+
+</body>
+</html>

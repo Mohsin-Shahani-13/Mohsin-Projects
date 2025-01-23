@@ -1,0 +1,151 @@
+﻿@model IP.Areas.Meta.Models.SOsStatus
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstSOsStatus" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+         var isSingleRow = false;
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var ischecked = $('#DockAllDate').is(':checked');
+        var custRef = $('#custRef').val();
+        var EvDateFrom = $('#EvDateFrom').val();
+        var EvDateTo = $('#EvDateTo').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SOsStatus/GetList',
+            data: {
+                frmDt: fDate,
+                toDate: tDate,
+                programId: _programId,
+                ProgramName: _ProgramName,
+                ischecked: ischecked,
+                custRef: custRef,
+                EvDateFrom: EvDateFrom,
+                EvDateTo: EvDateTo
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ID", "title": "ID", "width": "100px", "visible": false },
+                        { "data": "ProgramId", "title": "Program ID", "width": "100px", "visible": false },
+                        {
+                            "data": "CustomerReference", "title": "Customer Reference", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\SupplyChain\\SO\\Detail?SOHeaderId=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "shipdate", "title": "Ship Date", "width": "100px", "className": "text-right" },
+                        { "data": "Carrier", "title": "Carrier", "width": "60px" },
+                        { "data": "servicetypedescription", "title": "Service Type Desc.", "width": "140px" },
+                        { "data": "TrackingNo", "title": "Tracking No.", "width": "100px" },
+                        { "data": "Status", "title": "Status", "width": "100px" },
+                        { "data": "EventCode", "title": "Event Code ", "width": "70px"  },
+                        { "data": "EventDate", "title": "Event Date", "width": "80px", "className": "text-right" },
+                        { "data": "EventDescription", "title": "Event Description", "width": "200px" },
+                        { "data": "META-856", "title": "META-856", "width": "200px" },
+                        { "data": "META-Shipconfirmation", "title": "META-Shipconfirmation", "width": "160px" },
+                        { "data": "META-DeliveryNotification", "title": "META-DeliveryNotification", "width": "160px" },
+                        { "data": "META-ConShipNotification", "title": "META-ConShipNotification", "width": "160px" },
+                        { "data": "META-ConDeliveryNotification", "title": "META-ConDeliveryNotification", "width": "180px" },
+                        { "data": "META-Undeliverable", "title": "META-Undeliverable", "width": "160px" }
+
+                    ]
+
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstSOsStatus', data.lstSOsStatus, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>

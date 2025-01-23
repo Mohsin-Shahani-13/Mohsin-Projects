@@ -1,0 +1,208 @@
+﻿@model IP.Areas.BRT.Models.BRTLookup
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<style>
+
+    .leftsection {
+        text-align: center;
+        padding-top: 120px;
+        height: 460px;
+        
+    }
+
+    .left_panel_bottom {
+        text-align: center;
+        padding-bottom: 50px;
+        width: 35%;
+        height: 100%;
+    }
+
+    .right_panel_bottom {
+        text-align: center;
+        padding-bottom: 50px;
+        width: 15%;
+    }
+
+
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <table width="100%">
+        <tr>
+            <td style="width:180px; vertical-align:top;">
+                <div id="dataList" class="box panel panel-default">
+                    <div class="box-header with-border bg-blue-gradient">
+                        <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                            <span class="fa fa-filter fa-lg white" margin-left:1px;"></span>
+                        </button>
+                        <h6 class="box-title" id="head_lstUnitLst"><strong id="filterString"></strong></h6>
+                        <div>
+
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <table id="lstBRTLookup" class="table table-bordered table-striped text-sm table-hover" width="100%;">
+                            <thead>
+                                <tr>
+                                    <th>Bay</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblBody"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td style="vertical-align:top;">
+                <div class="row section-color">
+                    <div id="right_panel_top" class="col-md-12">
+                        <div id="leftsection" class="box panel panel-default leftsection">
+                            <h4>Click hyperlinks on Bay section to load data</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row section-color">
+                    <div id="left_panel_Bottom" class="col-md-6">
+                        <div id="left_bot_section" class="box panel panel-default leftsection">
+                            <h4>Click hyperlinks on above section to load data</h4>
+                        </div>
+                    </div>
+
+                    <div id="right_panel_bottom" class="col-md-6">
+                        <div id="right_bot_section" class="box panel panel-default leftsection">
+                            <h4>Click hyperlinks on left section to load data</h4>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#lstBRTLookup').data({
+            "paging": false,
+            "buttons": false,
+            "selection": false,
+
+
+        });
+    });
+
+    $(document).ready(function () {
+        $('#lstBRTLookup').data({
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: ""
+            }
+
+        });
+    });
+    var table = $('#lstBRTLookup').DataTable();
+
+    table.select.info(false);
+    var building = '@ViewBag.building'
+
+    ToggleDataList(false);
+    ToggleDataListPartShrtge('left_bot_section', false);
+    ToggleDataListPartShrtge('right_bot_section', false);
+    LoaData();
+    function LoaData() {
+
+        $('#tblBody').empty();
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var building = $('#ddlBuilding option:selected').text();
+
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/BRTLookup/GetList',
+            data:
+            {
+                programId: _programId,
+                ProgramName: _ProgramName,
+                building: building
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#tblBody').empty();
+                //$('#lstBRTLookup').empty();
+                //$('#lstBRTLookup').empty();
+                $('#filterString').append(data.filterString);
+
+
+                var columnDef = [
+                    {
+                        "width": "50px", "targets": 0,
+                        "data": null,
+                        render: function (data, type, row) {
+
+                            var url = '<a href="#" onclick="OpenViewBRT(\'\\\\BRT\\\\BRTLookup\\\\GetData?bay=' + row[0] + '&building=' + building + '\',\'right_panel_top\')">' + data + '</a>';
+                            return url;
+                        }
+                    },
+                ]
+
+                var tableHeader = $('.table').innerHeight();
+                var topHeader = $('.incomming').innerHeight();
+                var browserHeight = window.innerHeight;
+                var gridHeight = browserHeight - (tableHeader + topHeader)
+                ToggleDataList(true);
+                var h = getHeight(75);
+               // MakeMeBabyGrid('lstBRTLookup', data.lstBRTLookup, 600 , columnDef, false, true, $('#head_lstUnitLst').text(), false);
+                //MakeMeBabyGrid('lstBRTLookup', data.lstBRTLookup, 600, columnDef, false, true, $('#head_lstUnitLst').text(), false);
+                MakeDataGrid('lstBRTLookup', data.lstBRTLookup, 0, columnDef, false, false, false);
+               // MakeDataGrid('lstBRTLookup', data.lstBRTLookup, 100, columnDef, false, false, false);
+
+
+                ToggleDataListPartShrtge('left_bot_section', true);
+                ToggleDataListPartShrtge('right_bot_section', true);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+
+    function OpenViewBRT(_url, target) {
+
+        $('#right_panel_bottom').empty();
+        $('#right_panel_bottom').append('<div id="left_bot_section" class="box panel panel-default leftsection"><h4><p>Click hyperlinks on left section to load data</p></h4></div>');
+
+        $('#left_panel_Bottom').empty();
+        $('#left_panel_Bottom').append('<div id="left_bot_section" class="box panel panel-default leftsection"><h4><p>Click hyperlinks on above section to load data</p></h4></div>');
+
+            $.ajax({
+                url: _url,
+                success: function (data) {
+                    $('#' + target).hide();
+                    $("#wait").css("display", "none");
+                    $("#" + target).html(data);
+                    $('#' + target).show();
+                }
+            });
+
+        }
+
+</script>
+

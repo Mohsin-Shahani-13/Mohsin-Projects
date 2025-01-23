@@ -1,0 +1,809 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>\\10.211.9.34\wwwroot\PlusRS</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="Areas/ListingReports/Views/DefectList/Index.cshtml">
+      <publishTime>06/16/2021 03:33:35</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/DefectList/Option.cshtml">
+      <publishTime>06/17/2021 21:28:22</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartInquiry/Detail.cshtml">
+      <publishTime>06/17/2021 21:28:22</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartInquiry/Index.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartInquiry/Option.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartsInventory/Index.cshtml">
+      <publishTime>05/18/2021 02:14:38</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartsInventory/Option.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartsSerial/Detail.cshtml">
+      <publishTime>06/16/2021 23:22:26</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartsSerial/Index.cshtml">
+      <publishTime>04/15/2021 00:37:11</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartsSerial/Option.cshtml">
+      <publishTime>04/15/2021 00:37:11</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartsTransaction/Index.cshtml">
+      <publishTime>05/18/2021 02:14:38</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartsTransaction/Option.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartStructureBOM/Index.cshtml">
+      <publishTime>05/20/2021 22:25:31</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/PartStructureBOM/Option.cshtml">
+      <publishTime>05/20/2021 22:25:31</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/Rptyield/GetDetail.cshtml">
+      <publishTime>06/17/2021 21:28:22</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/Rptyield/Index.cshtml">
+      <publishTime>06/17/2021 21:28:22</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/Rptyield/Option.cshtml">
+      <publishTime>06/17/2021 21:28:22</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/SerialNumOnHold/Index.cshtml">
+      <publishTime>05/18/2021 05:09:57</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/SerialNumOnHold/Option.cshtml">
+      <publishTime>05/18/2021 02:14:42</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/Shared/_Layout.cshtml">
+      <publishTime>05/18/2021 05:09:58</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/SNInvNotShipped/Index.cshtml">
+      <publishTime>05/18/2021 05:09:57</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/SNInvNotShipped/Option.cshtml">
+      <publishTime>05/18/2021 02:14:42</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/web.config">
+      <publishTime>01/06/2021 03:41:34</publishTime>
+    </File>
+    <File Include="Areas/ListingReports/Views/_ViewStart.cshtml">
+      <publishTime>05/18/2021 05:09:58</publishTime>
+    </File>
+    <File Include="Areas/Logistics/Views/CrossDock/Index.cshtml">
+      <publishTime>05/21/2021 00:11:14</publishTime>
+    </File>
+    <File Include="Areas/Logistics/Views/CrossDock/Option.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/Logistics/Views/Docklog/Index.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/Logistics/Views/Docklog/Option.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/Logistics/Views/DockReceipts/Index.cshtml">
+      <publishTime>05/20/2021 22:25:31</publishTime>
+    </File>
+    <File Include="Areas/Logistics/Views/DockReceipts/Option.cshtml">
+      <publishTime>05/20/2021 22:25:31</publishTime>
+    </File>
+    <File Include="Areas/Logistics/Views/web.config">
+      <publishTime>02/12/2021 01:56:21</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/ComponentPickList/Index.cshtml">
+      <publishTime>06/14/2021 02:00:59</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/ComponentPickList/Option.cshtml">
+      <publishTime>06/14/2021 02:00:59</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/PartAging/Index.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/PartAging/Option.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/PartLocation/Index.cshtml">
+      <publishTime>04/15/2021 00:37:10</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/PartLocation/Option.cshtml">
+      <publishTime>04/15/2021 00:37:10</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/RO/Detail.cshtml">
+      <publishTime>04/21/2021 00:10:07</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/RO/GetRODetail.cshtml">
+      <publishTime>05/27/2021 03:18:13</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/RO/Index.cshtml">
+      <publishTime>06/14/2021 02:00:58</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/RO/Option.cshtml">
+      <publishTime>05/27/2021 03:18:13</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/RO/ROUnit.cshtml">
+      <publishTime>03/16/2021 02:39:27</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/RO/ROUnitAccessory.cshtml">
+      <publishTime>02/12/2021 01:56:21</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SO/Detail.cshtml">
+      <publishTime>04/19/2021 23:03:23</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SO/GetSODetail.cshtml">
+      <publishTime>05/27/2021 03:18:13</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SO/Index.cshtml">
+      <publishTime>05/27/2021 03:18:13</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SO/Option.cshtml">
+      <publishTime>05/17/2021 00:28:31</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SO/SOUnit.cshtml">
+      <publishTime>03/11/2021 03:47:02</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SO/SOUnitAccessory.cshtml">
+      <publishTime>02/12/2021 01:56:22</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SOPickList/Index.cshtml">
+      <publishTime>06/02/2021 21:21:27</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/SOPickList/option.cshtml">
+      <publishTime>06/02/2021 04:38:53</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/web.config">
+      <publishTime>12/29/2020 22:59:17</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WIP/GetUnits.cshtml">
+      <publishTime>04/12/2021 03:12:43</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WIP/GetWIP.cshtml">
+      <publishTime>05/27/2021 03:18:13</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WIP/Option.cshtml">
+      <publishTime>04/15/2021 03:26:14</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WIPAging/Index.cshtml">
+      <publishTime>04/15/2021 00:37:10</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WIPAging/Option.cshtml">
+      <publishTime>04/15/2021 00:37:10</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WO/Detail.cshtml">
+      <publishTime>04/20/2021 03:25:29</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WO/Index.cshtml">
+      <publishTime>05/07/2021 03:29:16</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WO/Option.cshtml">
+      <publishTime>04/15/2021 00:37:10</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WO/WOUnit.cshtml">
+      <publishTime>03/11/2021 03:47:02</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WOFaultRepair/Index.cshtml">
+      <publishTime>06/15/2021 04:04:05</publishTime>
+    </File>
+    <File Include="Areas/SupplyChain/Views/WOFaultRepair/Option.cshtml">
+      <publishTime>06/14/2021 02:00:59</publishTime>
+    </File>
+    <File Include="Assemblies/Antlr3.Runtime.dll">
+      <publishTime>12/29/2020 22:59:17</publishTime>
+    </File>
+    <File Include="Assemblies/ClosedXML.dll">
+      <publishTime>12/29/2020 22:59:17</publishTime>
+    </File>
+    <File Include="Assemblies/DocumentFormat.OpenXml.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/ExcelNumberFormat.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/FastMember.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/itextsharp.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/Microsoft.Web.Infrastructure.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/Newtonsoft.Json.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.ValueTuple.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.Web.Helpers.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.Web.Mvc.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.Web.Optimization.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.Web.Razor.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.Web.WebPages.Deployment.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.Web.WebPages.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/System.Web.WebPages.Razor.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Assemblies/WebGrease.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>12/29/2020 22:59:17</publishTime>
+    </File>
+    <File Include="bin/ClosedXML.dll">
+      <publishTime>12/29/2020 22:59:17</publishTime>
+    </File>
+    <File Include="bin/DocumentFormat.OpenXml.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/ExcelNumberFormat.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/FastMember.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/IP.dll">
+      <publishTime>06/17/2021 21:33:09</publishTime>
+    </File>
+    <File Include="bin/itextsharp.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.ValueTuple.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Helpers.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Optimization.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Deployment.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Razor.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="bin/WebGrease.dll">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/AdminLTE.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/all.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap-datepicker.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap-multiselect.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap.min.css">
+      <publishTime>02/25/2021 02:19:53</publishTime>
+    </File>
+    <File Include="Content/css/buttons.dataTables.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/datatable.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/datatable.select.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/EmptyLayout.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/font-awesome.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/ionicons.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/jquery.gridster.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/MyDataGrid.css">
+      <publishTime>02/12/2021 01:56:22</publishTime>
+    </File>
+    <File Include="Content/css/responsive-tables.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/scroller.dataTables.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/Site.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/Standards.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/css/_all-skins.min.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fa-solid.eot">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fa-solid.svg">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fa-solid.ttf">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fa-solid.woff">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fa-solid.woff2">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fontawesome-webfont.eot">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fontawesome-webfont.svg">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fontawesome-webfont.ttf">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fontawesome-webfont.woff">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/fontawesome-webfont.woff2">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/FontAwesome.otf">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.eot">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.svg">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.woff">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/3dots.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/copy.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/csv.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/delete-64.gif">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/details_close.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/details_edit.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/details_open.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/edit.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/Excel.gif">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/excel.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/GelBallGreen.gif">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/icon.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/Loading.gif">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/loading2.gif">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/loading21.gif">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/logo-mini.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/logo.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/logo_reco.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/noimage.jpg">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/No_Image.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/OctaneIcon.ico">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/OctaneWeb.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/Octel-web.ico">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/Octel-web.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/Octel.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/Octel_Logo.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/play.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/Plus.png">
+      <publishTime>02/12/2021 01:56:22</publishTime>
+    </File>
+    <File Include="Content/images/PlusRS2.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/PlusRS3.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/plus_icon.png">
+      <publishTime>02/12/2021 01:56:22</publishTime>
+    </File>
+    <File Include="Content/images/print.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/report-icon.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/sql.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/supplychain.png">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Content/images/trash.png">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Content/images/userImage.png">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/images/User_pic.png">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Content/Site.css">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-brands-400.eot">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-brands-400.svg">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-brands-400.ttf">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-brands-400.woff">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-brands-400.woff2">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-regular-400.eot">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-regular-400.svg">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-regular-400.ttf">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-regular-400.woff">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-regular-400.woff2">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-solid-900.eot">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-solid-900.svg">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-solid-900.ttf">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-solid-900.woff">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Content/webfonts/fa-solid-900.woff2">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Error.html">
+      <publishTime>12/29/2020 22:59:17</publishTime>
+    </File>
+    <File Include="Extensions/CodeTableListing.aspx">
+      <publishTime>02/25/2021 02:19:53</publishTime>
+    </File>
+    <File Include="Extensions/WidgetReport.aspx">
+      <publishTime>02/25/2021 02:19:53</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.eot">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.svg">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>12/29/2020 22:59:18</publishTime>
+    </File>
+    <File Include="Scripts/adminlte.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap-multiselect.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/buttons.bootstrap.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/buttons.colVis.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/buttons.html5.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/buttons.print.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/Chart.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/ChartBundle.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/chartCommon.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/ChartJsLabeling.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/common-v1.0.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/CommonGrids.js">
+      <publishTime>02/12/2021 01:56:21</publishTime>
+    </File>
+    <File Include="Scripts/datatables.bs.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/dataTables.buttons.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/dataTables.editor.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/datatables.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/dataTables.scroller.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/dataTables.select.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/datatable_sum.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/datepicker.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/datetime.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/gridCommon.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/gridmvc.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/gridmvc.lang.ru.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/gridmvc.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.slim.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/jquery.bootstrap.newsbox.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/jquery.gridster.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/jquery.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/jquery.responsive-tables.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/jszip.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/modernizr-2.6.2.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/moment.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/pdfmake.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/percentBar.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/Utility.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/vfs_fonts.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Scripts/zingchart.min.js">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/CodeTableListing/detail.cshtml">
+      <publishTime>05/18/2021 02:14:38</publishTime>
+    </File>
+    <File Include="Views/CodeTableListing/Index.cshtml">
+      <publishTime>05/18/2021 05:10:04</publishTime>
+    </File>
+    <File Include="Views/CodeTableListing/Option.cshtml">
+      <publishTime>05/20/2021 22:25:31</publishTime>
+    </File>
+    <File Include="Views/Dashboard/BigTv.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/Dashboard/DBIndex.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/Dashboard/Index.cshtml">
+      <publishTime>04/12/2021 03:12:43</publishTime>
+    </File>
+    <File Include="Views/Dashboard/SamsungHorizonChart.cshtml">
+      <publishTime>04/11/2021 23:40:37</publishTime>
+    </File>
+    <File Include="Views/Dashboard/SamsungRefresh.cshtml">
+      <publishTime>04/11/2021 23:40:37</publishTime>
+    </File>
+    <File Include="Views/Dashboard/Samsung_Horizon.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/Home/Base.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/Home/Error.cshtml">
+      <publishTime>04/11/2021 23:40:37</publishTime>
+    </File>
+    <File Include="Views/Home/Index.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/Home/WIPStatus.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/LogQueries/ActivityLog.cshtml">
+      <publishTime>03/16/2021 04:53:38</publishTime>
+    </File>
+    <File Include="Views/LogQueries/Index.cshtml">
+      <publishTime>03/16/2021 04:53:38</publishTime>
+    </File>
+    <File Include="Views/LogQueries/UnitList.cshtml">
+      <publishTime>04/06/2021 01:34:24</publishTime>
+    </File>
+    <File Include="Views/MnuLibrary/Index.cshtml">
+      <publishTime>04/11/2021 23:40:37</publishTime>
+    </File>
+    <File Include="Views/Shared/GetProgramBySite.cshtml">
+      <publishTime>05/07/2021 03:29:16</publishTime>
+    </File>
+    <File Include="Views/Shared/_Layout.cshtml">
+      <publishTime>05/07/2021 05:03:27</publishTime>
+    </File>
+    <File Include="Views/Shared/_LayoutDashboard.cshtml">
+      <publishTime>02/12/2021 01:56:21</publishTime>
+    </File>
+    <File Include="Views/Shared/_LayoutEmpty.cshtml">
+      <publishTime>02/12/2021 01:56:21</publishTime>
+    </File>
+    <File Include="Views/Shared/_LayoutInner.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/SqlDocs/Index.cshtml">
+      <publishTime>01/06/2021 03:41:35</publishTime>
+    </File>
+    <File Include="Views/web.config">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/Widget/Index.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>12/29/2020 22:59:19</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>06/17/2021 21:33:10</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

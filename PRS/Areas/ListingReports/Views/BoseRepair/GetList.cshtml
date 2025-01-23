@@ -1,0 +1,433 @@
+﻿@model IP.Areas.ListingReports.Models.BoseRepair
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+    .Part_Undrln {
+        text-decoration: underline;
+    }
+
+    .leftsection {
+        text-align: center;
+        padding-top: 50px;
+        height: 25%;
+    }
+
+    .hideColumn {
+        display: none;
+    }
+</style>
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="panel panel-default">
+        <div class="row">
+
+            <div class="box-header with-border bg-blue-gradient">
+                @{
+                    if (ViewBag.Option == "op")
+                    {
+                        <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                            <span class="fa fa-filter fa-lg white"></span>
+                        </button>
+                        <input id="rptCode" type="hidden" value="011" />
+                    }
+                    else
+                    {
+                        <button type="button" id="opp" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                            <span class="fa fa-filter fa-lg white"></span>
+                        </button>
+                        <input id="rptCode" type="hidden" value="240" />
+                        <input id="rptTitle" type="hidden" value="Work In Progress" />
+
+                    }
+                }
+                <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+                <div id="buttons" class="box-tools pull-right">
+                </div>
+            </div>
+            <div class="box-body">
+                <table id="lstData" class="table table-bordered table-striped text-sm" width="100%">
+                    <thead>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        var _lstData = @Html.Raw(Json.Encode(Model.lstRepair));  //datatable wiplist
+        var _lstDataColumn = @Html.Raw(Json.Encode(Model.lstData)); // column headers
+        var ProgramID = '@ViewBag.ProgramID';
+
+        var conType = '@HttpContext.Current.Session["CONN_TYPE"].ToString()';
+        var Program = '@ViewBag.ProgramName';
+
+        //console.log(conType + "" + Program)
+
+        var th = '<tr>'; //create th for headers
+        var tft = '<tr>'; //create th for footers
+
+
+
+            $.each(_lstDataColumn, function (index, value) {
+
+                if (index == 0) {
+                    th += '<th id=idx' + index + ' class="notexport">' + value + ' </th>'; // for table headers
+                }
+                else {
+                    th += '<th id=idx' + index + '>' + value + ' </th>'; // for table headers
+                }
+
+                if (index == 0) {
+                    tft += '<th Style="text-align:left"></th>';
+                }
+                else if (index == 4) {
+                    tft += '<th></th>';
+                    //for table footer show total.
+                }
+                else {
+                    tft += '<th></th>'; // for table footers
+                }
+
+            });
+
+
+
+
+            th += '</tr>'; // th end
+            tft += '</tr>' // th footer end
+            $('#lstData >thead').append(th); // th header append to thead
+            $('#lstData >tfoot').append(tft); // th footer append to footer
+
+
+
+        var columnDef = [];
+
+
+    // hyperlink on in_wip units
+    for (i = 0; i <= _lstDataColumn.length - 1; i++) {
+
+        columnDef.push({
+
+            "className": "text-center", "width": "70px", "targets": i });
+    }
+
+
+
+
+        //ToggleDataList(true);
+        ToggleDataList(true);
+        var h = getHeight(88);
+        //MakeFrameGrid('lstData', _lstData, h, columnDef, 'lstWIP', true, false, footerfunc);
+
+        MakeDataGrid('lstData', _lstData, 0, columnDef, true, true, false);
+
+        // Apply green color if Inbound/Output Actual is greater than Inbound/Output Plan
+        var th = '<tr>'; //create th for headers
+        var tft = '<tr>'; //create th for footers
+
+        $.each(_lstDataColumn, function (index, value) {
+            if (index == 0) {
+                th += '<th id=idx' + index + ' class="notexport">' + value + ' </th>'; // for table headers
+            } else {
+                th += '<th id=idx' + index + '>' + value + ' </th>'; // for table headers
+            }
+
+            if (index == 0) {
+                tft += '<th Style="text-align:left"></th>';
+            } else if (index == 4) {
+                tft += '<th></th>';
+                //for table footer show total.
+            } else {
+                tft += '<th></th>'; // for table footers
+            }
+        });
+
+        th += '</tr>'; // th end
+        tft += '</tr>'; // th footer end
+        $('#lstData > thead').append(th); // th header append to thead
+        $('#lstData > tfoot').append(tft); // th footer append to footer
+
+        var columnDef = [];
+
+        // hyperlink on in_wip units
+        for (i = 0; i <= _lstDataColumn.length - 1; i++) {
+            columnDef.push({
+                "className": "text-center", "width": "70px", "targets": i
+            });
+        }
+
+        // ToggleDataList(true);
+        ToggleDataList(true);
+        var h = getHeight(88);
+        // MakeFrameGrid('lstData', _lstData, h, columnDef, 'lstWIP', true, false, footerfunc);
+        MakeDataGrid('lstData', _lstData, 0, columnDef, true, true, false);
+
+        // Apply green or red color based on Actual vs. Plan comparison for specific rows across all date columns
+        $('#lstData tbody tr').each(function () {
+            var $row = $(this);
+
+            // Check if the row corresponds to the rows that need conditional coloring
+            var rowLabel = $row.find('td:first').text().trim();
+
+            if (["InboundPlan", "InboundActual", "OutputPlan", "OutputActual"].includes(rowLabel)) {
+
+                // Loop through all date columns in the row
+                $row.find('td').each(function (index) {
+                    if (index > 0) { // Skip the first column (row labels)
+
+                        var cellValue = parseInt($(this).text().trim());
+
+                        // Get corresponding Plan/Actual value
+                        if (rowLabel === "InboundActual") {
+                            var inboundPlanCell = $row.siblings().find('td:first:contains("InboundPlan")').nextAll().eq(index - 1);
+                            var inboundPlan = parseInt(inboundPlanCell.text().trim());
+
+                            if (isNaN(inboundPlan)) { // Check if Inbound Plan is null/empty
+                                $(this).css({
+                                    'color': 'green',
+                                    'font-weight': 'bold'
+                                }); // Apply green and bold if Plan is null
+                            } else if (cellValue >= inboundPlan) {
+                                $(this).css({
+                                    'color': 'green',
+                                    'font-weight': 'bold'
+                                }); // Green and bold if Inbound Actual > Inbound Plan
+                            } else if (cellValue < inboundPlan) {
+                                $(this).css({
+                                    'color': 'red',
+                                    'font-weight': 'bold'
+                                }); // Red and bold if Inbound Actual < Inbound Plan
+                            }
+                        }
+
+                        if (rowLabel === "OutputActual") {
+                            var outputPlanCell = $row.siblings().find('td:first:contains("OutputPlan")').nextAll().eq(index - 1);
+                            var outputPlan = parseInt(outputPlanCell.text().trim());
+
+                            if (isNaN(outputPlan)) { // Check if Output Plan is null/empty
+                                $(this).css({
+                                    'color': 'green',
+                                    'font-weight': 'bold'
+                                }); // Apply green and bold if Plan is null
+                            } else if (cellValue >= outputPlan) {
+                                $(this).css({
+                                    'color': 'green',
+                                    'font-weight': 'bold'
+                                }); // Green and bold if Output Actual > Output Plan
+                            } else if (cellValue < outputPlan) {
+                                $(this).css({
+                                    'color': 'red',
+                                    'font-weight': 'bold'
+                                }); // Red and bold if Output Actual < Output Plan
+                            }
+                        }
+
+                    }
+                });
+            }
+        });
+
+    }
+
+    function MakeFrameGrid(tableId, data, tableHeight, columns, buttonId, search, isScrollX, footerFunction, isFramed, reportTitle, isSqlDoc, showPaging) {
+        var startTime = performance.now();
+        var isFooter = footerFunction === undefined || footerFunction === false ? false : true;
+        isFramed = isFramed === undefined || isFramed === false ? false : true;
+        isScrollX = isScrollX === undefined ? false : true;
+        if (search === undefined) { search = true; }
+        reportTitle = reportTitle === undefined ? $('.box-title').text() : reportTitle;
+        showPaging = showPaging === undefined ? true : false;
+
+        var gridHeight = 0;
+        var gridButtonsClass = '';
+        //var gridButtonSize = 0;
+        gridButtonsClass = 'btn-header btn-box-tool';
+        gridSearchBoxClass = 'bg-white';
+        gridButtonSize = 20;
+
+        var layoutHeader = $('nav').innerHeight();
+        //var topHeader = $('#topHeader').innerHeight();
+        var cardHeader = $('.box-header').innerHeight();
+        var tableHeader = $('#' + tableId + ' > thead').innerHeight();
+        var tableFooter = 25;
+        var cardFooterH = 20;
+
+
+        if (showPaging)
+            cardFooterH = 30;
+
+        //if (isFooter === true)
+        //    tableFooter = 24;
+
+        var browserHeight = window.innerHeight;
+        tableFooter = tableFooter === undefined ? 0 : tableFooter;
+        // gridHeight = browserHeight - (cardHeader + tableHeader + tableFooter + cardFooterH);
+        gridHeight = browserHeight - (cardHeader + tableHeader + layoutHeader + tableFooter + cardFooterH);
+        //gridHeight = 640;
+        //For SQL Documentation
+        var boxtool;
+        if (search === true) {
+            if (isFramed) {
+                $('#trHeadSearch').empty();
+                boxtool = '<input class="txtSearch-frame" id="txtFrameSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                $('#trHeadSearch').append(boxtool);
+            }
+            else {
+                $('#' + buttonId).empty();
+                if (isSqlDoc === true)
+                    AddSqlDoc(buttonId);
+                boxtool = '<input class="txtSearch-frame" id="txtFrameSearch' + tableId + '" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                $('#' + buttonId).append(boxtool);
+            }
+        }
+        else {
+            if (isFramed) {
+                $('#trHeadSearch').empty();
+                boxtool = '<input class="txtSearch-frame" id="txtFrameSearch" type="text" placeholder="Search.." style="padding-left: 10px !important;" >';
+                $('#trHeadSearch').append(boxtool);
+            }
+            else {
+                $('#' + buttonId).empty();
+                if (isSqlDoc === true)
+                    AddSqlDoc(buttonId);
+            }
+        }
+
+        var table = $('#' + tableId).DataTable({
+            order: [],
+            data: data,
+            destroy: true,
+            columns: columns,
+            bInfo: showPaging,
+            paging: showPaging,
+            ordering: true,
+            searching: search,
+            deferRender: true,
+            pagingType: 'full',
+            pageLength: 100,
+            scrollCollapse: false,
+            scrollX: isScrollX,
+            scrollY: gridHeight,
+            footerCallback: footerFunction,
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                oPaginate: {
+                    sNext: '<i class="fa fa-forward"></i>',
+                    sPrevious: '<i class="fa fa-backward"></i>',
+                    sFirst: '<i class="fa fa-step-backward"></i>',
+                    sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            },
+            "dom": "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'#designedBy.col-sm-3'><'col-sm-4'p>>", // Added By Tahir
+            buttons: [
+                {
+                    extend: 'copyHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(244, 164, 37);"></i><i class="fa fa-copy fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Copy',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        columns: 'th:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 179, 98);"></i><i class="fa fa-file-excel fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Export to excel',
+                    title: reportTitle,
+                    filename: 'DataExport',
+                    exportOptions: {
+                        columns: 'th:not(.notexport)'
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        var excelColumns = [];
+
+                        header = $("row[r=2]", sheet);
+
+                        cols = header.find("c");
+                        cols.each(function () {
+                            t = $(this).find("t").text();
+                            if (t.includes("Serial") || t.includes("Customer Ref."))
+                                excelColumns.push($(this).attr("r"));
+                        });
+                        $(excelColumns).each(function () {
+                            var cell = this.substring(0, 1);
+                            $('row:gt(1) c[r^="' + cell + '"]', sheet).each(function () {
+                                $(this).removeAttr('s');
+                                $(this).attr('t', 'inlineStr');
+                                $(this).find('v').replaceWith('<is><t>' + $(this).text() + '</t></is>');
+                            });
+                        });
+
+                    }
+                },
+                {
+                    extend: 'print',
+                    footer: true,
+                    text: '<span><span class="fa-stack"><i class="fa fa-circle fa-stack-2x" style="color: rgb(0, 204, 255);"></i><i class="fa fa-print fa-stack-1x" style="color: white;"></i></span></span>',
+                    titleAttr: 'Print',
+                    title: '',
+                    messageTop: function () { return '<h4>' + reportTitle + '</h4>'; },
+                    filename: 'DataExport',
+                    exportOptions: {
+                        columns: 'th:not(.notexport)'
+                    }
+                }
+
+            ],
+            select: true
+        });
+
+        table.buttons().container()
+            .appendTo('#' + buttonId);
+
+        table.button(0).nodes().removeClass('btn btn-default buttons-copy buttons-html5');
+        table.button(0).nodes().addClass(gridButtonsClass);
+
+        table.button(1).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(1).nodes().addClass(gridButtonsClass);
+
+        table.button(2).nodes().removeClass('btn btn-default buttons-excel buttons-html5');
+        table.button(2).nodes().addClass(gridButtonsClass);
+
+        $('#txtFrameSearch' + tableId).on('keyup change', function () {
+            table.search(this.value).draw();
+        });
+        $('.dataTables_filter').hide();
+        table.columns.adjust().draw();
+        var endTime = performance.now();
+        var elapsedTimeInSeconds = (endTime - startTime) / 1000;
+
+        $.ajax({
+            cache: false,
+            type: 'POST',
+            url: '/Home/SaveLog',
+            data: {
+                gridExecutionTime: elapsedTimeInSeconds
+            },
+            success: function () {
+                //console.log('Value sent to controller!');
+            },
+            error: function () {
+                //console.log('Error sending value to controller!');
+            }
+        }); //Added by Huzaifa
+    }
+</script>

@@ -1,0 +1,233 @@
+﻿@model IP.Areas.Meta.Models.MetaSOHourlyOps
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+
+<style>
+    .pad {
+        width: 260px;
+    }
+</style>
+<table class="fullWidth">
+    @*<tr>
+            <td colspan="4" class="pad">
+                @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = ""})
+            </td>
+        </tr>*@
+
+    <tr>
+        <td class="pad">
+            <strong>From:</strong>
+            <div class='input-group date' id='dtpFrom'>
+                @Html.TextBoxFor(model => model.fromDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+        <td class="pad">
+            <strong>To:</strong>
+            <div class='input-group date' id='dtpTo'>
+                @Html.TextBoxFor(model => model.toDt, htmlAttributes: new { @class = "form-control" })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </td>
+
+        <td class="dateFont ">
+            <div>
+                <br />
+                <br />
+                <label for="_DockAllDate" style="margin-left:0px">
+                    <input type="checkbox" id="DockAllDate" name="DockAllDate" onclick="EnableDisableOrdCreat_2(this)" />
+                    All
+                </label>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.serialNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="serialNo" name="serialNo" autofocus onkeydown="GoOnEnter()" />
+           
+        </td>
+    </tr>
+   
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td align="center">
+            <span id="myValidationMessage" class="optionMsg"></span>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    function EnableDisableOrdCreat_2(dockIsAllDate) {
+        var dockIsAllDate = $('#DockAllDate').is(':checked');
+        document.getElementById("fromDt").disabled = dockIsAllDate;
+        var nodes1 = document.getElementById("fromDt").getElementsByTagName('*');
+        document.getElementById("toDt").disabled = dockIsAllDate;
+        var nodes1 = document.getElementById("toDt").getElementsByTagName('*');
+        for (var i = 0; i < nodes1.length; i++) {
+            nodes1[i].disabled = dockIsAllDate;
+        }
+    };
+
+    function textBoxValidation() {
+        $('#myValidationMessage').empty();
+        if ($('#DockAllDate').is(':checked') && $('#serialNo').val() === '') {
+           
+            $('#myValidationMessage').append('Please input the Value');
+            return false;
+        } else {
+     
+            $('#myValidationMessage').empty();
+            return true;
+        }
+    }
+    
+
+
+    $('#option').on('shown.bs.modal', function () {
+
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            var retValue = textBoxValidation();
+            if (retVal == true && retValue == true) {
+                Go();
+            }
+            
+            
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        var retValue = textBoxValidation();
+        if (retVal == true && retValue == true) {
+            Go();
+        }
+    });
+
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $("#dtpTo, #dtpFrom").mouseover(function () {
+        $(this).css('cursor', 'pointer');
+    });
+
+
+ 
+
+    //$(document).ready(function () {
+    //    $("#DockAllDate").click(function () {
+    //        if ($(this).is(":checked")) {
+    //            $("#serialNo").prop("disabled", false);
+    //        } else {
+    //            $("#serialNo").prop("disabled", true);
+    //        }
+    //    });
+    //});
+
+    //For Date Picker
+    dateFrom();
+    dateTo();
+    function dateFrom() {
+
+        //debugger
+
+        var date = new Date();
+        var newdate = new Date();
+        //For From Date
+        newdate.setDate(newdate.getDate() - 1);
+
+        //var dd = (newdate.getFullYear(newdate.getMonth()), '0' + 1);
+        var dd = ('0' + newdate.getDate() ).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1 )).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('fromDt').value = someFormattedDate;
+    }
+    function dateTo() {
+        var date = new Date();
+        var newdate = new Date(date);
+        //For To Date
+        newdate.setDate(newdate.getDate()-1);
+
+        var dd = ('0' + newdate.getDate()).slice(-2);
+        var mm = ('0' + (newdate.getMonth() + 1)).slice(-2);
+        var y = newdate.getFullYear();
+        var strat = newdate
+
+        var someFormattedDate = y + '.' + mm + '.' + dd;
+
+        document.getElementById('toDt').value = someFormattedDate;
+    }
+
+    $("#dtpTo, #dtpFrom").datepicker({
+        format: 'yyyy.mm.dd',
+        autoclose: true,
+        startDate: '2023-04-03' ,
+        endDate: '-1d'
+    });
+
+    function isDate(txtDate) {
+        if (txtDate.length != 10) {
+            return false;
+        }
+        if (txtDate.substring(4, 5) !== '.' || txtDate.substring(7, 8) !== '.') {
+            return false;
+        }
+        return true;
+    }
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+
+        if (fDate.length <= 0 || tDate.length <= 0 || !isDate(fDate) || !isDate(tDate) || fDate > tDate) {
+            $('#lblMsg').append('Enter a valid date');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function Go() {
+        
+
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+        var serialNo = $('#serialNo').val();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var ischecked = $('#DockAllDate').is(':checked');
+
+        $('#option').modal('hide');
+        OpenPage('\\Meta\\MetaSOHourlyOps\\Index?programId=' + programId + '&programName=' + ProgramName + 'serialNo=' + serialNo + '&frmDt=' + fDate + ' &toDate=' + tDate + '&ischecked=' + ischecked +  '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>
+

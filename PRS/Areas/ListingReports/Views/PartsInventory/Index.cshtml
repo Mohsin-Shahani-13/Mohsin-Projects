@@ -1,0 +1,366 @@
+﻿@model IP.Areas.ListingReports.Models.PartsInventory
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstPartsInventory" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+
+                        @if (ViewBag.programName == "BOSE")
+                        {
+                            <th></th>
+                        }
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Total :</th>
+                        @if (ViewBag.programName == "BOSE")
+                        {
+                            <th></th>
+                        }
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        @*<div id="right_panel" class="col-md-2">
+                <div id="rightsection" class="" style="margin-top:50%; margin-left:10px; padding-right:10px;">
+                    <h4>Click Qty hyperlinks on left section to load data</h4>
+                </div>
+            </div>*@
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        var _partNo = $('#partNo').val();
+        var _programId = $('#ProgramID').val();
+        var _ProgramName = $("#ProgramID option:selected").text();
+        var _Warehouse = $("#ddlWarehouse option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/PartsInventory/GetList',
+            data: {
+                partNo: _partNo,
+                programId: _programId,
+                ProgramName: _ProgramName,
+                Warehouse: _Warehouse
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                //$.each(data.lstPartsInventory, function (index, row) {
+
+                //if (data.lstPartsInventory.length == 1) {
+                //    isSingleRow = true;
+                //    MenuHide();
+                //    OpenPage('\\ListingReports\\PartInquiry\\Detail?partNo=' + row["partno"] + '&page=detailed');
+                //}
+                //});
+                if (_ProgramName == "BOSE") {
+                    var columnDef = [
+                        { "data": "ID", "title": "ID", "width": "60px", "visible": false },
+                        { "data": "NAME", "title": "Program", "width": "60px" },
+                        { "data": "Code_Name", "title": "Code_Name" },
+                        {
+                            "data": "partno", "title": "Part No.", "width": "100px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["partno"] + '&ProgramId=' + row["ID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                      
+                        { "data": "description", "title": "Description" },
+                        { "data": "Warehouse", "title": "Warehouse", "width": "100px" },
+                        { "data": "LocationId", "visible": false },
+                        { "data": "locationno", "title": "Location" },
+                        { "data": "Bin", "title": "Bin", "width": "80px" },
+                        { "data": "ConfigId", "visible": false },
+                        { "data": "Configuration", "title": "Configuration", "width": "50px" },
+                        {
+                            "data": "PalletBoxNo", "title": "Pallet Box No.", "width": "80px",
+                            render: function (data, type, row) {
+                                var data_replace = data;
+                                if (data_replace == '' || data_replace == null) {
+                                    data_replace = 0;
+                                }
+                                return data_replace;
+                            }
+                        },
+                        { "data": "LotNo", "title": "Lot No.", "width": "60px" },
+                        { "data": "SerialFlag", "title": "Serial Flag", "width": "60px", "visible": false },
+                        {
+                            "data": "availableqty", "title": "Qty", "width": "30px", "className": "text-right",
+                            render: function (data, type, row) {
+
+                                if (row["SerialFlag"] == 'N') {
+                                    url = thousands_separators(row["availableqty"]);
+                                }
+                                else {
+
+                                    if (row["PalletBoxNo"] == '' || row["PalletBoxNo"] == null) {
+                                        row["PalletBoxNo"] = 0;
+                                    }
+                                    var url = '<a href="\\ListingReports\\PartsSerial\\Index?partNo=' + row["partno"] + '&locationId=' + row["LocationId"] + '&config=' + row["ConfigId"] + '&palletBoxNo=' + row["PalletBoxNo"] + '&programId=' + row["ID"] + '&page=list&originFrom=PartsQty" target=_blank > ' + thousands_separators(data) + '</a>';
+                                }
+                                return url;
+
+                            }
+
+                        },
+                        { "data": "Username", "title": "Created By", "width": "100px" },
+                        { "data": "CreateDate", "title": "Created On", "width": "90px", "className": "text-right" },
+                        { "data": "LastActivityDate", "title": "Last Activity On", "width": "90px", "className": "text-right" },
+                    ]
+
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(14).footer()).html(thousands_separators(api.column(14, { search: 'applied' }).data().sum()));
+
+                    }
+                }
+                else {
+                 
+                        var columnDef = [
+                            { "data": "ID", "title": "ID", "width": "60px", "visible": false },
+                            { "data": "NAME", "title": "Program", "width": "60px" },
+                            {
+                                "data": "partno", "title": "Part No.", "width": "100px",
+                                render: function (data, type, row) {
+                                    var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["partno"] + '&ProgramId=' + row["ID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                            },
+                            { "data": "description", "title": "Description" },
+                            { "data": "Warehouse", "title": "Warehouse", "width": "100px" },
+                            { "data": "LocationId", "visible": false },
+                            { "data": "locationno", "title": "Location" },
+                            { "data": "Bin", "title": "Bin", "width": "80px" },
+                            { "data": "ConfigId", "visible": false },
+                            { "data": "Configuration", "title": "Configuration", "width": "50px" },
+                            {
+                                "data": "PalletBoxNo", "title": "Pallet Box No.", "width": "80px",
+                                render: function (data, type, row) {
+                                    var data_replace = data;
+                                    if (data_replace == '' || data_replace == null) {
+                                        data_replace = 0;
+                                    }
+                                    return data_replace;
+                                }
+                            },
+                            { "data": "LotNo", "title": "Lot No.", "width": "60px" },
+                            { "data": "SerialFlag", "title": "Serial Flag", "width": "60px", "visible": false },
+                            {
+                                "data": "availableqty", "title": "Qty", "width": "30px", "className": "text-right",
+                                render: function (data, type, row) {
+
+                                    if (row["SerialFlag"] == 'N') {
+                                        url = thousands_separators(row["availableqty"]);
+                                    }
+                                    else {
+
+                                        if (row["PalletBoxNo"] == '' || row["PalletBoxNo"] == null) {
+                                            row["PalletBoxNo"] = 0;
+                                        }
+                                        var url = '<a href="\\ListingReports\\PartsSerial\\Index?partNo=' + row["partno"] + '&locationId=' + row["LocationId"] + '&config=' + row["ConfigId"] + '&palletBoxNo=' + row["PalletBoxNo"] + '&programId=' + row["ID"] + '&page=list&originFrom=PartsQty" target=_blank > ' + thousands_separators(data) + '</a>';
+                                    }
+                                    return url;
+
+                                }
+
+                            },
+                            { "data": "Username", "title": "Created By", "width": "100px" },
+                            { "data": "CreateDate", "title": "Created On", "width": "90px", "className": "text-right" },
+                            { "data": "LastActivityDate", "title": "Last Activity On", "width": "90px", "className": "text-right" },
+                        ]
+
+                        //For Displaying  Footer Sum
+                        var footerfunc = function () {
+                            var api = this.api();
+                            $(api.column(13).footer()).html(thousands_separators(api.column(13, { search: 'applied' }).data().sum()));
+
+                        }
+                    
+                }
+                  
+                   
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstPartsInventory', data.lstPartsInventory, 0, columnDef, true, true, footerfunc);
+                
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+
+@*<script>
+
+        ToggleDataList(false);
+        LoadData();
+        function LoadData() {
+            $('#tblBody').empty();
+
+            $('#option').modal('hide');
+            var isSingleRow = false;
+            var partNo = $('#partNo').val();
+            var _programId = $('#ProgramID').val();
+            var _ProgramName = $("#ProgramID option:selected").text();
+            $.ajax({
+
+                cache: false,
+                type: 'GET',
+                url: '/PartsInventory/GetList',
+                data: {
+                    partNo: partNo,
+                    programId: _programId,
+                    ProgramName: _ProgramName
+                },
+                datatype: JSON,
+                success: function (data) {
+                    $('#filterString').append(data.filterString);
+
+                    $.each(data.lstPartsInventory, function (index, row) {
+
+                        //if (data.lstPartsInventory.length == 1) {
+                        //    isSingleRow = true;
+                        //    MenuHide();
+                        //    OpenPage('\\ListingReports\\PartInquiry\\Detail?partNo=' + row["partno"] + '&page=detailed');
+                        //}
+                    });
+
+                    if (!isSingleRow) {
+                        var columnDef = [
+                            { "data": "NAME", "title": "Program", "width": "60px" },
+                            {
+                                "data": "partno", "title": "Part No.", "width": "100px",
+                                render: function (data, type, row) {
+                                    var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["partno"] + '&page=list" target=_blank > ' + data + '</a>';
+                                    return url;
+                                }
+                            },
+                            { "data": "description", "title": "Description" },
+                            { "data": "Warehouse", "title": "Warehouse", "width": "100px" },
+                            { "data": "locationno", "title": "Location", "width": "140px" },
+                            { "data": "Configuration", "title": "Configuration", "width": "50px" },
+                            { "data": "PalletNo", "title": "Pallet No.", "width": "60px" },
+                            { "data": "CartonNo", "title": "Carton No.", "width": "60px" },
+                            { "data": "SerialFlag", "title": "Serial Flag", "width": "60px", "visible": false},
+
+                            //{
+                            //    "data": "availableqty", "title": "Qty", "width": "60px", "className": "text-right"
+                            //    ,
+                            //    render: function (data, type, row) {
+                            //        if (data.lstGetSerials != null) {
+                            //            var url = '<a href="#" onclick="OpenView(\'\\\\ListingReports\\\\PartsInventory\\\\GetSerials?partNo=' + row["partno"] + '&locNo=' + row["locationno"] + '\',\'right_panel\')">' + data + '</a>';
+                            //            return url;
+                            //        }
+                            //    },
+                            //},
+                            {
+                                "data": "availableqty", "title": "Qty", "width": "60px", "className": "text-right",
+                                render: function (data, type, row) {
+                                    if (row["SerialFlag"] == 'N') {
+                                        url = row["availableqty"];
+                                    }
+                                    else {
+                                        var url = '<a href="#" onclick="OpenView(\'\\\\ListingReports\\\\PartsInventory\\\\GetSerials?partNo=' + row["partno"] + '&locNo=' + row["locationno"] + '\',\'right_panel\')">' + data + '</a>';
+                                    }
+                                    return url;
+                                }
+                            },
+
+
+                            { "data": "Username", "title": "Created By", "width": "100px" },
+                            { "data": "CreateDate", "title": "Created On", "width": "90px", "className": "text-right" },
+                        ]
+                        //For Displaying  Footer Sum
+                        var footerfunc = function () {
+                            var api = this.api();
+                            //$(api.column().footer()).html(thousands_separators(api.column(8).data().sum()));
+                            $(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+
+                        }
+
+                        ToggleDataList(true);
+                        MakeDataGrid('lstPartsInventory', data.lstPartsInventory, 0, columnDef, true, true, footerfunc);
+                    }
+                    if (data["ErrorMessage"] != null) {
+                        $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                    }
+                },
+                onerror: function (r) { r },
+                failure: function (r) { r }
+            });
+
+
+        }
+    </script>*@

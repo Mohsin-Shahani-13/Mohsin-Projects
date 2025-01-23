@@ -1,0 +1,378 @@
+﻿@model IP.Areas.Meta.Models.MetaTrackDataWipeCompliance
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            @*<button type="button" class="btn btn-box-tool" title="Refresh Page" onclick="LoadData();">
+            <span class="fas fa-redo-alt fa-lg white"></span>
+        </button>*@
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            @*<button type="button" class="btn btn-success btn-sm" id="Summary" onclick="DrawChart()">
+                Summary
+            </button>*@
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstMetaDatawipeCompliance" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                        <th></th>
+                        <th class="notexport"></th>
+
+                        @*<th></th> Last Run On*@
+
+                    </tr>
+                    
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+    var countY = 0;
+    var countN = 0;
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var faFilter = $('#FAFilter option:selected').val();
+        var bounceFilter = $('#BounceFilter option:selected').val();
+        var TestFilter = $('#TestFilter option:selected').val();
+        var DataWipeTestPerformed24HrsFilter = $('#DataWipeTestPerformed24HrsFilter option:selected').val();
+        var LogFilter = $('#LogFilter option:selected').val();
+        var ListFilter = $('#ListFilter option:selected').val();
+        var IdleFilter = $('#IdleFilter option:selected').val();
+        var isAllDate = $('#isAllDate').is(':checked');
+        var DataWipeResult = $('#DataWipeResult option:selected').val();
+        var Model = $('#ddModel option:selected').val();
+        //var _programId = $('#ddProgram').val();
+        //var _ProgramName = $("#ddProgram option:selected").text();
+
+
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/MetaTrackDataWipeCompliance/GetList',
+            data: {
+                frmDt: fDate,
+                toDt: tDate,
+                isAllDate: isAllDate,
+                faFilter: faFilter,
+                bounceFilter: bounceFilter,
+                TestFilter: TestFilter,
+                DataWipeTestPerformed24HrsFilter: DataWipeTestPerformed24HrsFilter,
+                LogFilter: LogFilter,
+                ListFilter: ListFilter,
+                IdleFilter: IdleFilter,
+                DataWipeResult: DataWipeResult,
+                Model: Model
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').text(data.filterString);
+                
+                var columnDef = [
+                    { "data": "ProgramID", "title": "Program Id", "width": "60px", "visible": false },
+                    { "data": "ReceiptSKU", "title": "SKU", "width": "80px" },
+                    {
+                        "data": "DataWipeComplete", "title": "Data Wipe Complete", "width": "120px", "className": "text-center",
+                        render: function (data, type, row) {
+                            if (data === 'Y') {
+                                var colorData = '<span style="color:green;font-weight:bolder">' + data + '</span>'
+                            }
+                            else if (data === 'N') {
+                                var colorData = '<span style="color:red;font-weight:bolder">' + data + '</span>'
+                            }
+                            return colorData;
+                        }
+                    },
+                    {
+                        "data": "DataWipeResult", "title": "Data Wipe Result", "width": "120px", "className": "text-center"
+                    },
+                    { "data": "DataWipeFailOccurrences", "title": "Data Wipe Fail Occurrences", "width": "150px" },
+                    {
+                        "data": "TAT", "title": "Docklog to Current Date TAT in Hours", "width": "200px", "className": "text-center"
+                    },
+
+                    { "data": "CurrentLocation", "title": "Current Location", "width": "90px" },
+                    { "data": "CurrentMachineName", "title": "Current Machine Name", "width": "150px" },
+                    { "data": "CurrentResultMessage", "title": "Current Result Message", "width": "250px" },
+                    { "data": "CurrentWorkstation", "title": "Current Workstation", "width": "120px", "className": "text-center" },
+                    { "data": "Model", "title": "Model", "width": "120px" },
+                    { "data": "CustRef", "title": "RMA", "width": "80px" },
+                    { "data": "ReceiptSerialNo", "title": "SerialNo", "width": "60px" },
+                    { "data": "OrderType", "title": "Order Type", "width": "100px" },
+                    { "data": "RepairType", "title": "Repair Type", "width": "130px" },
+                    { "data": "DockLogDate", "title": "Dock Log Date", "width": "90px", "className": "text-right" },
+                    { "data": "ReceiptDate", "title": "Receipt Date", "width": "90px", "className": "text-right" },
+                    { "data": "WIPE_PASS_DATE", "title": "Wipe Pass Date", "width": "100px", "className": "text-right" },
+                    { "data": "WIPE_FAIL_DATE", "title": "Wipe Fail Date", "width": "100px", "className": "text-right" },
+                    { "data": "WrkstnMoveToMRB", "title": "Workstation Move to MRB", "width": "140px", "className": "text-right" },
+                    { "data": "UnitFailureCode", "title": "Unit Failure Code", "width": "100px" },
+                    
+                    { "data": "DekitDate", "title": "Dekit Date", "width": "90px", "className": "text-right" },
+
+
+                    { "data": "WIPStartDate", "title": "WIP Start Date", "width": "90px", "className": "text-right" },
+                    { "data": "FAFIlter", "title": "FA Filter", "width": "80px" },
+                    { "data": "BounceFilter", "title": "Bounce Filter", "width": "100px" },
+                    { "data": "ProblemLogFilter", "title": "Problem Log Filter", "width": "120px" },
+                    { "data": "BlacklistFilter", "title": "Lock Device Filter", "width": "100px" },
+                    {
+                        "data": "DecimalReceiveToDataWipeDelta", "title": "Receive To DataWipe Delta", "width": "150px", "className": "text-center",
+                        render: function (data, type, row) {
+                            var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                            return val;
+                        }
+                    },
+                    {
+                        "data": "DecimalWorkingDays", "title": "Delta TAT", "width": "60px", "className": "text-center",
+                        render: function (data, type, row) {
+                            var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                            return val;
+                        }
+                    },
+                    { "data": "ReceiptTransactionID", "title": "Receipt Tran. Id", "width": "90px" },
+                    { "data": "DekitTransactionID", "title": "Dekit Tran. Id", "width": "80px" },
+                    { "data": "WOHeaderID", "title": "WO Header Id", "width": "90px" },
+                    { "data": "ReceiptType", "title": "Receipt Type", "width": "100px" },
+                    {
+                        "data": "DecimalDockLogToReceiptDelta", "title": "Dock Log To Receipt Delta", "width": "150px", "className": "text-center",
+                        render: function (data, type, row) {
+
+                            var val = COLUMN_FORMAT.formatTwoDecimal(data);
+                            return val;
+                        }
+                    },
+                    {
+                        "data": "DataWipeTestPerformed24Hrs", "title": "Data Wipe Completed in 24Hrs", "width": "180px", "className": "text-center",
+                        render: function (data, type, row) {
+                            if (data === 'Y') {
+                                var colorData = '<span style="color:green;font-weight:bolder">' + data + '</span>'
+                            }
+                            else if (data === 'N') {
+                                var colorData = '<span style="color:red;font-weight:bolder">' + data + '</span>'
+                            }
+                            return colorData;
+                        }
+                    },
+                    
+                   //{ "data": "CanBeDataWiped", "title": "Data Wiped", "width": "70px", "className": "text-center" },
+                   
+                   
+                    {
+                        "data": "DataWipeTestPerformed", "title": "Data Wipe Complete", "width": "170px", "className": "text-center", "visible": false,
+                        render: function (data, type, row) {
+                            if (data === 'Y') {
+                                var colorData = '<span style="color:green;font-weight:bolder">' + data + '</span>'
+                            }
+                            else if (data === 'N') {
+                                var colorData = '<span style="color:red;font-weight:bolder">' + data + '</span>'
+                            }
+                            return colorData;
+                        }
+                    },
+                   
+                    
+                    
+                    
+                    
+                   
+                   
+                    
+                  
+                    
+                    
+                   
+
+                ];
+
+                ToggleDataList(true);
+
+                MakeDataGrid('lstMetaDatawipeCompliance', data.lstMetaDatawipeCompliance, 0, columnDef, true, true);
+
+                //for (var i = 0; i < data.lstMetaDatawipeCompliance.length; i++) {
+                //    var value = data.lstMetaDatawipeCompliance[i].DataWipeTestPerformed24Hrs;
+
+
+                //    if (value === 'Y') {
+                //        countY++;
+                //    } else if (value === 'N') {
+                //        countN++;
+                //    }
+                //}
+                //console.log(countY + ' ' + countN);
+
+
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+    function DrawChart() {
+    
+        var counts = [countY, countN];
+        var data = {
+            labels: ['Data Wipe Test Performed'],
+            datasets: [
+                {
+                    label: '# of Data Wipe Performed',
+                    data: [countY],
+                    backgroundColor: ['green'], // Colors for Y
+                    borderWidth: 1,
+                },
+                {
+                    label: '# of Data Wipe Not Performed',
+                    data: [countN],
+                    backgroundColor: ['red'],
+                    borderWidth: 1,
+                },
+            ],
+        };
+
+
+
+    // Create a canvas element dynamically
+    var canvas = document.createElement('canvas');
+    canvas.width = 300;
+    canvas.height = 300;
+    var ctx = canvas.getContext('2d');
+
+    // Create the bar chart
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            plugins: {
+                datalabels: {
+                    color: 'white'
+                }
+            },
+
+            responsive: true,
+
+            title: {
+                display: true,
+                text: 'Distribution of Data Wipe (Y) and Not Data Wipe (N)',
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        fontColor: 'blue',
+                        display: true
+                    }
+                }],
+
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                    },
+                }],
+            },
+        },
+    });
+    Chart.defaults.global.defaultFontColor = "#000";
+    $('#commentsheader').html('Summary' + '<button type="button" class="close full-opacity-hover" data-dismiss="modal" style="margin-top:-7px;">&times;</button>');
+    $('#commentsbody').html(canvas);
+    $('#comments').modal('show');
+
+
+    }
+</script>
+

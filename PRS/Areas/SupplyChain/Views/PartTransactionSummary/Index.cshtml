@@ -1,0 +1,109 @@
+﻿@model IP.Areas.SupplyChain.Models.PartTransactionSummary
+
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container-fluid">
+    <input id="rptcode" type="hidden" value="142" />
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle ></strong><strong id="filterString" style="font-weight:700; font-size:12px;"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body">
+            <table id="lstTran" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    LoaData();
+    function LoaData() {
+        $('#tblBody').empty();
+        
+        var programId = $('#ddProgram').val();      
+        var partNo = $('#partNo').val();
+        var fDate = $('#fromDt').val();
+        var tDate = $('#toDt').val();
+        var isSingleRow = false;
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/PartTransactionSummary/GetList',
+            data: {
+                programId: programId,
+                partNo: partNo,
+                frmDate: fDate,
+                toDate: tDate
+            },
+            datatype: JSON,
+            success: function (data) {
+                
+                $('#tblBody').empty();
+                $('#filterString').append(data.filterString);
+                
+
+                $.each(data.lstTran, function (index, column) {
+                    if (data.lstTran.length == 1) {
+                        isSingleRow = true;
+                        MenuHide();
+                        OpenPage('\\SupplyChain\\PartTransactionSummary\\Detail?programId=' + programId + '&partNo=' + partNo + '&frmDate=' + fDate + ' &toDate=' + tDate + '&page=detailed');
+                    }
+                });
+
+                if (!isSingleRow) {
+
+                    var columDef = [
+                        { "title": "ProgramID", "visible": false},
+                        //{ "title": "Part No." },
+                        { "title": "Part No.", "width": "400px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\SupplyChain\\PartTransactionSummary\\Detail?programId=' + row[0] + '&partNo=' + row[1] + '&frmDate=' + fDate + ' &toDate=' + tDate + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "title": "Description" }
+                    ];
+
+                ToggleDataList(true);
+                MakeDataGrid('lstTran', data.lstTran, 0, columDef, true, false, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                    }
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+
+

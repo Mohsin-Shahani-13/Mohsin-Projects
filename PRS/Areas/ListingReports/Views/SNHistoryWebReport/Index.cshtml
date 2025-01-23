@@ -1,0 +1,146 @@
+﻿@model IP.Areas.ListingReports.Models.SNHistoryWebReport
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+
+        <div class="box-body" id="lstP">
+            <table id="lstSNHistoryWebReport" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @*<tbody id="tblBody"></tbody>*@
+                <tfoot>
+                    <tr>
+                        <th class="notexport"></th>
+                        <th style="text-align:left;">Total: </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+        //var fDate = $('#fromDt').val();
+        //var tDate = $('#toDt').val();
+        //var _programId = $('#ProgramID').val();
+        //var _ProgramName = $("#ProgramID option:selected").text();
+        var serialNo = $('#serialNo').val();
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/SNHistoryWebReport/GetList',
+            data: {
+                serialNo: serialNo,
+                programId: programId,
+                ProgramName: ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramId", "title": "ProgramId", "width": "50px", "visible": false },
+                        { "data": "DATE", "title": "Transaction Date", "width": "100px", "className": "text-right"},
+                        { "data": "GOPROMOVETYPE", "title": "GoPro Move Type", "width": "120px" },
+                        {
+                            "data": "PARTNO", "title": "Part No.", "width": "120px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PARTNO"] + '&ProgramId=' + row["ProgramId"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "PARTTYPEDESC", "title": "Part Type Desc.", "width": "110px" },
+                        { "data": "PARTDESCRIPTION", "title": "Part Desc."},
+                        { "data": "PLUS_LOCATION", "title": "Plus Location", "width": "150px" },
+                        { "data": "GOPRO_LOCATION", "title": "GoPro Location", "width": "110px" },
+                        { "data": "REFERENCE", "title": "Reference", "width": "80px" },
+                        { "data": "QTY", "title": "Qty", "width": "60px", "className": "text-right" },
+                        {
+                            "data": "SERIALNUMBER", "title": "Serial No.", "width": "120px",
+                            render: function (data, type, row) {
+
+                                var url = '<a href= \\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SERIALNUMBER"] + '&ProgramId=' + row["ProgramId"] + '&PartNo=' + row["PARTNO"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "TRANSACTIONID", "title": "Transaction Id", "width": "120px" },
+                        { "data": "Input", "title": "Input", "width": "120px" }
+                    ]
+
+                    //For Displaying  Footer Sum
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9).data().sum()));
+                        //$(api.column(8).footer()).html(thousands_separators(api.column(8).data().sum()));
+
+                    }
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstSNHistoryWebReport', data.lstSNHistoryWebReport, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+
+
+    }
+</script>
+

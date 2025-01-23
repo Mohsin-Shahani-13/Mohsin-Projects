@@ -1,0 +1,109 @@
+﻿@model IP.Areas.ListingReports.Models.PrevShipScrap
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+    tr {
+        white-space: nowrap;
+    }
+</style>
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>Prev. Week Ship & Scrap </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstPrevShipScrap" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th style="text-align:left">Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+      
+        var _fDate = $('#fromDt').val();
+        
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/PrevShipScrap/GetList',
+            data: {
+                fDate: _fDate
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                    var columnDef = [
+                        { "data": "ReportDate", "title": "Report Date", "width": "70px", "className": "text-right" },
+                        { "data": "ProgramID", "title": "Program ID", "width": "70px", "visible" :false },
+                        {
+                            "data": "PartNo", "title": "Part No.",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "Partner", "title": "Partner", "width": "90px" },
+                        { "data": "Repair QTY", "title": "Repair Qty", "width": "80px", "className": "text-right" },
+                        { "data": "Scrap QTY", "title": "Scrap Qty", "width": "80px", "className": "text-right" }
+                ];
+
+                //For Displaying  Footer Sum
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(4).footer()).html(thousands_separators(api.column(4, { search: 'applied' }).data().sum()));
+                    $(api.column(5).footer()).html(thousands_separators(api.column(5, { search: 'applied' }).data().sum()));
+
+                }
+                    ToggleDataList(true);
+                MakeDataGrid('lstPrevShipScrap', data.lstPrevShipScrap, 0, columnDef, true, true, footerfunc);
+                
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+
+
+

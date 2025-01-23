@@ -1,0 +1,124 @@
+﻿@model IP.Areas.ListingReports.Models.PLUSGenericInformation
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style type="text/css">
+    .Rpt-report {
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        text-align: center;
+        border-radius: 15px;
+        width: 90px;
+        height: 20px;
+    }
+</style>
+
+<div id="parentDiv" class="container-fluid">
+    <div class="row" style="height:100%">
+        <div class="col-md-2">
+            <div id="dataList" class="box panel panel-default">
+                <div class="box-header with-border bg-blue-gradient">
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle</strong></h6>
+                    <div id="buttons_left" class="box-tools pull-right">
+
+                    </div>
+                </div>
+
+                <div class="box-body" id="CodeUnit">
+                    <table id="lstReports" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                        <thead class="sorted-asc">
+                            <tr>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10" id="rghtPanel">
+            <h3 style="padding-top:300px; text-align:center">Click on report to load data </h3>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#lstReports').data({
+            "paging": false,
+            "buttons": false
+        });
+    });
+
+    $(document).ready(function () {
+        $('#lstReports').data({
+            language: {
+                emptyTable: "<p style=\"text-align:left;\">No record(s) found.</p>",
+                zeroRecords: "<p style=\"text-align:left;\">No matching record(s) found</p>",
+                infoFiltered: "",
+                info: " _START_ to _END_ of _TOTAL_ "
+            }
+        });
+    });
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#dataList').css('display', '');
+
+        $('#tblBody').empty();
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/PLUSGenericInformation/GetReport',
+            data: {
+            },
+            datatype: JSON,
+            success: function (data) {
+
+                var columnDef = [
+                    {
+                        "data": "RptName", "title": "Reports",
+                        render: function (data, type, row) {
+
+                            //var url = '<a href= "\\ListingReports\\PLUSGenericInformation\\OpenReport?RptId=' + row["RptId"] + '&page=list" target=_blank > <button class="Rpt-report" >Rpt Report</button></a>';
+                            if (row["RptHasOptionPage"] == true) {
+                                //var url = '<a href= "\\ListingReports\\PLUSGenericInformation\\Option?RptName=' + row["RptName"] + '&RptId=' + row["RptId"] + '&RptHasProgramId=' + row["RptHasProgramId"] + '&RptLabel=' + row["RptLabel"] + '&RptInputField=' + row["RptInputField"] + '&RptCtrlType=' + row["RptCtrlType"] + '&RptOperator=' + row["RptOperator"] + '&page=list" target=_blank> <button class="Rpt-report" >Rpt Report</button></a>';
+                                var url = '<a onclick="OpenView(\'\\\\ListingReports\\\\PLUSGenericInformation\\\\Option?RptName=' + row["RptName"] + '&RptId=' + row["RptId"] + '&RptInputField=' + row["RptInputField"] + '&RptLabel=' + row["RptLabel"] + '&RptHasProgramId=' + row["RptHasProgramId"] + '&RptCtrlType=' + row["RptCtrlType"] + '&RptOperator=' + row["RptOperator"] + '&IsDetail=' + row["IsDetail"] + '\',\'rghtPanel\')">' + data + '</a>';
+
+                                //console.log(url)
+                            }
+                            else {
+                                //var url = '<a href= "\\ListingReports\\PLUSGenericInformation\\Detail?RptName=' + row["RptName"] + '&RptId=' + row["RptId"] + '&RptHasProgramId=' + row["RptHasProgramId"] + '&RptLabel=' + row["RptLabel"] + '&RptInputField=' + row["RptInputField"] + '&RptCtrlType=' + row["RptCtrlType"] + '&RptOperator=' + row["RptOperator"] + '&page=list" target=_blank> <button class="Rpt-report" >Rpt Report</button></a>';
+                                var url = '<a onclick="OpenView(\'\\\\ListingReports\\\\PLUSGenericInformation\\\\Detail?RptName=' + row["RptName"] + '&RptId=' + row["RptId"] + '&RptInputField=' + row["RptInputField"] + '&RptLabel=' + row["RptLabel"] + '&RptHasProgramId=' + row["RptHasProgramId"] + '&RptCtrlType=' + row["RptCtrlType"] + '&RptOperator=' + row["RptOperator"] + '\',\'rghtPanel\')">' + data + '</a>';
+
+                            }
+                            return url;
+                        },
+                    },
+                ];
+
+                var footerfunc = function () {
+                    var api = this.api();
+                    $(api.column(0).footer()).html(thousands_separators(api.column(0).data().sum()));
+                }
+                ToggleDataList(true);
+                var h = getHeight(96);
+                MakeFrameGrid('lstReports', data.lstReports, h, columnDef, 'buttons_left', true, false, footerfunc);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>
+
+
+
+

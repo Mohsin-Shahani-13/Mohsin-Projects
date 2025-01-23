@@ -1,0 +1,413 @@
+﻿@model IP.Areas.SupplyChain.Models.DailyPulse
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool">
+                @*title="Option Page" onclick="$('#option').modal('show');"*@
+                <span class="fa fa-list fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstDailyPulse" class="table table-bordered table-striped text-sm table-hover">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th style="text-align:left">Total:</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === "0" ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        $('#tblBody').empty();
+
+        var isSingleRow = false;
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/DailyPulse/GetList',
+            data: {
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "Date", "title": "Date", "width": "70px", "className": "text-right" },
+                        { "data": "Commodity", "title": "Commodity", "width": "150px" },
+                        { "data": "Current WIP Units", "title": "Current WIP Units", "width": "150px", "className": "text-center" },
+                        {
+                            "data": "OCB Qty <= 5 Days", "title": "OCB Qty <= 5 Days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "OCB Qty > 5 Days", "title": "OCB Qty > 5 Days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+
+                        {
+                            "data": "Units <= 5 Days", "title": "Units <= 5 Days", "width": "100px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Units > 5 Days", "title": "Units > 5 Days", "width": "100px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Workable WIP <= 5 Days", "title": "Workable WIP <= 5 Days", "width": "150px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Workable WIP > 5 Days", "title": "Workable WIP > 5 Days", "width": "150px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "NPI Hold TRP <= 5 Days", "title": "NPI Hold TRP <= 5 Days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+
+                        {
+                            "data": "NPI Hold TRP > 5 Days", "title": "NPI Hold TRP > 5 Days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "NPI Hold Dell <= 5 Days", "title": "NPI Hold Dell <= 5 Days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "NPI Hold Dell > 5 Days", "title": "NPI Hold Dell > 5 Days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Material Hold in 1 day", "title": "Material Hold in 1 day", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Material Hold in 2-3 days", "title": "Material Hold in 2-3 days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+
+                        {
+                            "data": "Material Hold in 4-5 days", "title": "Material Hold in 4-5 days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Material Hold > 5 days", "title": "Material Hold > 5 days", "width": "130px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Engineering Hold TRP <= 5 Days", "title": "Engineering Hold TRP <= 5 Days", "width": "180px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Engineering Hold TRP > 5 Days", "title": "Engineering Hold TRP > 5 Days", "width": "170px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Engineering Hold Dell <= 5 Days", "title": "Engineering Hold Dell <= 5 Days", "width": "170px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+
+                        {
+                            "data": "Engineering Hold Dell > 5 Days", "title": "Engineering Hold Dell > 5 Days", "width": "170px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "OEM Hold <= 5 Days", "title": "OEM Hold <= 5 Days", "width": "150px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "OEM Hold > 5 Days", "title": "OEM Hold > 5 Days", "width": "150px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Unit Capacity", "title": "Unit Capacity", "width": "150px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Volume Received", "title": "Volume Received", "width": "100px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Volume Shipped", "title": "Volume Shipped", "width": "100px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "TAT Performance to 5 Days Qty", "title": "TAT Performance to 5 Days Qty", "width": "170px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "NFF Qty", "title": "NFF Qty", "width": "80px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Repaired Qty", "title": "Repaired Qty", "width": "100px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                        {
+                            "data": "Scrapped Qty", "title": "Scrapped Qty", "width": "100px", "className": "text-center",
+
+                            render: function (data, type, row) {
+
+                                var val = COLUMN_FORMAT.formatNumberForZero(data);
+                                return val;
+                            }
+                        },
+                    ];
+                    ToggleDataList(true);
+
+                     var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(27).footer()).html(thousands_separators(api.column(27, { search: 'applied' }).data().sum()));
+                        $(api.column(28).footer()).html(thousands_separators(api.column(28, { search: 'applied' }).data().sum()));
+                        $(api.column(29).footer()).html(thousands_separators(api.column(29, { search: 'applied' }).data().sum()));
+
+
+                    }
+                    MakeDataGrid('lstDailyPulse', data.lstDailyPulse, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>
+
+
+

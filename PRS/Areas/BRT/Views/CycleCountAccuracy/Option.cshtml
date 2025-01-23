@@ -1,0 +1,103 @@
+﻿@model IP.Areas.BRT.Models.CycleCountAccuracy
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+
+<style>
+    .pad {
+        width: 180px;
+    }
+
+    .padding {
+        padding: 2px;
+        padding-top: 24px;
+        width: 200px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
+            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2" class="pad">
+            <label>Go Back: </label>
+            <input id="no" class="form-control" type="number" min="1" max="7" value="7" 
+                   onkeydown="GoOnEnter()" />
+        </td>
+
+        <td colspan="2" class="padding">
+            <div>
+                <select class="form-control" name="" id="calender">
+                    <option selected value="Daily">Days</option>
+                    <option value="Weekly">Weeks</option>
+                    <option value="Monthly">Months</option>
+                </select>
+            </div>
+        </td>
+    </tr>
+
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+
+<script>
+    $('#option').on('shown.bs.modal', function () {
+
+    });
+
+     function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    function OptionsIsValid() {
+        $('#lblMsg').empty();
+        var no = $('#no').val();
+        if (no < 1 || no > 7) {
+            $('#lblMsg').append('Enter a valid No.');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function Go() {
+        var programId = $('#ddProgram').val();
+        var programName = $('#ddProgram option:selected').text();
+        var no = $('#no').val();
+        var calender = $('#calender option:selected').text();
+          $('#option').modal('hide');
+        OpenPage('\\BRT\\CycleCountAccuracy\\Index?programID=' + programId + '&programName=' + programName + '&no=' + no + '&calender=' + calender +'&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+    }
+</script>

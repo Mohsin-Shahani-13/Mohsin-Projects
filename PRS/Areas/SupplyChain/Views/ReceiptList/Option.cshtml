@@ -1,0 +1,113 @@
+﻿@model IP.Areas.SupplyChain.Models.ReceiptList
+@{
+    ViewBag.Title = "Option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        width: 180px;
+    }
+</style>
+<table class="fullWidth">
+    <tr>
+        <td class="pad" colspan="4">
+            <label>Report Type:</label>
+            @Html.DropDownList("rptType", new List<SelectListItem>
+                {
+
+                   new SelectListItem{ Text="Summary", Value = "Summary",  },
+                   new SelectListItem{ Text="Detail", Value = "Detail" },
+
+
+                }, new { @id = "rptName", @class = "form-control" })
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.PalletBoxNo, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="PalletBoxNo" name="PalletBoxNo" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+    </tr>
+</table>
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<script>
+    $('#option').on('shown.bs.modal', function () {
+        $('#PalletBoxNo').focus();
+    });
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+        }
+    }
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true) {
+            Go();
+        }
+    });
+
+    function OptionsIsValid() {
+
+        var PalletBoxNo = $('#PalletBoxNo').val();
+
+        $('#lblMsg').empty();
+
+        if (PalletBoxNo == "") {
+            $('#lblMsg').append('Please input the Value');
+
+            return false;
+        }
+
+        if (PalletBoxNo != "" ) {
+            $('#lblMsg').empty();
+            return true;
+        }
+        //if (PalletBoxNo == "" || LocationNo != "" && PartNo == "") {
+        //    $('#lblMsg').empty();
+        //    return true;
+        //}
+    }
+
+    function Go() {
+
+        var RptType = $('#rptName option:selected').text();
+        var PalletBoxNo = $('#PalletBoxNo').val();
+
+        $('#option').modal('hide');
+        //window.open('../Externals/ReportViewer.aspx?PalletBoxNo=' + PalletBoxNo + '&rptName=ReceiptList');
+        //OpenPage('\\SupplyChain\\ReceiptList\\?PalletBoxNo=' + PalletBoxNo + '&rptName=PackingList' + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        if (RptType == "Summary") {
+
+            //for Summary
+            OpenPage('\\SupplyChain\\ReceiptList\\Summary?PalletBoxNo=' + PalletBoxNo + ' &RptType=' + RptType + '&rptName=ReceiptList' + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+
+        }
+        else {
+
+            //for Detail
+            OpenPage('\\SupplyChain\\ReceiptList\\Detail?PalletBoxNo=' + PalletBoxNo + ' &RptType=' + RptType +  '&rptName=ReceiptList' + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+
+        }
+    }
+</script>
+

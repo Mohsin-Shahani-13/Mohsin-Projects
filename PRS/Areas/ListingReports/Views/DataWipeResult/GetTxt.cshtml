@@ -1,0 +1,8 @@
+﻿@model IP.Areas.Biztalk.Models.OutboundTransactionDetail
+@{
+    ViewBag.Title = "GetTxt";
+    Layout = null;
+    Response.ContentType = "text/plain;charset=utf-8";
+}
+
+@Html.Raw(ViewBag.TxtData)

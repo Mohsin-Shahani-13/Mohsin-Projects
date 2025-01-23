@@ -1,0 +1,84 @@
+﻿@model IP.Areas.SupplyChain.Models.ShipmentDocument
+@{
+    ViewBag.Title = "option";
+    Layout = null;
+}
+
+<style>
+    .pad {
+        padding-bottom: 15px;
+        padding: 2px;
+        padding-top: 10px;
+    }
+</style>
+<table class="fullWidth" cellpadding="10" cellspacing="10">
+    <tr>
+        <td colspan="4" class="pad">
+            @Html.LabelFor(model => model.CustRef, new { @class = "col-4 col-form-label" })
+            <input type="text" class="form-control" id="custRef" name="custRef" autofocus
+                   onkeydown="GoOnEnter()" />
+        </td>
+
+    </tr>
+</table>
+<br />
+<table width="100%">
+    <tr>
+        <td align="center">
+            <div id="lblMsg" class="optionMsg">
+            </div>
+        </td>
+        <td width="70" align="right">
+            <a id="btnGo" role="button" class="btn btn-primary">Confirm</a>
+        </td>
+        <td width="100" align="center">
+            <a id="btnCancel" data-dismiss="modal" class="cancel">Cancel</a>
+        </td>
+    </tr>
+</table>
+<input id="rptcode" type="hidden" value='@Request.QueryString["rptCode"]' />
+<script>
+
+    function GoOnEnter() {
+        if (event.keyCode == 13) {
+            var retVal = OptionsIsValid();
+            if (retVal == true) {
+                Go();
+            }
+
+        }
+    }
+
+    $('#btnGo').click(function () {
+        var retVal = OptionsIsValid();
+        if (retVal == true ) {
+            Go();
+        }
+    });
+
+    function OptionsIsValid() {
+
+        $('#lblMsg').empty();
+        var custRef = $('#custRef').val();
+
+        if (custRef.length < 3) {
+            $('#lblMsg').text('Please Enter Customer Reference.');
+            //$("#lblMsg").css("color", 'red');
+            return false;
+        }
+        else {
+            $('#lblMsg').empty();
+            return true;
+        }
+    }
+
+    function Go() {
+
+        var custRef = $('#custRef').val();
+
+        $('#option').modal('hide');
+       // window.open("\\Externals\\ReportViewer.aspx?custRef=" + custRef + "&rptName=ShipmentDocument", '_blank');
+        OpenPage('\\SupplyChain\\ShipmentDocument\\Index?custRef=' + custRef + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+
+    }
+</script>

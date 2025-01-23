@@ -1,0 +1,117 @@
+﻿@model IP.Areas.ListingReports.Models.AgedRepairs
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstAgedRepairs" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+
+        $('#tblBody').empty();
+        var aged = $('#IdleOver').val();
+        var programId = $('#ProgramID').val();
+        var ProgramName = $("#ProgramID option:selected").text();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/AgedRepairs/GetList',
+            data: {
+                aged: aged,
+                programId: programId,
+                ProgramName: ProgramName
+            },
+            datatype: JSON,
+            success: function (data) {
+                console.log(data)
+                $('#filterString').append(data.filterString);
+
+                var columnDef = [
+                    { "data": "programid", "title": "Program Id", "width": "100px", "visible": false },
+                    { "data": "ID", "title": "Ro Id", "width": "100px", "visible": false },
+                    {
+                        "data": "RMA", "title": "RMA No.", "width": "100px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\SupplyChain\\RO\\Detail?Id=' + row["ID"] + '&custRef=' + row["RMA"] + '&ProgramId=' + row["programid"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    {
+                        "data": "SerialNo", "title": "Serial No.", "width": "120px",
+                        render: function (data, type, row) {
+
+                            var url = '<a href= "\\ListingReports\\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["programid"] + '&PartNo=' + row["SKU"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "DOCK DATE", "title": "Dock Date", "width": "90px", "className": "text-right" },
+                    { "data": "RECEIPT DATE", "title": "Receipt Date", "width": "90px", "className": "text-right" },
+                    { "data": "Country", "title": "Country", "width": "60px" },
+                    {
+                        "data": "SKU", "title": "SKU", "width": "80px",
+                        render: function (data, type, row) {
+                            var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["SKU"] + '&ProgramId=' + row["programid"] + '&page=list" target=_blank > ' + data + '</a>';
+                            return url;
+                        }
+                    },
+                    { "data": "DESCRIPTION", "title": "Description" },
+                    { "data": "STATUS", "title": "Status", "width": "90px" },
+                    { "data": "AGE", "title": "Age", "width": "50px", "className": "text-right" }
+                ]
+
+
+                ToggleDataList(true);
+
+                MakeDataGrid('lstAgedRepairs', data.lstAgedRepairs, 0, columnDef, true, true, false);
+
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+
+</script>
+
+
+
+
+

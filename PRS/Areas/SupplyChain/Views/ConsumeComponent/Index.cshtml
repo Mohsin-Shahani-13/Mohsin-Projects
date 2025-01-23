@@ -1,0 +1,170 @@
+﻿@model IP.Areas.SupplyChain.Models.ConsumeComponent
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="box-header with-border bg-blue-gradient">
+            <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                <span class="fa fa-filter fa-lg white"></span>
+            </button>
+            <h6 class="box-title"><strong>@ViewBag.ReportTitle </strong><strong id="filterString"></strong></h6>
+
+
+            <div id="buttons" class="box-tools pull-right">
+
+            </div>
+        </div>
+        <div class="box-body" id="lstP">
+            <table id="lstConsumeComponent" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
+                <thead class="sorted-asc">
+                    <tr>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th class="notexport"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+                <tfoot>
+                    <tr>
+
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+
+        var isSingleRow = false;
+        var programId = $('#ddProgram').val();
+        var ProgramName = $("#ddProgram option:selected").text();
+        var fromDt = $('#fromDt').val();
+        var toDt = $('#toDt').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/ConsumeComponent/GetList',
+            data: {
+                programId: programId,
+                ProgramName: ProgramName,
+                fromDt: fromDt,
+                toDt: toDt
+
+
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "PartNo", "title": "Part No.", "width": "40px", "visible": false },
+                        { "data": "RoId", "title": "Ro ID", "width": "40px", "visible": false },
+                        { "data": "ID", "title": "ProgramID", "width": "40px", "visible": false },
+                        { "data": "ProgramName", "title": "Program", "width": "50px", "visible": false },
+                       
+                        {
+                            "data": "SerialNo", "title": "Serial No.", "width": "80px",
+                            render: function (data, type, row) {
+                                var d = data.toString();
+                                if (row["HAS_SN"] == 'N' || row["SerialNo"] == "*") {
+                                    url = row["SerialNo"];
+                                }
+                                else {
+                                    var url = '<a href= "\\ListingReports\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&Programid=' + row["ID"] + '&partno=' + row["PartNo"] + '&page=list" target=_blank > ' + d + '</a>';
+                                } return url;
+                            }
+                        },
+                        {
+                            "data": "CustomerReference", "title": "Customer Ref.", "width": "50px",
+                            render: function (data, type, row) {
+
+                                var url = '<a href= "\\SupplyChain\\RO\\Detail?ID=' + row["RoId"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "Workstation", "title": "Current Work Station ", "width": "100px"
+                        },
+                        {
+                            "data": "ComponentPartNo", "title": "Comp. Part No. ", "width": "60px",
+                            render: function (data, type, row) {
+                                var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["ComponentPartNo"] + '&ProgramId=' + row["ID"] + '&page=list" target=_blank > ' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        { "data": "Part_Desc", "title": "Comp. Desc. ", "width": "200px" },
+                        {
+                            "data": "Qty_issued", "title": "Qty Issued ", "width": "30px", "className": "text-right"
+                        },
+                        {
+                            "data": "Configuration", "title": "Configuration ", "width": "30px"
+                        },
+                        { "data": "Location", "title": "Location", "width": "120px" },
+                        { "data": "Part_Type", "title": "Part Type ", "width": "40px" },
+                        { "data": "CreatedBy", "title": "Created By", "width": "80px" },
+                        {
+                            "data": "ConsumeDate", "title": "Consume On ", "width": "30px","className": "text-right" }
+                      
+                    ]
+
+                    var footerfunc = function () {
+                        var api = this.api();
+                        $(api.column(9).footer()).html(thousands_separators(api.column(9).data().sum()));
+                    }
+                    ToggleDataList(true);
+                    MakeDataGrid('lstConsumeComponent', data.lstConsumeComponent, 0, columnDef, true, true, footerfunc);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
+

@@ -1,0 +1,163 @@
+﻿@model IP.Areas.ListingReports.Models.BoseRepairVolume
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<div id="parentDiv" class="container-fluid">
+    <div id="dataList" class="box panel panel-default">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="box-header with-border bg-blue-gradient">
+                    <button type="button" class="btn btn-box-tool" title="Option Page" onclick="$('#option').modal('show');">
+                        <span class="fa fa-filter fa-lg white"></span>
+                    </button>
+                    <h6 class="box-title"><strong>@ViewBag.ReportTitle  </strong><strong id="filterString"></strong></h6>
+                    <div id="buttons" class="box-tools pull-right">
+
+                    </div>
+                </div>
+
+                <div class="box-body" id="lstP">
+                    <table id="lstBoseRepairVolume" class="table table-bordered table-striped text-sm table-hover" width="100%">
+                        <thead class="sorted-asc">
+                            <tr>
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th></th>
+                                <th class="notexport"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+
+                    </table>
+                </div>
+            </div>
+            <div id="left_panel_Bottom" class="col-md-2">
+                <div id="left_bot_section" class="box panel panel-default leftsection" style="height:100%">
+                    <h4>Click hyperlinks on left section to load Serial No.</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var COLUMN_FORMAT =
+    {
+        formatDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(4));
+        },
+        formatTwoDecimal: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(2);
+        },
+        formatNumber: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : thousands_separators(val.toFixed(0));
+        },
+
+        formatNumberForZero: function (data, type, row) {
+            var val = +data;
+            return val === 0 ? '' : val.toFixed(0);
+        },
+
+    };
+
+    ToggleDataList(false);
+    LoadData();
+    function LoadData() {
+        $('#tblBody').empty();
+
+        $('#option').modal('hide');
+        var isSingleRow = false;
+
+        var _programId = $('#ddProgram').val();
+        var _programName = $("#ddProgram option:selected").text();
+        var _fDate = $('#fromDt').val();
+        var _tDate = $('#toDt').val();
+
+        $.ajax({
+
+            cache: false,
+            type: 'GET',
+            url: '/BoseRepairVolume/GetList',
+            data: {
+                programId: _programId,
+                programName: _programName,
+                fDate: _fDate,
+                tDate: _tDate
+            },
+            datatype: JSON,
+            success: function (data) {
+                $('#filterString').append(data.filterString);
+
+
+                if (!isSingleRow) {
+                    var columnDef = [
+                        { "data": "ProgramID", "title": "ProgramID", "width": "120px", "visible": false },
+                        { "data": "AreaCell", "title": "Area (Cell)", "width": "120px", "className": "text-center" },
+                        {
+                            "data": "Units", "title": "Units", "width": "120px", "className": "text-center"
+                        },
+                        {
+                            "data": "ReceiptDate", "title": "Receipt Date", "width": "120px", "className": "text-center", "visible": false
+                        },
+                        {
+                            "data": "Days(TAT)", "title": "Days(TAT)", "width": "120px", "className": "text-center"
+                        },
+                        {
+                            "data": "0-30 Days", "title": "0-30 Days", "width": "120px", "className": "text-center",
+                            render: function (data, type, row) {//ListingReports/BoseRepairVolume
+
+                                var url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\ListingReports\\\\BoseRepairVolume\\\\GetUnits?ProgramID=' + row["ProgramID"] + '&AreaCell=' + row["AreaCell"] + '&frmDt=' + _fDate + '&toDt=' + _tDate + '&Range=0-30' + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "31-60 Days", "title": "31-60 Days", "width": "120px", "className": "text-center",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\ListingReports\\\\BoseRepairVolume\\\\GetUnits?ProgramID=' + row["ProgramID"] + '&AreaCell=' + row["AreaCell"] + '&Range=31-60' + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "61-90 Days", "title": "61-90 Days", "width": "120px", "className": "text-center",
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\ListingReports\\\\BoseRepairVolume\\\\GetUnits?ProgramID=' + row["ProgramID"] + '&AreaCell=' + row["AreaCell"] + '&Range=61-90' + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                                return url;
+                            }
+                        },
+                        {
+                            "data": "90+ Days", "title": "90+ Days", "width": "120px", "className": "text-center"
+                            ,
+                            render: function (data, type, row) {
+
+                                var url = '<a href="#" class="Part_Undrln" onclick="OpenView(\'\\\\ListingReports\\\\BoseRepairVolume\\\\GetUnits?ProgramID=' + row["ProgramID"] + '&AreaCell=' + row["AreaCell"] + '&Range=90-Above' + '\',\'left_panel_Bottom\')">' + data + '</a>';
+                                return url;
+                            }
+                        }
+
+                    ]
+
+
+                    ToggleDataList(true);
+                    MakeDataGrid('lstBoseRepairVolume', data.lstBoseRepairVolume, 0, columnDef, true, true, false);
+                }
+                if (data["ErrorMessage"] != null) {
+                    $('.dataTables_empty > p').text(data["ErrorMessage"]);
+                }
+            },
+            onerror: function (r) { r },
+            failure: function (r) { r }
+        });
+    }
+</script>
