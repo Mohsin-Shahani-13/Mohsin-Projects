@@ -35,14 +35,6 @@
             <table id="lstSO" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
                 <thead class="sorted-asc">
                     <tr>
-                        <th class="notexport"></th>
-                        <th></th>
-                        <th class="notexport"></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -59,14 +51,6 @@
                 <tbody id="tblBody"></tbody>
                 <tfoot>
                     <tr>
-                        <th></th>
-                        <th>Total :</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -100,37 +84,11 @@
        var fDate = $('#fromDt').val();
         var tDate = $('#toDt').val();
         var custRef = $('#custRef').val();
-        //var isAllDate = $('#isAllDate').is(':checked');
-        var _programId = $('#ProgramID').val();
-        var _ProgramName = $("#ProgramID option:selected").text();
+      
 
-        //var program = $('#ddlProgram option:selected').text();
-        //var programId = $('#ddlProgram option:selected').val();
-        var status = '@Request.QueryString["status"].ToString()';
-
-        var statusId = '@Request.QueryString["statusId"].ToString()';
-
-        //For Multiple Status
+      
         
-        var routeLoc = '@ViewBag.Option';
-        if (routeLoc == "op") {
-            if (selectedParts == "All") {
-                status = "All";
-                statusId = ""
-            }
-            else {
-                $('#lstStatus :selected').each(function (i, sel) {
-                    if (i == 0) {
-                        statusId = "'" + ($(sel).val()) + "'";
-                        status = ($(sel).text());
-                    }
-                    else {
-                        statusId += "," + "'" + ($(sel).val()) + "'";
-                        status = "Multiple";
-                    }
-                });
-            }
-        }
+        
 
 
         $.ajax({
@@ -142,13 +100,6 @@
                 frmDt: fDate,
                 toDate: tDate,
                 custRef: custRef,
-                //isAllDate: isAllDate,
-                //program: program,
-                //programId: programId,
-                programId: _programId,
-                ProgramName: _ProgramName,
-                statusId: statusId,
-                status: status,
                 type:"@ViewBag.ReportTitle1"
             },
             datatype: JSON,
@@ -158,34 +109,21 @@
                 //$('#lstSO').DataTable().destroy();
 
                 var columnDef = [
-                        { "data": "ProgramID", "title": "ProgramID", "width": "40px", "visible": false },
-                        { "data": "Program", "title": "Program", "width": "50px" },
-                        { "data": "ID", "title": "ID", "width": "40px", "visible": false },
+                      
+                        { "data": "ID", "title": "ID", "width": "40px" },
                         {
-                            "data": "CustomerReference", "title": "Customer Ref.", "width": "120px",
-                            render: function (data, type, row) {
-                                var url = '<a href= "\\SupplyChain\\SO\\Detail?SOHeaderId=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
-                                return url;
-                            }
+                            "data": "CustomerReference", "title": "Customer Ref.", "width": "120px"
+                           
                         },
-                        { "data": "ThirdPartyReference", "title": "Third Party Ref.", "width": "90px" },
-                        { "data": "Status", "title": "Status", "width": "120px" },
-                        {
-                            "data": "TrackingNo", "title": "Tracking No.", "width": "90px",
-                            render: function (data, type, row) {
-                                return data;
-                            }
-                        },
-                        { "data": "Address", "title": "Address"},
-                        { "data": "City", "title": "City", "width": "70px" },
-                        { "data": "State", "title": "State", "width": "50px" },
-                        { "data": "Country", "title": "Country", "width": "50px" },
-                         { "data": "Zip", "title": "Zip Code", "width": "80px" },
-                         { "data": "Value", "title": "Cust. Order Type", "width": "110px" },
-                        { "data": "QtyToShip", "title": "To Ship", "width": "50px", "className": "text-right" },
-                        { "data": "QtyShipped", "title": "Shipped", "width": "50px", "className": "text-right" },
-                        { "data": "Username", "title": "Created By", "width": "100px" },
-                        {
+
+                    { "data": "ThirdPartyReference", "title": "Third Party Ref.", "width": "90px" },
+                    { "data": "ProgramID", "title": "ProgramID", "width": "40px" },
+                    
+                    { "data": "AddressID", "title": "AddressID"},
+                    { "data": "StatusID", "title": "StatusID", "width": "70px" },
+                    { "data": "BizTalkID", "title": "BizTalkID", "width": "50px" },
+                    { "data": "UserID", "title": "UserID", "width": "50px" },
+                    {
                             "data": "CreateDate", "title": "Created On", "width": "90px", "className": "text-right",
 
                         },
@@ -198,14 +136,8 @@
 
 
                     ToggleDataList(true);
-                //For Displaying  Footer Sum
-                var footerfunc = function () {
-                    var api = this.api();
-                    $(api.column(13).footer()).html(thousands_separators(api.column(13, { search: 'applied' }).data().sum()));
-                    $(api.column(14).footer()).html(thousands_separators(api.column(14, { search: 'applied' }).data().sum()));
-
-                }
-                MakeDataGrid('lstSO', data.lstSO, 0, columnDef, true, true, footerfunc);
+               
+                MakeDataGrid('lstSO', data.lstSO, 0, columnDef, true, true, false);
 
                 if (data["ErrorMessage"] != null) {
                     $('.dataTables_empty > p').text(data["ErrorMessage"]);

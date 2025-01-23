@@ -62,261 +62,37 @@ namespace IP.Areas.SupplyChain.Models
         {
             string sites = HttpContext.Current.Session["DefaultSite"].ToString();
             string query = string.Empty;
-            query = @"SELECT DISTINCT Id As ProgramId, Name AS Program  FROM pls.Program where name = 'BOSE' AND site = '<site>'";
+            query = @"SELECT DISTINCT Id As ProgramId, Name AS Program  FROM IP.Program where name = 'BOSE' AND site = '<site>'";
 
             query = query.Replace("<site>", sites);
             DataTable dt = oDAL.GetData(query);
             return dt;
         }
 
-        public bool Status()
-        {
-            string query = string.Empty;
-            query = @"SELECT DISTINCT 
-                            CS.ID,
-		                    CS.Description		
-                FROM pls.CodeStatus CS
-                Inner Join pls.SOHeader On CS.ID = StatusID 
-                ORDER BY CS.Description	ASC ";
-            DataTable dt = oDAL.GetData(query);
-            lstStatus = cCommon.ConvertDtToArrayList(dt);
-            if (!oDAL.HasErrors)
-                return true;
-            else
-                return false;
+    
 
-            //return dt;
-        }
-
-        public bool GetSO(string Id, string frmDt, string toDt, string custRef, string status, string statusId, string type, string programId, string ProgramName)
+        public bool GetSO(string SOHeaderId, string frmDt, string toDate, string custRef)
         {
             // oDAL = new cDAL("ACTIVE", "ST");
             string query = string.Empty;
 
-            if (!string.IsNullOrEmpty(statusId) && type.Equals("Reserved Units SO"))
-            {
+            
 
                 query = @"
-       SELECT SOH.ProgramID,
-       SOH.ID,
-       SOH.CustomerReference,
-       SOH.ThirdPartyReference,
-       SOSI.TrackingNo,
-       P.Name AS Program,
-	   CONCAT(CAD.Address1, ' ' ,CAD.Address2) AS Address
-        ,CAD.City
-	    ,CAD.State
-	    ,CAD.Country
-	    ,CAD.Zip
-       ,SOHA.Value
-	   , (
-		  SELECT SUM(QtyToShip)
-		  FROM [pls].[SOLine]
-		  WHERE  [SOHeaderID]= SOH.ID
-		) AS CO5_RightAlign
-	  , (
-		  SELECT SUM(QtyReserved)
-		  FROM [pls].[SOLine]
-		  WHERE [SOHeaderID]= SOH.ID
-		) AS CO6_RightAlign,
-       CS.Description AS Status,
-       U.Username,
-       SOH.CreateDate,
-       SOH.LastActivityDate
-FROM   [pls].[SOUnit] SOU  
-INNER JOIN [pls].[SOLine] SOL ON SOL.ID = SOU.SOLineID
-INNER JOIN [pls].[SOHeader] SOH ON SOH.id = SOL.SOHeaderID 
-INNER JOIN pls.[User] U ON SOH.UserID = U.ID 
-LEFT OUTER JOIN pls.Program P ON SOH.ProgramID = P.ID
-LEFT OUTER JOIN pls.CodeAddressDetails CAD ON CAD.AddressID = SOH.AddressID AND CAD.AddressType = 'ShipTo'
-LEFT OUTER JOIN pls.CodeStatus CS ON SOH.StatusID = CS.ID
-LEFT OUTER JOIN pls.[SOShipmentInfo] SOSI ON SOH.ID = SOSI.SOHeaderID
-LEFT JOIN pls.CodeAttribute CA on CA.AttributeName ='CUSTORDERTYPE'
-LEFT JOIN pls.SOHeaderAttribute SOHA on SOHA.SOHeaderID = SOH.ID AND SOHA.AttributeID = CA.ID
-
-
+      SELECT TOP (1000) [ID]
+      ,[CustomerReference]
+      ,[ThirdPartyReference]
+      ,[ProgramID]
+      ,[AddressID]
+      ,[StatusID]
+      ,[BizTalkID]
+      ,[UserID]
+      ,[CreateDate]
+      ,[LastActivityDate]
+  FROM [PlusRS].[IP].[SOHeader]
                      ";
-                query += "WHERE SOU.StatusID   = '<ID>'";
-                //query += " AND P.ID ='" + programId + "' ";
-                if (programId != "0" && programId != null)
-                {
-                    query += "AND P.ID = '" + programId + "' ";
-                }
-                else
-                {
-                    query += "AND P.ID IN (" + HttpContext.Current.Session["ProgramForSite"].ToString() + ") ";
-                }
-
-                query = query.Replace("<ID>", statusId);
-                query += "ORDER BY CreateDate DESC";
-                filterString = "Status = '" + status + "'";
-            }
-            else if (!string.IsNullOrEmpty(statusId) && type.Equals("NEW SO") || type.Equals("RESERVED SO") || type.Equals("Partially Reserved SO"))
-            {
-
-                query = @"
-     SELECT SOH.ProgramID,
-       SOH.ID,
-       SOH.CustomerReference,
-       SOH.ThirdPartyReference,
-        SOSI.TrackingNo,
-       P.Name AS Program,
-	   CONCAT(CAD.Address1, ' ' ,CAD.Address2) AS Address,
-       CAD.City,
-	   CAD.State,
-	   CAD.Country,
-	   CAD.Zip,
-       SOHA.Value,
-	   SUM(SOL.QtyToShip) AS QtyToShip,
-	   SUM(SOL.QtyReserved)AS QtyShipped,
-       CS.Description AS Status,
-       U.Username,
-       SOH.CreateDate,
-       SOH.LastActivityDate
-FROM   [pls].[SOHeader] SOH
-INNER JOIN pls.SOLine SOL ON SOL.SOHeaderID = SOH.ID
-INNER JOIN pls.Program P ON SOH.ProgramID = P.ID
-INNER JOIN pls.CodeAddressDetails CAD ON CAD.AddressID = SOH.AddressID AND CAD.AddressType = 'ShipTo'
-INNER JOIN pls.CodeStatus CS ON SOH.StatusID = CS.ID
-INNER JOIN pls.[User] U ON SOH.UserID = U.ID
-LEFT OUTER JOIN pls.[SOShipmentInfo] SOSI ON SOH.ID = SOSI.SOHeaderID
-LEFT JOIN pls.CodeAttribute CA on CA.AttributeName ='CUSTORDERTYPE'
-LEFT JOIN pls.SOHeaderAttribute SOHA on SOHA.SOHeaderID = SOH.ID AND SOHA.AttributeID = CA.ID
-
-
-                     ";
-                query += "WHERE SOH.StatusID   = '<ID>'";
-                //query += " AND P.ID ='" + programId + "' ";
-
-                if (programId != "0" && programId != null)
-                {
-                    query += "AND P.ID = '" + programId + "' ";
-                }
-                else
-                {
-                    query += "AND P.ID IN (" + HttpContext.Current.Session["ProgramForSite"].ToString() + ") ";
-                }
-
-                query = query.Replace("<ID>", statusId);
-
-                query += @"
-       GROUP BY
-       SOH.ProgramID,       
-       SOH.ID,
-       SOH.CustomerReference,
-       SOH.ThirdPartyReference,
-	   SOSI.TrackingNo,
-       P.Name,
-	   CONCAT(CAD.Address1, ' ' ,CAD.Address2), 
-       CAD.City,
-	   CAD.State,
-	   CAD.Country,
-	   CAD.Zip,
-       SOHA.Value,
-	   CS.Description ,
-       U.Username,
-       SOH.CreateDate,
-       SOH.LastActivityDate ";
-
-                query += "ORDER BY CreateDate DESC";
-
-                filterString = "Status = '" + status + "'";
-            }
-            else
-            {
-
-
-                query = @"
-
-  SELECT  SOH.ProgramID,
-       SOH.ID,
-       SOH.CustomerReference,
-       SOH.ThirdPartyReference,
-	   SOSI.TrackingNo,
-       P.Name AS Program,
-	   CONCAT(CAD.Address1, ' ' ,CAD.Address2) AS Address,
-       CAD.City,
-	   CAD.State,
-	   CAD.Country,
-	   CAD.Zip,
-       SOHA.Value,
-	   SUM(SOL.QtyToShip) AS QtyToShip,
-	   SUM(SOL.QtyReserved)AS QtyShipped,
-       CS.Description AS Status,
-       U.Username,
-       SOH.CreateDate,
-       SOH.LastActivityDate
-FROM   [pls].[SOHeader] SOH
-INNER JOIN pls.SOLine SOL ON SOL.SOHeaderID = SOH.ID
-INNER JOIN pls.Program P ON SOH.ProgramID = P.ID
-INNER JOIN pls.CodeAddressDetails CAD ON CAD.AddressID = SOH.AddressID AND CAD.AddressType = 'ShipTo'
-INNER JOIN pls.CodeStatus CS ON SOH.StatusID = CS.ID
-INNER JOIN pls.[User] U ON SOH.UserID = U.ID
-LEFT OUTER JOIN pls.[SOShipmentInfo] SOSI ON SOH.ID = SOSI.SOHeaderID
-LEFT JOIN pls.CodeAttribute CA on CA.AttributeName ='CUSTORDERTYPE'
-LEFT JOIN pls.SOHeaderAttribute SOHA on SOHA.SOHeaderID = SOH.ID AND SOHA.AttributeID = CA.ID
-
- ";
                 
-                    query += "WHERE CONVERT(Date, SOH.LastActivityDate) >= '<frmDt>' AND CONVERT(Date, SOH.LastActivityDate) <= '<toDt>'";
-                    query = query.Replace("<frmDt>", frmDt);
-                    query = query.Replace("<toDt>", toDt);
-                
-               
-
-
-               
-
-                if (!string.IsNullOrEmpty(custRef))
-                    query += "AND SOH.CustomerReference LIKE '%" + custRef + "%'";
-
-                if (!status.Equals("All"))
-                    query += "AND cs.ID  IN (" + statusId + ") ";
-
-                //if (!program.Equals("All"))
-                //query += "AND P.ID ='" + programId + "' ";
-
-                if (programId != "0" && programId != null)
-                {
-                    query += "AND P.ID = '" + programId + "' ";
-                }
-                else
-                {
-                    query += "AND P.ID IN (" + HttpContext.Current.Session["ProgramForSite"].ToString() + ") ";
-                }
-
-                query += @"
-       GROUP BY
-       SOH.ProgramID,
-       SOH.ID,
-       SOH.CustomerReference,
-       SOH.ThirdPartyReference,
-	   SOSI.TrackingNo,
-       P.Name,
-	   CONCAT(CAD.Address1, ' ' ,CAD.Address2), 
-       CAD.City,
-	   CAD.State,
-	   CAD.Country,
-	   CAD.Zip,
-       SOHA.Value,
-	   CS.Description ,
-       U.Username,
-       SOH.CreateDate,
-       SOH.LastActivityDate ";
-
-                query += "ORDER BY CreateDate DESC";
-
-                if (!string.IsNullOrEmpty(ProgramName))
-                    filterString += " Program = '" + ProgramName + "' ";
-
-                if (string.IsNullOrEmpty(custRef))
-                    filterString += "| From = '" + frmDt + "' To = '" + toDt + "' | Status = '" + status + "' ";
-                else
-                    filterString += "| From = '" + frmDt + "' To = '" + toDt + "' | Customer Ref. Like '" + custRef + "' | Status = '" + status + "' ";
-
-            }
-
-
+           
 
             DataTable dt = oDAL.GetData(query);
 

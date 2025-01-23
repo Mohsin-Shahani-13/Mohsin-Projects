@@ -23,10 +23,8 @@
             @Html.DropDownList("rptType", new List<SelectListItem>
                 {
 
-                   new SelectListItem{ Text="Summary", Value = "Summary" },
-                   new SelectListItem{ Text="Detail", Value = "Detail" },
-                   new SelectListItem{ Text="No WO Units", Value = "WithoutWO" },
-                   new SelectListItem{ Text="Pre-Registered Units", Value = "PreRegisteredUnits" }
+                   new SelectListItem{ Text="Summary", Value = "Summary" }
+                  
 
                 }, new { @class = "form-control" })
         </td>
@@ -277,7 +275,7 @@
         //var status = $('#ddlStatus option:selected').text();
         var status = $('#lstStatus option:selected').text();
 
-        // For Testing -Tazeen Write
+        
 
         if (fDate.length <= 0 || tDate.length <= 0 || !isDate(fDate) || !isDate(tDate) || fDate > tDate) {
             $('#lblMsg').append('Enter a valid date');

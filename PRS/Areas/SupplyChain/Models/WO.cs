@@ -113,18 +113,7 @@ namespace IP.Areas.SupplyChain.Models
             return dt;
         }
 
-        //public DataTable Status()
-        //{
-        //    string query = string.Empty;
-        //    query = @"SELECT DISTINCT CS.ID,
-        //  CS.Description		
-        //        FROM pls.CodeStatus CS
-        //        Inner Join pls.WOHeader On CS.ID = StatusID 
-        //        ORDER BY CS.Description	ASC";
-        //    //query = @"SELECT DISTINCT Id, Description FROM pls.CodeStatus ORDER BY Description ";
-        //    DataTable dt = oDAL.GetData(query);
-        //    return dt;
-        //}
+        
 
         public bool GetStatus()
         {
@@ -161,188 +150,32 @@ namespace IP.Areas.SupplyChain.Models
                 return false;
         }
 
-        public bool GetWO(string Id, string frmDt, string toDt, bool isAllDate, bool ischecked3, string custRef, string status, string statusId, string Repair, string RepairTypeID, bool ischecked, string type, string ProgramID, string ProgramName)
+        public bool GetWO(string Id, string frmDt, string toDate, bool isAllDate, bool ischecked3, string custRef, bool ischecked)
         {
             // oDAL = new cDAL("ACTIVE", "ST");
             string query = string.Empty;
             query = @"
-SELECT WOH.ID, 
-       WOH.ProgramID,
-       P.Name AS Program,
-       WOH.CustomerReference,   
-       (select CustomerReference
-        from pls.ROHeader where id = (select ROHeaderID
-        from pls.ROLine where id = (select max(ROLineID)
-        from pls.rounit where SerialNo = WOH.SerialNo))) AS ROCustomerReference,
-       WOH.PartNo,
-       WOH.SerialNo,
-       (SELECT CASE WHEN COUNT(PS.SerialNo) > 0 THEN 'Y' ELSE 'N' END
-       FROM pls.partserial PS
-       WHERE PS.SerialNo = WOH.SerialNo AND PS.ProgramID = WOH.ProgramID ) HAS_SN,
-       CRT.Description As RepairType,
-       (select value
-        from pls.PartNoAttribute PNA
-        where pna.ProgramID = WOH.ProgramID and PNA.PartNo = WOH.PartNo and pna.AttributeID = 278) AS FamilyAttribute,
-       CASE WHEN wsd.Code IS NULL THEN cws.ID ELSE wsd.ID END AS WorkstationID,
-       CASE WHEN wsd.Code IS NULL THEN cws.Description ELSE wsd.Description END As Workstation,
-       CS.Description AS Status,
-       SUM(CAST(QtyRequested AS bigint)) AS QtyRequested,
-       SUM(CAST(QtyConsumed AS bigint)) AS QtyConsumed,
-      
-       U.Username AS CreatedBy, 
-       FORMAT(WOH.CreateDate, 'yyyy.MM.dd HH:mm') AS CreatedOn, 
-       FORMAT(WOH.LastActivityDate, 'yyyy.MM.dd HH:mm') AS LastActivityOn
-FROM   pls.WOHeader WOH
-INNER JOIN pls.[User] U ON U.ID = WOH.UserID 
-INNER JOIN pls.Program P ON P.ID = WOH.ProgramID
-LEFT JOIN pls.WOLine WOL ON WOL.WOHeaderID = WOH.ID
-LEFT OUTER JOIN pls.CodeRepairType CRT ON CRT.ID = WOH.RepairTypeID
-LEFT OUTER JOIN pls.CodeWorkStation CWS ON CWS.ID = WOH.WorkstationID
-LEFT JOIN pls.CodeWorkStationCustomDescription wsd ON
-                   wsd.ProgramID = WOH.ProgramID 
-                   AND wsd.RepairTypeID = WOH.RepairTypeID
-                   AND wsd.CodeWorkStationID = WOH.WorkStationID
-LEFT OUTER JOIN pls.CodeStatus CS ON CS.ID = WOH.StatusID
+SELECT TOP (1000) [ID]
+      ,[CustomerReference]
+      ,[ProgramID]
+      ,[PartNo]
+      ,[SerialNo]
+      ,[RepairTypeID]
+      ,[WorkStationIDPrevious]
+      ,[WorkStationID]
+      ,[IsPass]
+      ,[StatusID]
+      ,[BizTalkID]
+      ,[DefaultLocationID]
+      ,[UserID]
+      ,[CreateDate]
+      ,[LastActivityDate]
+      ,[SourcePartNo]
+      ,[SourceSerialNo]
+  FROM [PlusRS].[IP].[WOHeader]
+
 ";
-            if (ProgramID != "0" && ProgramID != null)
-            {
-                query += " WHERE P.ID = '" + ProgramID + "' ";
-            }
-            else
-            {
-                query += " WHERE P.ID IN (" + HttpContext.Current.Session["ProgramForSite"].ToString() + ") ";
-            }
-
-            if (ischecked3 != true && !type.Equals("REPAIR WO"))
-            {
-                query += "AND CONVERT(Date, WOH.LastActivityDate) >= '<frmDt>' AND CONVERT(Date, WOH.LastActivityDate) <= '<toDt>' ";
-            }
-            if (!string.IsNullOrEmpty(statusId) && type.Equals("REPAIR WO") || type.Equals("RESERVED WO") || type.Equals("PRD WO") && ischecked ==true  || ischecked2 == true && ischecked3 != true)
-            
-            {
-
-                query += " AND CS.ID  IN ('<ID>') ";
-                //query += " WHERE CRT.ID  IN ('<RepairTypeID>') ";
-
-                
-                query = query.Replace("<ID>", statusId);
-                //query = query.Replace("<RepairTypeID>", RepairTypeID);
-                query += @"GROUP BY
-       WOH.ID, 
-       WOH.ProgramID,
-       P.Name, 
-       WOH.CustomerReference,
-       CRT.Description,
-       U.Username,
-       WOH.CreateDate,
-       WOH.PartNo,
-       WOH.SerialNo,
-       wsd.Code,cws.ID,
-       wsd.ID,
-       cws.Description,
-       wsd.Description,
-       CS.Description,
-       WOH.LastActivityDate ";
-
-                query += "ORDER BY CreatedOn DESC";
-                //filterString = "Status = '" + status + "'";
-                if (!string.IsNullOrEmpty(ProgramName))
-                {
-                    filterString = " Program = '" + ProgramName + "' | Open work orders ";
-                }
-                else
-                {
-                    filterString = " Status = '"+status+"' ";
-                }
-                
-            }
-            else
-            {
-
-                if (ischecked3 != false && isAllDate !=true)
-                {
-                    query += "AND CONVERT(Date, WOH.CreateDate) >= '<frmDt>' AND CONVERT(Date, WOH.CreateDate) <= '<toDt>' ";
-                }
-
-               
-
-                if (ischecked3 != false )
-                {
-
-                    query += "AND CS.ID IN (19,28)";
-                }
-
-
-                query = query.Replace("<frmDt>", frmDt);
-                    query = query.Replace("<toDt>", toDt);
-
-                if (!string.IsNullOrEmpty(custRef))
-                    query += "AND WOH.CustomerReference LIKE '%" + custRef + "%'";
-
-                if (!status.Equals("All") && ischecked == true || ischecked2 == true)
-                    query += "AND CS.ID  IN (" + statusId + ") ";
-
-                if (!status.Equals("All") && ischecked == false && ischecked2 == false && ischecked3 == false)
-                    query += "AND CS.ID  IN (" + statusId + ") ";
-
-                if (!Repair.Equals("All") && RepairTypeID != "" )
-                    query += "AND CRT.ID IN (" + RepairTypeID + ") ";
-
-                
-
-                if (ischecked == true)
-                {
-                    query += "AND WOH.WorkStationID = 4 AND WOH.StatusID = 19 ";
-                }
-
-                query += @"GROUP BY
-       WOH.ID, 
-       WOH.ProgramID,
-       P.Name, 
-       WOH.CustomerReference,
-       CRT.Description,
-       U.Username,
-       WOH.CreateDate,
-       WOH.PartNo,
-       WOH.SerialNo,
-       wsd.Code,cws.ID,
-       wsd.ID,
-       cws.Description,
-       wsd.Description,
-       CS.Description,
-       WOH.LastActivityDate ";
-
-                query += "ORDER BY CreatedOn DESC";
-
-                //if (!string.IsNullOrEmpty(ProgramName))
-                //    filterString = "> Program = '" + ProgramName + "' ";
-
-                if (string.IsNullOrEmpty(custRef) && !string.IsNullOrEmpty(ProgramName) && ischecked3 != true)
-                    filterString = " Program = '" + ProgramName + "' | From = '" + frmDt + "' To = '" + toDt + "' | Status = '" + status + "'" + "' | Repair = '" + Repair + "'";
-
-                else if (!string.IsNullOrEmpty(custRef) && !string.IsNullOrEmpty(ProgramName) && ischecked3 != false)
-                 
-                filterString = " Program = '" + ProgramName + "' | From = '" + frmDt + "' To = '" + toDt + "' | Customer Ref. Like '" + custRef + "' | Open Work Order ";
-
-                else if (!string.IsNullOrEmpty(ProgramName) && ischecked3 != false && isAllDate != true)
-                    filterString = " Program = '" + ProgramName + "' | From = '" + frmDt + "' To = '" + toDt + "' | Open Work Order ";
-                else if (!string.IsNullOrEmpty(custRef) && !string.IsNullOrEmpty(ProgramName) && ischecked3 != true)
-                    filterString = "Program = '" + ProgramName + "' | From = '" + frmDt + "' To = '" + toDt + "'  | Customer Ref. Like '" + custRef + "'   | Status = '" + status + "'" + "' | Repair = '" + Repair + "'";
-
-                else if (!string.IsNullOrEmpty(custRef) && !string.IsNullOrEmpty(ProgramName) && ischecked3 != false)
-                    filterString = " Program = '" + ProgramName + "'  | From = '" + frmDt + "' To = '" + toDt + "' | Customer Ref. Like '" + custRef + "'  | Open Work Order ";
-
-                else if (!string.IsNullOrEmpty(ProgramName) && ischecked3 != false && isAllDate != false)
-                    filterString = "Program = '" + ProgramName + "' | Open Work Order ";
-
-                else
-                    filterString = "Program = '" + ProgramName + "' | From = '" + frmDt + "' To = '" + toDt + "' | Customer Ref. Like '" + custRef + "' ";
-
-                if (ischecked == true)
-                {
-                    filterString += " | Showing units at close station but not yet closed ";
-                }
-            }
+           
             DataTable dt = oDAL.GetData(query);
 
             //For SQL Documentation

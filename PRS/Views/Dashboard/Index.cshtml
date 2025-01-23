@@ -719,6 +719,114 @@
             $("#txt").val(JSON.stringify(data.chart_data));
             draw_me_stackchart(ctx, data.chart_data, data.chart_title, 'horizontalBar');
         }
+        else if (type.toLowerCase() == 'doughnut') {
+            var count = data.widget_count_count;
+            str = '<div class="chart" style="height:inherit; background-color: #fff"> ';
+            str += ' <canvas id="c' + widget_id + '" style="width: 250px; height: 250px;"></canvas>';
+            str += '</div>';
+
+            // Prepare footer with percentages
+            var percentages = data.chart_data.percentage_values; // Assuming percentage_values is included in chart_data
+            var footerContent = '<div style="display: flex; justify-content: center; align-items: flex-end; gap: 20px; ">'; // Flexbox for inline display
+
+            if (percentages && percentages.length > 0) {
+                percentages.forEach(function (percentage, index) {
+                    footerContent += '<div style="text-align: center; margin-bottom:0px;">';
+                    footerContent += '<span style="font-weight: bold; font-size: 18px;">' + percentage.toFixed(2) + '%</span>'; // Bold percentage
+                    footerContent += '<div style="font-size: 10px;">' + data.chart_data.labels[index] + '</div>'; // Label below the percentage
+                    footerContent += '</div>';
+                });
+            } else {
+                footerContent = '<div>No Data Available</div>';
+            }
+
+            footerContent += '</div>'; // Close flexbox div
+
+            str += '<div class="small-box-footer" style="position: absolute; width: 100%; bottom: 5px; text-align: center;">';
+            str += footerContent; // Add the formatted percentage content
+            str += '</div>';
+
+            $("#dashboard_grid > ul > #x" + widget_id + " > .box > .box-body").html(str);
+            var ctx = document.getElementById('c' + widget_id + '').getContext('2d');
+            var sizeY = $("#x" + widget_id + " > .box > .box-body").height();
+            var sizeX = $("#x" + widget_id + " > .box > .box-body").width();
+            $("#txt").val(JSON.stringify(data.chart_data));
+
+            draw_me_doughnut_chart(ctx, data.chart_data, data.chart_title, 'doughnut');
+        }
+
+        else if (type.toLowerCase() == 'bar') {
+            var count = data.widget_count_count;
+            str = '<div class="chart" style="height:inherit; background-color: #fff"> ';
+            str += ' <canvas id="c' + widget_id + '" style="width: 250px; height: 300px;"></canvas>';
+            str += '</div>';
+
+            // Prepare footer with percentages
+            //var percentages = data.chart_data.percentage_values; // Assuming percentage_values is included in chart_data
+            //var footerContent = '<div style="display: flex; justify-content: center; align-items: flex-end; gap: 20px; ">'; // Flexbox for inline display
+
+            //if (percentages && percentages.length > 0) {
+            //    percentages.forEach(function (percentage, index) {
+            //        footerContent += '<div style="text-align: center; margin-bottom:0px;">';
+            //        footerContent += '<span style="font-weight: bold; font-size: 18px;">' + percentage.toFixed(2) + '%</span>'; // Bold percentage
+            //        footerContent += '<div style="font-size: 10px;">' + data.chart_data.labels[index] + '</div>'; // Label below the percentage
+            //        footerContent += '</div>';
+            //    });
+            //} else {
+            //    footerContent = '<div>No Data Available</div>';
+            //}
+
+            /* footerContent += '</div>';*/ // Close flexbox div
+
+            //str += '<div class="small-box-footer" style="position: absolute; width: 100%; bottom: 5px; text-align: center;">';
+            //str += footerContent; // Add the formatted percentage content
+            //str += '</div>';
+
+            $("#dashboard_grid > ul > #x" + widget_id + " > .box > .box-body").html(str);
+            var ctx = document.getElementById('c' + widget_id + '').getContext('2d');
+            var sizeY = $("#x" + widget_id + " > .box > .box-body").height();
+            var sizeX = $("#x" + widget_id + " > .box > .box-body").width();
+            $("#txt").val(JSON.stringify(data.chart_data));
+
+            draw_me_bar_chart(ctx, data.chart_data, data.chart_title, 'bar');
+        }
+
+             else if (type.toLowerCase() == 'line') {
+            var count = data.widget_count_count;
+            str = '<div class="chart" style="height:inherit; background-color: #fff"> ';
+            str += ' <canvas id="c' + widget_id + '" style="width: 250px; height: 300px;"></canvas>';
+            str += '</div>';
+
+            //// Prepare footer with percentages
+            //var percentages = data.chart_data.percentage_values; // Assuming percentage_values is included in chart_data
+            //var footerContent = '<div style="display: flex; justify-content: center; align-items: flex-end; gap: 20px; ">'; // Flexbox for inline display
+
+            ////if (percentages && percentages.length > 0) {
+            ////    percentages.forEach(function (percentage, index) {
+            ////        footerContent += '<div style="text-align: center; margin-bottom:0px;">';
+            ////        footerContent += '<span style="font-weight: bold; font-size: 18px;">' + percentage.toFixed(2) + '%</span>'; // Bold percentage
+            ////        footerContent += '<div style="font-size: 10px;">' + data.chart_data.labels[index] + '</div>'; // Label below the percentage
+            ////        footerContent += '</div>';
+            ////    });
+            ////} else {
+            ////    footerContent = '<div>No Data Available</div>';
+            ////}
+
+            //footerContent += '</div>'; // Close flexbox div
+
+            //str += '<div class="small-box-footer" style="position: absolute; width: 100%; bottom: 5px; text-align: center;">';
+            //str += footerContent; // Add the formatted percentage content
+            //str += '</div>';
+
+            $("#dashboard_grid > ul > #x" + widget_id + " > .box > .box-body").html(str);
+            var ctx = document.getElementById('c' + widget_id + '').getContext('2d');
+            var sizeY = $("#x" + widget_id + " > .box > .box-body").height();
+            var sizeX = $("#x" + widget_id + " > .box > .box-body").width();
+            $("#txt").val(JSON.stringify(data.chart_data));
+
+            draw_me_line_chart(ctx, data.chart_data, data.chart_title, 'line');
+        }
+
         else if (type.toLowerCase() == 'count_group') {
             var lst = data.lst_widget_group_counts;
 
@@ -877,6 +985,216 @@
         });
 
     }
+    function draw_me_doughnut_chart(chartId, data, title, chartType) {
+        var sum = 0;
+        for (var i = 0; i < data.datasets[0].data.length; i++) {
+            sum += parseInt(data.datasets[0].data[i]);
+        }
+
+        // Specify your custom colors for each section of the doughnut chart
+        var customColors = ['#f77171', '#00d4ff', '#2eb83e', '#f6a415', '#9966FF', '#FF9F40']; // Add more colors as needed
+
+        // If you have less data points than colors, slice the array
+        var backgroundColors = customColors.slice(0, data.datasets[0].data.length);
+
+        // Modify the data object to include the custom colors
+        chartId.data = {
+            labels: data.labels, // Keep existing labels
+            datasets: [{
+                data: data.datasets[0].data, // Use existing data
+                backgroundColor: backgroundColors, // Set custom colors
+                hoverBackgroundColor: backgroundColors.map(color => color.replace(')', ', 0.7)').replace('rgb', 'rgba')) // Add transparency on hover
+            }]
+        };
+
+        window.myBar = new Chart(chartId, {
+            type: chartType,
+            data: chartId.data, // Use the modified data with custom colors
+            options: {
+                responsive: true,
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var tooltipValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            return thousands_separators(Math.round(tooltipValue));
+                        }
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        display: false // Ensure data labels are not displayed
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        display: false // Hide x-axis and gridlines
+                    }],
+                    yAxes: [{
+                        display: false // Hide y-axis and gridlines
+                    }]
+                },
+                // Remove grid lines for the chart background
+                gridLines: {
+                    display: false
+                }
+            }
+        });
+    }
+
+
+
+    function draw_me_bar_chart(chartId, data, title, chartType) {
+        var calender = $('#calender option:selected').text();
+
+        // Define your custom colors for the bars
+        var customColors = ['#00d4ff', '#00d4ff', '#2eb83e', '#f6a415', '#9966FF', '#FF9F40']; // Add more colors as needed
+
+        // Check if the data has datasets and assign custom colors
+        if (data.datasets && data.datasets.length > 0) {
+            data.datasets[0].backgroundColor = customColors.slice(0, data.datasets[0].data.length);
+        }
+
+        chartId.data = []; // Clear previous data
+        window.myBar = new Chart(chartId, {
+            type: chartType,
+            data: data,
+            options: {
+                layout: {
+                    padding: {
+                        top: 20 // Set top margin to 20 pixels (adjust as needed)
+                    }
+                },
+                legend: {
+                    display: false,
+                    labels: {
+                        fontColor: '#000000',
+                    },
+                },
+                title: {
+                    display: false, // Hide the title
+                },
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        stacked: false,
+                        barThickness: 50,
+                        maxBarThickness: 28,
+                        minBarLength: 16,
+                        ticks: {
+                            fontColor: '#000000',
+                            padding: 0,
+                            autoSkip: false,
+                            maxRotation: 35,
+                            minRotation: 35,
+                        },
+                        scaleLabel: {
+                            display: false,
+                            labelString: calender + '⇧',
+                            elements: {
+                                point: {
+                                    radius: 0,
+                                },
+                            },
+                            fontColor: '#000000',
+                            fontFamily: 'font/serif_bold',
+                            fontWeight: '700',
+                        },
+                    }],
+                    yAxes: [{
+                        stacked: false,
+                        ticks: {
+                            fontColor: '#000000',
+                            min: 0,
+                        },
+                    }],
+                },
+                plugins: {
+                    datalabels: {
+                        display: false, // Ensure data labels are displayed
+                        color: '#000000', // Set the data label color to black
+                    }
+                },
+            },
+        });
+    }
+
+
+
+    function draw_me_line_chart(chartId, data, title, chartType) {
+        var calender = $('#calender option:selected').text();
+
+        // Define your custom colors for the lines
+        var customColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF5733', '#33FF57'];
+
+        // Check if the data has datasets and assign custom colors
+        if (data.datasets && data.datasets.length > 0) {
+            data.datasets.forEach((dataset, index) => {
+                dataset.borderColor = customColors[index % customColors.length]; // Set line color
+                dataset.fill = false; // Ensure the area under the line is not filled (for line charts)
+            });
+        }
+
+        chartId.data = []; // Clear previous data
+        window.myLineChart = new Chart(chartId, {
+            type: chartType,
+            data: data,
+            options: {
+                layout: {
+                    padding: {
+                        top: 20 // Set top margin to 20 pixels (adjust as needed)
+                    }
+                },
+                legend: {
+                    display: false,
+                    labels: {
+                        fontColor: '#000000',
+                    },
+                },
+                title: {
+                    display: false, // Hide the title
+                },
+                responsive: true,
+                scales: {
+                    scaleLabel: {
+                        fontColor: '#000000',
+                    },
+                    xAxes: [{
+                        stacked: false,
+                        ticks: {
+                            fontColor: '#000000',
+                            padding: 0,
+                            autoSkip: false,
+                            maxRotation: 35,
+                            minRotation: 35,
+                        },
+                        scaleLabel: {
+                            display: false,
+                            labelString: calender + '⇧',
+                            fontColor: '#000000',
+                            fontFamily: 'font/serif_bold',
+                            fontWeight: '700',
+                        },
+                    }],
+                    yAxes: [{
+                        stacked: false,
+                        ticks: {
+                            fontColor: '#000000',
+                            min: 0,
+                        },
+                    }],
+                },
+                plugins: {
+                    datalabels: {
+                        display: false, // Ensure data labels are not displayed
+                        color: '#000000', // Set the data label color to black
+                    }
+                },
+            },
+        });
+    }
+
     function draw_me_stackchart(chartId, data, title, chartType) {
 
         var sum = 0;

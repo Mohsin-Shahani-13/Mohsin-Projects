@@ -29,19 +29,15 @@
             @Html.DropDownList("rptType", new List<SelectListItem>
                 {
 
-                   new SelectListItem{ Text="Summary", Value = "Summary",  },
-                   new SelectListItem{ Text="Detail", Value = "Detail" },
+                   new SelectListItem{ Text="Summary", Value = "Summary",  }
+
 
 
                 }, new { @class = "form-control" })
         </td>
     </tr>
 
-    <tr>
-        <td colspan="4" class="pad">
-            @Html.Action("GetProgramBySite", "Home", new { id = "ProgramID", @name = "ProgramID", area = "" })
-        </td>
-    </tr>
+    
     <tr style="float:left;">
         <td colspan="4" class="padding">
 
@@ -63,15 +59,7 @@
                 </span>
             </div>
         </td>
-        @*<td class="dateFont">
-                <div>
-                    <br />
-                    <label id="AllCheckbox" class="hidden-checkbox" for="_isAllDate">
-                        <input type="checkbox" id="isAllDate"  name="isAllDate" onclick="EnableDisableOrdCreat(this)" />
-                        All
-                    </label>
-                </div>
-            </td>*@
+       
     </tr>
     <tr>
         <td colspan="4" class="pad">
@@ -95,22 +83,7 @@
             </td>
 
         </tr>*@
-    <tr>
-        <td class="pad" colspan="4">
-            @Html.LabelFor(model => model.statusId, htmlAttributes: new { @class = "col-4 col-form-lable" })
-            <select id="lstStatus" multiple="multiple" class="multiselect form-control" name="options[]">
-                @{
-                    if (Model != null)
-                    {
-                        foreach (var item in Model.lstStatus)
-                        {
-                            <option value="@item[0]">@item[1]</option>
-                        }
-                    }
-                }
-            </select>
-        </td>
-    </tr>
+  
 </table>
 <table width="100%">
     <tr>
@@ -160,60 +133,7 @@
     //    }
     //});
     
-    $('#lstStatus').multiselect({
-        includeSelectAllOption: true,
-        selectAllText: 'All',
-        buttonWidth: '100%',
-        maxHeight: 300,
-        enableFiltering: true,
-        enableCaseInsensitiveFiltering: true,
-        filterPlaceholder: 'Search',
-        numberDisplayed: 1,
-        templates: {
-            ul: '<ul class="multiselect-container dropdown-menu" style="-ms-overflow-x: hidden; -ms-overflow-y: auto; max-height: 300px; width:100%;">"'
-        },
-
-        buttonText: function (options, select) {
-            if (options.length == 0) {
-                return 'select from list';
-            }
-            else {
-                if (options.prevObject.length == options.length) {
-                    selectedParts = 'All';
-                } else {
-                    selectedParts = '';
-                    options.each(function () {
-                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
-                        selectedParts += "'" + label + "', ";
-                    });
-                    selectedParts = selectedParts.substr(0, selectedParts.length - 2);
-                }
-
-
-
-                if (options.length > this.numberDisplayed) {
-                    return options.length + ' ' + this.nSelectedText;
-                }
-                else {
-                    var selected = '';
-                    options.each(function () {
-                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
-                        selected += label + ", ";
-                    });
-                    return selected.substr(0, selected.length - 2);
-                }
-            }
-        }
-    });
-
-    $('#lstStatus').multiselect('selectAll', false);
-    $("#lstStatus").multiselect('updateButtonText');
-
-    $("#lstStatus").change(function () {
-        $('#lblMsg').empty();
-    });
-    
-
+ 
     $('#option').on('shown.bs.modal', function () {
         $('#custRef').focus();
     });
@@ -300,11 +220,7 @@
         var custRef = $('#custRef').val();
         //var program_Id = $('#ddlProgram option:selected').text();
         //var status = $('#ddlStatus option:selected').text();
-        var status = $('#lstStatus option:selected').text();
-        if (status == "") {
-            $('#lblMsg').append('Please select status from list');
-            return false;
-        }
+       
 
         if (fDate.length <= 0 || tDate.length <= 0 || !isDate(fDate) || !isDate(tDate) || fDate > tDate) {
             $('#lblMsg').append('Enter a valid date');
@@ -315,21 +231,9 @@
             return true;
         }
 
-        if (status == null) {
-            $('#lblMsg').empty();
-            $('#lblMsg').append('Something went wrong! Reopen Option Page');
-            return false;
-        }
-        if (status == 'No Data Available') {
-            $('#lblMsg').empty();
-            $('#lblMsg').append('Select Status ');
-            return false;
-        }
+        
 
-        else {
-            $('#lblMsg').empty();
-            return true;
-        }
+        
     }
 
     function Go() {
@@ -338,25 +242,13 @@
         var fDate = $('#fromDt').val();
         var tDate = $('#toDt').val();
         var custRef = $('#custRef').val();
-        //var program_Id = $('#ddlProgram option:selected').text();
-        //var isAllDate = $('#isAllDate').is(':checked');
-        //var status = $('#ddlStatus option:selected').text();
-        //var statusid = $('#ddlStatus option:selected').val();
-        var status = $('#lstStatus option:selected').text();
-        var statusid = $('#lstStatus option:selected').val();
-        var programId = $('#ProgramID').val();
-        var ProgramName = $("#ProgramID option:selected").text();
+       
 
         $('#option').modal('hide');
       
-        if (rptName == 'Summary')
-        {
-            OpenPage('\\SupplyChain\\SO\\Index?statusId=' + statusid + '&Option=' + 'op' + '&frmDt=' + fDate + '&rptName=' + rptName + ' &toDate=' + tDate + ' &custRef=' + custRef + '&status=' + status + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
-        }
-        else if (rptName == 'Detail')
-        {
-            OpenPage('\\SupplyChain\\SO\\GetSODetail?statusId=' + statusid + '&Option=' + 'op' + '&frmDt=' + fDate + '&rptName=' + rptName + ' &toDate=' + tDate + ' &custRef=' + custRef + '&status=' + status + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
-        }
+        
+            OpenPage('\\SupplyChain\\SO\\Index?Option=' + 'op' + '&frmDt=' + fDate + '&rptName=' + rptName + ' &toDate=' + tDate + ' &custRef=' + custRef + '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+        
     }
 </script>
 

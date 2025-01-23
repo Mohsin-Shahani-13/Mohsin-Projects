@@ -17,24 +17,10 @@ namespace IP.Areas.SupplyChain.Controllers
         // GET: SupplyChain/WO
         public ActionResult Option()
         {
-            //DataTable dtProgram = oWO.Program();
-            //ViewBag.ddlProgram = cCommon.ToDropDown(dtProgram, "ProgramId", "Program", "All");
-            //DataTable dtStatus = oWO.Status();
-            //ViewBag.ddlStatus = cCommon.ToDropDown(dtStatus, "Id", "Description", "All");
-            //ViewBag.Option = "op";
-            //return View(oWO);
-
-            DataTable dtProgram = oWO.GetProgramBySite();
-            ViewBag.ddprogram = cCommon.ToDropDown(dtProgram, "programID", "programName", "");
+            WO oWO = new WO();
 
 
-            bool success = oWO.GetStatus();
-
-            bool success1 = oWO.Repairtype();
-            if (success && success1)
-                return View(oWO);
-            else
-                return View();
+            return View(oWO);
         }
         public ActionResult OptionBose()
         {
@@ -71,12 +57,12 @@ namespace IP.Areas.SupplyChain.Controllers
             return View();
         }
 
-        public JsonResult GetWO(string Id, string frmDt, string toDate, bool isAllDate, bool ischecked3, string custRef, string status, string statusId, string Repair, string RepairTypeID, bool ischecked, string type, string ProgramID, string ProgramName)
+        public JsonResult GetWO(string Id, string frmDt, string toDate, bool isAllDate, bool ischecked3, string custRef, bool ischecked)
         {
             string menuTitle = string.Empty;
             string RptCode;
             oWO = new WO();
-            oWO.GetWO(Id, frmDt, toDate, isAllDate, ischecked3, custRef, status, statusId, Repair, RepairTypeID, ischecked, type, ProgramID, ProgramName);
+            oWO.GetWO(Id, frmDt, toDate, isAllDate, ischecked3, custRef, ischecked);
             var jsonResult = Json(oWO, JsonRequestBehavior.AllowGet);
             jsonResult.MaxJsonLength = int.MaxValue;
             //LOAD MRU & LOG QUERY

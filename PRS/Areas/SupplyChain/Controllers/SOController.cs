@@ -20,12 +20,12 @@ namespace IP.Areas.SupplyChain.Controllers
             oSO = new SO();
             //DataTable dtProgram = oSO.Program();
             //ViewBag.ddlProgram = cCommon.ToDropDown(dtProgram, "ProgramId", "Program", "All");
-            bool statusSuccess = oSO.Status();
+            //bool statusSuccess = oSO.Status();
 
             //ViewBag.ddlStatus = cCommon.ToDropDown(dtStatus, "Id", "Description", "All");
-            if (statusSuccess)
-                return View(oSO);
-            else
+            //if (statusSuccess)
+            //    return View(oSO);
+            //else
                 return View();
             //return View(oSO);
         }
@@ -34,12 +34,12 @@ namespace IP.Areas.SupplyChain.Controllers
             oSO = new SO();
             DataTable dtProgram = oSO.Program();
             ViewBag.ddlProgram = cCommon.ToDropDown(dtProgram, "ProgramId", "Program", "");
-            bool statusSuccess = oSO.Status();
+            //bool statusSuccess = oSO.Status();
 
             //ViewBag.ddlStatus = cCommon.ToDropDown(dtStatus, "Id", "Description", "All");
-            if (statusSuccess)
-                return View(oSO);
-            else
+            //if (statusSuccess)
+            //    return View(oSO);
+            //else
                 return View();
             //return View(oSO);
         }
@@ -87,12 +87,12 @@ namespace IP.Areas.SupplyChain.Controllers
             }
             return jsonResult;
         }
-        public JsonResult GetSO(string SOHeaderId, string frmDt, string toDate, string custRef, string status, string statusId, string type, string programId, string ProgramName)
+        public JsonResult GetSO(string SOHeaderId, string frmDt, string toDate, string custRef)
         {
             string menuTitle = string.Empty;
             string RptCode;
             oSO = new SO();
-            oSO.GetSO(SOHeaderId, frmDt, toDate, custRef, status, statusId, type, programId, ProgramName);
+            oSO.GetSO(SOHeaderId, frmDt, toDate, custRef);
             var jsonResult = Json(oSO, JsonRequestBehavior.AllowGet);
             jsonResult.MaxJsonLength = int.MaxValue;
             //LOAD MRU & LOG QUERY

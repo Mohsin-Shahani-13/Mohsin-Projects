@@ -37,14 +37,8 @@
                 <table id="lstWO" class="table table-bordered table-striped text-sm table-hover" style="width:100%">
                     <thead class="sorted-asc">
                         <tr>
-                            <th class="notexport"></th>
-                            <th class="notexport"></th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-
                             <th></th>
                             <th></th>
                             <th></th>
@@ -56,6 +50,11 @@
                             <th></th>
                             <th></th>
                             <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                           
                         </tr>
                     </thead>
                     <tbody id="tblBody"></tbody>
@@ -63,12 +62,6 @@
                         <tr>
                             <th></th>
                             <th></th>
-                            <th>Total :</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-
                             <th></th>
                             <th></th>
                             <th></th>
@@ -80,6 +73,11 @@
                             <th></th>
                             <th></th>
                             <th></th>
+
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                           
                         </tr>
                     </tfoot>
                 </table>
@@ -124,67 +122,10 @@
             var fDate = $('#fromDt').val();
             var tDate = $('#toDt').val();
             var isAllDate = $('#isAllDate').is(':checked');
-           // var receiveAllDate = $('#ReceivedAllDate').is(':checked');
             var custRef = $('#custRef').val();
-            var programId = $('#ddProgram').val();
-
-            var ProgramName = $('#ddProgram option:selected').text();
             var ischecked3 = $('#ischecked3').is(':checked');
-           var status = '@Request.QueryString["status"].ToString()';
-           var statusId = '@Request.QueryString["statusId"].ToString()';
-
-
-            var type = '@Request.QueryString["type"].ToString()';
             var ischecked = $('#ischecked').is(':checked');
 
-            if (type != "REPAIR WO") {
-                var Repair = '@Request.QueryString["Repair"].ToString()';
-                var RepairTypeID = '@Request.QueryString["RepairTypeID"].ToString()';
-
-                // var ischecked = $('#ischecked').is(':checked');
-                //For Multiple Status
-                var statusId = '';
-                var status = '';
-                if (selectedParts == "All") {
-                    status = "All";
-                }
-                else {
-                    $('#lstStatus :selected').each(function (i, sel) {
-                        if (i == 0) {
-                            statusId = "'" + ($(sel).val()) + "'";
-                            status = ($(sel).text());
-                        }
-                        else {
-                            statusId += "," + "'" + ($(sel).val()) + "'";
-                            status = "Multiple";
-                        }
-                    });
-                }
-
-                //For Multiple Repair
-                var RepairTypeID = '';
-                var Repair = '';
-                if (selectedPart == "All") {
-                    Repair = "All";
-                }
-                else {
-                    $('#lstRepair :selected').each(function (i, sel) {
-                        if (i == 0) {
-                            RepairTypeID = "'" + ($(sel).val()) + "'";
-                            Repair = ($(sel).text());
-                        }
-                        else {
-                            RepairTypeID += "," + "'" + ($(sel).val()) + "'";
-                            Repair = "Multiple";
-                        }
-                    });
-                }
-            }
-
-           
-
-
-          //  ProdCode = ProdCode + '|' + PG;
 
             $.ajax({
 
@@ -195,115 +136,47 @@
                     frmDt: fDate,
                     toDate: tDate,
                     isAllDate: isAllDate,
-                    //recAllDate: receiveAllDate,
                     custRef: custRef,
-                    //program: program,
-                    //programId: programId,
+                    
                     ischecked3: ischecked3,
-                    statusId: statusId,
-                    status: status,
-                    RepairTypeID: RepairTypeID,
-                    Repair: Repair,
-                    ProgramID: programId,
-                    ProgramName: ProgramName,
                     type: '@ViewBag.ReportTitle1',
                     ischecked: ischecked
                 },
                 datatype: JSON,
                 success: function (data) {
                     $('#filterString').append(data.filterString);
-                    //$('#lstROH').DataTable().clear();
-                    //$('#lstROH').DataTable().destroy();
-
-
-                    //$.each(data.lstWO, function (index, row) {
-                    //    if (data.lstWO.length == 1) {
-                    //        isSingleRow = true;
-                    //        MenuHide();
-                    //        OpenPage('\\SupplyChain\\WO\\Detail?Id=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&page=detailed');
-                    //    }
-                    //});
-
-                    //if (!isSingleRow) {
+                    
                         var columnDef = [
 
-                            { "data": "ID", "title": "ID", "width": "40px", "visible": false },
-                            { "data": "ProgramID", "title": "ProgramID", "width": "40px", "visible": false },
-                            { "data": "Program", "title": "Program", "width": "50px" },
+                            { "data": "ID", "title": "ID", "width": "40px" },
                             {
-                                "data": "CustomerReference", "title": "Customer Ref.",
-                                render: function (data, type, row) {
-                                    var url = '<a href= "\\SupplyChain\\WO\\Detail?Id=' + row["ID"] + '&custRef=' + row["CustomerReference"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
-
-                                    return url;
-                                }
+                                "data": "CustomerReference", "title": "Customer Ref."
                             },
-                            { "data": "ROCustomerReference", "title": "RO Customer Ref.", "width": "140px" },
+                            { "data": "ProgramID", "title": "ProgramID", "width": "40px" },
                             {
-                                "data": "PartNo", "title": "Part No.", "width": "120px",
-                                render: function (data, type, row) {
-                                    var url = '<a href= "\\ListingReports\\PartInquiry\\Detail?partNo=' + row["PartNo"] + '&ProgramId=' + row["ProgramID"] + '&page=list" target=_blank > ' + data + '</a>';
-                                    return url;
-                                }
+                                "data": "PartNo", "title": "Part No.", "width": "120px"
                             },
                             {
-                                "data": "SerialNo", "title": "Serial No.", "width": "120px",
-                                render: function (data, type, row) {
-                                    if (row["SerialNo"] == "*" || row["HAS_SN"] == 'N') {
-                                        url = row["SerialNo"];
-                                    }
-                                    else {
-                                        var url = '<a href= "\\ListingReports\\\PartsSerial\\Detail?serialNo=' + row["SerialNo"] + '&ProgramId=' + row["ProgramID"] + '&PartNo=' + row["PartNo"] + '&page=list" target=_blank > ' + data + '</a>';
-                            }
-                                           return url;
-                                }
+                                "data": "SerialNo", "title": "Serial No.", "width": "120px"
                             },
-                            { "data": "RepairType", "title": "Repair Type", "width": "170px" },
-                            { "data": "FamilyAttribute", "title": "Family", "width": "90px" },
-                            { "data": "WorkstationID", "title": "Workstation Id", "width": "90px", "visible": false  },
-                            { "data": "Workstation", "title": "Work Station", "width": "90px" },
-                            { "data": "Status", "title": "Status", "width": "80px" },
-                           // { "data": "OrderCode", "title": "Order Code", "width": "80px" },
-                           // { "data": "EngChgLevel", "title": "Eng Chg Lvl", "width": "80px" },
-                           // { "data": "OrgCode", "title": "Org Code", "width": "80px" },
-                           // { "data": "SubstitutePart", "title": "Subs. Part", "width": "120px" },
-                           // { "data": "SubstituteSerial", "title": "Subs. Serial", "width": "100px" },
-                            {
-                                "data": "QtyRequested", "title": "Requested", "width": "50px", "className": "text-right",
-
-                                render: function (data, type, row) {
-
-                                    var val = COLUMN_FORMAT.formatNumber(data);
-                                    return val;
-                                }
-                            },
-                            { "data": "QtyConsumed", "title": "Consumed", "width": "50px", "className": "text-right" },
-                            { "data": "CreatedBy", "title": "Created By", "width": "100px" },
-                            {
-                                "data": "CreatedOn", "title": "Created On", "width": "90px", "className": "text-right",
-
-                            },
-                            {
-                                "data": "LastActivityOn", "title": "Last Activity On", "width": "100px", "className": "text-right",
-
-                            }
+                            
+                            { "data": "RepairTypeID", "title": "Repair Type", "width": "170px" },
+                            { "data": "WorkStationIDPrevious", "title": "Workstation Id", "width": "90px"  },
+                            { "data": "WorkStationID", "title": "Work Station", "width": "90px" },
+                            { "data": "StatusID", "title": "Status", "width": "80px" },
+                            { "data": "BizTalkID", "title": "BizTalkID", "width": "80px" },
+                            { "data": "IsPass", "title": "IsPass", "width": "80px" },
+                            { "data": "DefaultLocationID", "title": "DefaultLocationID", "width": "100px" },
+                            { "data": "UserID", "title": "UserID", "width": "100px" },
+                            { "data": "CreateDate", "title": "Created On", "width": "90px", "className": "text-right" },
+                            { "data": "LastActivityDate", "title": "Last Activity On", "width": "100px", "className": "text-right" }
                         ]
 
 
 
                         ToggleDataList(true);
-                    //For Displaying  Footer Sum
-                    var footerfunc = function () {
-                        var api = this.api();
-                        //$(api.column(11).footer()).html(thousands_separators(api.column(11, { search: 'applied' }).data().sum()));
-                        $(api.column(12).footer()).html(thousands_separators(api.column(12, { search: 'applied' }).data().reduce(function (a, b) {
-                            return Number(a) + Number(b);
-                        }, 0)));
-                        $(api.column(13).footer()).html(thousands_separators(api.column(13, { search: 'applied' }).data().reduce(function (a, b) {
-                            return Number(a) + Number(b);
-                        }, 0, 2)));
-                    }
-                    MakeDataGrid('lstWO', data.lstWO, 0, columnDef, true, true, footerfunc);
+                   
+                    MakeDataGrid('lstWO', data.lstWO, 0, columnDef, true, true, false);
                     //}
                     if (data["ErrorMessage"] != null) {
                         $('.dataTables_empty > p').text(data["ErrorMessage"]);

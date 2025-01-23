@@ -14,12 +14,7 @@
     }
 </style>
 <table class="fullWidth" cellpadding="10" cellspacing="10">
-    <tr>
-        <td colspan="4" class="pad">
-            @Html.LabelFor(model => model.program, htmlAttributes: new { @class = "col-4 col-form-lable" })
-            @Html.DropDownList("ddProgram", null, new { id = "ddProgram", @name = "ddProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
-        </td>
-    </tr>
+    
 
     <tr>
         <td class="pad">
@@ -61,59 +56,13 @@
         </td>
 
     </tr>
-    @*<tr>
-            <td colspan="4" class="pad">
-                @Html.LabelFor(model => model.program_Id, htmlAttributes: new { @class = "col-4 col-form-lable" })
-                @Html.DropDownList("ddlProgram", null, new { id = "ddlProgram", @name = "ddlProgram", @class = "form-control", @onkeydown = "GoOnEnter()" })
-
-            </td>
-        </tr>*@
-    @*<tr>
-            <td colspan="4" class="pad">
-                @Html.LabelFor(model => model.statusId, htmlAttributes: new { @class = "col-4 col-form-lable" })
-                @Html.DropDownList("ddlStatus", null, new { id = "ddlStatus", @name = "ddlStatus", @class = "form-control", @onkeydown = "GoOnEnter()" })
-            </td>
-
-        </tr>*@
-    <tr>
-        <td class="pad" colspan="4">
-            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "form-label" })
-            <select id="lstStatus" multiple="multiple" class="multiselect form-control" name="options[]">
-                @{
-                    if (Model != null)
-                    {
-                        foreach (var item in Model.lstStatus)
-                        {
-                            <option value="@item[0]">@item[1]</option>
-                        }
-                    }
-                }
-            </select>
-        </td>
-    </tr>
+   
+    
 
 
 
 
-    <tr>
-        <td class="pad" colspan="4">
-            <div>
-                @Html.LabelFor(model => model.Repair, htmlAttributes: new { @class = "form-label" })
-                <select id="lstRepair" multiple="multiple" class="multiselect form-control " name="options[]">
-                    @{
-                        if (Model != null)
-                        {
-                            foreach (var item in Model.lstRepair)
-                            {
-                                <option value="@item[0]">@item[1]</option>
-                            }
-                        }
-                    }
-                </select>
-            </div>
-        </td>
-
-    </tr>
+    
 
     <tr>
         <td colspan="4" class="pad">
@@ -162,220 +111,8 @@
     </tr>
 </table>
 <script>
-    $(document).ready(function () {
-        $("#isAllDate").hide();
-        $("#lblisAllDate").hide();
-    });
+  
 
-    function EnableDisableAllDate(OpenWork) {
-        
-       var OpenWork = $('#ischecked3').is(':checked')
-
-        if (OpenWork === true) {
-            $("#isAllDate").show();
-            $("#lblisAllDate").show();
-            $("#isAllDate").prop("checked", true);
-            document.getElementById("fromDt").disabled = isAllDate;
-            var nodes1 = document.getElementById("fromDt").getElementsByTagName('*');
-            document.getElementById("toDt").disabled = isAllDate;
-            var nodes1 = document.getElementById("toDt").getElementsByTagName('*');
-            for (var i = 0; i < nodes1.length; i++) {
-                nodes1[i].disabled = isAllDate;
-            }
-        }
-        else if (OpenWork === false) {
-            $("#isAllDate").hide();
-            $("#lblisAllDate").hide();
-            document.getElementById("fromDt").disabled = false;
-            var nodes1 = document.getElementById("fromDt").getElementsByTagName('*');
-            document.getElementById("toDt").disabled = false;
-            var nodes1 = document.getElementById("toDt").getElementsByTagName('*');
-            for (var i = 0; i < nodes1.length; i++) {
-                nodes1[i].disabled = isSuccessed;
-            }
-        }
-
-    };
-
-
-    function EnableDisableOrdCreat_2(ischecked2) {
-
-        var ischecked2 = $('#ischecked2').is(':checked')
-
-        if (ischecked2 === true) {
-            $("#isAllDate").hide();
-            $("#lblisAllDate").hide();
-            document.getElementById("fromDt").disabled = false;
-            document.getElementById("toDt").disabled = false;
-        }
-
-    }
-
-        function EnableDisableOrdCreat_3(ischecked) {
-
-            var ischecked = $('#ischecked').is(':checked')
-
-            if (ischecked === true) {
-                $("#isAllDate").hide();
-                $("#lblisAllDate").hide();
-                document.getElementById("fromDt").disabled = false;
-                document.getElementById("toDt").disabled = false;
-            }
-
-
-        }
-
-    function isAllDate(isAllDate) {
-        $('#lblMsg').empty();
-        var isAllDate = $('#isAllDate').is(':checked');
-        document.getElementById("fromDt").disabled = isAllDate;
-        var nodes1 = document.getElementById("fromDt").getElementsByTagName('*');
-        document.getElementById("toDt").disabled = isAllDate;
-        var nodes1 = document.getElementById("toDt").getElementsByTagName('*');
-        for (var i = 0; i < nodes1.length; i++) {
-            nodes1[i].disabled = isAllDate;
-        }
-    };
-
-
-
-  //  $("#lstRepair option").length
-
-
-
- 
-
-
-        $('#ischecked2').change(function () {
-
-            //checkBoxVal = $("#ischecked2").is(":checked").val();
-
-            if ($(this).is(":checked")) {
-
-                //for repair units
-                $('#lstRepair').multiselect("deselectAll", false);
-                $('#lstRepair').multiselect("updateButtonText");
-                $("#lstRepair").multiselect("disable");
-                //for status repair
-                $('#lstStatus').multiselect("deselectAll", false);
-                $('#lstStatus').multiselect("updateButtonText");
-                $("#lstStatus").multiselect("disable");
-
-                $('#ischecked').prop("checked", false);
-                $('#ischecked2').prop("checked", true);
-                $('#ischecked3').prop("checked", false);
-
-                if ($(this).is(':checked')) {
-                    $('#button').prop('disabled', false);
-                } else {
-                    $('#button').prop('disabled', true);
-                }
-
-
-
-
-            }
-            else {
-                //for repair units
-                $('#ischecked').prop("checked", false);
-                $('#ischecked2').prop("checked", false);
-                $('#ischecked3').prop("checked", false);
-
-                $("#lstRepair").multiselect("enable");
-                $('#lstRepair').multiselect('selectAll', false);
-                $('#lstRepair').multiselect('updateButtonText');
-
-                //for status repair
-                $("#lstStatus").multiselect("enable");
-                $('#lstStatus').multiselect('selectAll', false);
-                $('#lstStatus').multiselect('updateButtonText');
-            }
-        });
-
-    // check for open work order
-
-    $('#ischecked3').change(function () {
-
-        //checkBoxVal = $("#ischecked2").is(":checked").val();
-
-        if ($(this).is(":checked")) {
-
-            //for repair units
-            $('#ischecked').prop("checked", false);
-            $('#ischecked2').prop("checked", false);
-            $('#ischecked3').prop("checked", true)
-
-            $('#lstRepair').multiselect("deselectAll", false);
-            $('#lstRepair').multiselect("updateButtonText");
-            $("#lstRepair").multiselect("disable");
-            //$('#lstRepair').multiselect("deselectAll", false);
-            //$('#lstRepair').multiselect("updateButtonText");
-            //$("#lstRepair").multiselect("disable");
-            //for status repair
-            $('#lstStatus').multiselect("deselectAll", false);
-            $('#lstStatus').multiselect("updateButtonText");
-            $("#lstStatus").multiselect("disable");
-
-            $('#ischecked').prop("checked", false);
-
-        }
-        else {
-            //for repair units
-            $('#ischecked').prop("checked", false);
-            $('#ischecked2').prop("checked", false);
-            $('#ischecked3').prop("checked", false)
-            $("#lstRepair").multiselect("enable");
-            $('#lstRepair').multiselect('selectAll', false);
-            $('#lstRepair').multiselect('updateButtonText');
-
-            //for status repair
-            $("#lstStatus").multiselect("enable");
-            $('#lstStatus').multiselect('selectAll', false);
-            $('#lstStatus').multiselect('updateButtonText');
-        }
-    });
-
-
-
-
-
-
-    $('#ischecked').change(function () {
-
-        if ($(this).is(":checked")) {
-
-
-
-            $("#lstRepair").multiselect("enable");
-            $('#lstRepair').multiselect('selectAll', false);
-            $('#lstRepair').multiselect('updateButtonText');
-
-            //for status repair
-            $("#lstStatus").multiselect("enable");
-            $('#lstStatus').multiselect('selectAll', false);
-            $('#lstStatus').multiselect('updateButtonText');
-            $('#ischecked2').prop("checked", false);
-        }
-    });
-
-
-    $('#ischecked').change(function () {
-
-        if ($(this).is(":checked")) {
-
-
-
-            $("#lstRepair").multiselect("enable");
-            $('#lstRepair').multiselect('selectAll', false);
-            $('#lstRepair').multiselect('updateButtonText');
-
-            //for status repair
-            $("#lstStatus").multiselect("enable");
-            $('#lstStatus').multiselect('selectAll', false);
-            $('#lstStatus').multiselect('updateButtonText');
-            $('#ischecked3').prop("checked", false);
-        }
-    });
 
     $('#option').on('shown.bs.modal', function () {
         
@@ -390,113 +127,7 @@
     $("#dtpTo, #dtpFrom").mouseover(function () {
         $(this).css('cursor', 'pointer');
     });
-    // For Multiple Status
-    selectedParts = '';
-
-    $('#lstStatus').multiselect({
-        includeSelectAllOption: true,
-        selectAllText: 'All',
-        buttonWidth: '100%',
-        maxHeight: 300,
-        enableFiltering: true,
-        enableCaseInsensitiveFiltering: true,
-        filterPlaceholder: 'Search',
-        numberDisplayed: 1,
-        templates: {
-            ul: '<ul class="multiselect-container dropdown-menu" style="-ms-overflow-x: hidden; -ms-overflow-y: auto; max-height: 300px; width:100%;">"'
-        },
-
-        buttonText: function (options, select) {
-            if (options.length == 0) {
-                return 'select from list';
-            }
-            else {
-                if (options.prevObject.length == options.length) {
-                    selectedParts = 'All';
-                } else {
-                    selectedParts = '';
-                    options.each(function () {
-                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
-                        selectedParts += "'" + label + "', ";
-                    });
-                    selectedParts = selectedParts.substr(0, selectedParts.length - 2);
-                }
-
-
-
-                if (options.length > this.numberDisplayed) {
-                    return options.length + ' ' + this.nSelectedText;
-                }
-                else {
-                    var selected = '';
-                    options.each(function () {
-                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
-                        selected += label + ", ";
-                    });
-                    return selected.substr(0, selected.length - 2);
-                }
-            }
-        }
-    });
-
-
-
-    $('#lstStatus').multiselect('selectAll', false);
-    $("#lstStatus").multiselect('updateButtonText');
-
-    // For Multiple Repairs
-    selectedPart = '';
-
-    $('#lstRepair').multiselect({
-        includeSelectAllOption: true,
-        selectAllText: 'All',
-        buttonWidth: '100%',
-        maxHeight: 200,
-        enableFiltering: true,
-        enableCaseInsensitiveFiltering: true,
-        filterPlaceholder: 'Search',
-        numberDisplayed: 1,
-        templates: {
-            ul: '<ul class="multiselect-container dropdown-menu" style="-ms-overflow-x: hidden; -ms-overflow-y: auto; max-height: 300px; width:100%;">"'
-        },
-
-        buttonText: function (options, select) {
-            if (options.length == 0) {
-                return 'select from list';
-            }
-            else {
-                if (options.prevObject.length == options.length) {
-                    selectedPart = 'All';
-                } else {
-                    selectedPart = '';
-                    options.each(function () {
-                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
-                        selectedPart += "'" + label + "', ";
-                    });
-                    selectedPart = selectedPart.substr(0, selectedPart.length - 2);
-                }
-
-
-
-                if (options.length > this.numberDisplayed) {
-                    return options.length + ' ' + this.nSelectedText;
-                }
-                else {
-                    var selected = '';
-                    options.each(function () {
-                        var label = ($(this).attr('text') !== undefined) ? $(this).attr('text') : $(this).html();
-                        selected += label + ", ";
-                    });
-                    return selected.substr(0, selected.length - 2);
-                }
-            }
-        }
-    });
-
-
-
-    $('#lstRepair').multiselect('selectAll', false);
-    $("#lstRepair").multiselect('updateButtonText');
+    
     //For Date Picker
     dateFrom();
     dateTo();
@@ -548,17 +179,7 @@
         return true;
     }
 
-    $(document).ready(function () {
-
-
-        $("#lstStatus").change(function () {
-            $('#lblMsg').empty();
-        });
-        $("#lstRepair").change(function () {
-            $('#lblMsg').empty();
-        });
-
-    });
+    
 
     function GoOnEnter() {
         if (event.keyCode == 13) {
@@ -580,26 +201,11 @@
         $('#lblMsg').empty();
         var fDate = $('#fromDt').val();
         var tDate = $('#toDt').val();
-        var custRef = $('#custRef').val();
-        //var program_Id = $('#ddlProgram option:selected').text();
-        var status = $('#lstStatus option:selected').text();
-        var Repair = $('#lstRepair option:selected').text();
-        //var  = $('#lstRepair option:selected').text();
+     
         var ischecked2 = $('#ischecked2').is(':checked');
         var ischecked3 = $('#ischecked3').is(':checked');
-        if (status == "" && ischecked2 == false && ischecked3 == false) {
-            $('#lblMsg').append('Please select status from list');
-            return false;
-        }
-
-        else if (Repair == "" && ischecked2 == false && ischecked3 == false ) {
-            $('#lblMsg').append('Please select Repair from list');
-            return false;
-        }
-        else {
-            $('#lblMsg').empty();
-            return true;
-        }
+       
+        
 
         //var ischecked = $('#ischecked').is(':checked');
 
@@ -607,38 +213,11 @@
             $('#lblMsg').append('Enter a valid date');
             return false;
         }
-        else {
-            $('#lblMsg').empty();
-            return true;
-        }
-        //for status
-        if (status == null) {
-            $('#lblMsg').empty();
-            $('#lblMsg').append('Something went wrong! Reopen Option Page');
-            return false;
-        }
-        if (status == 'No Data Available') {
-            $('#lblMsg').empty();
-            $('#lblMsg').append('Select Status ');
-            return false;
-        }
+      
+       
 
-        else {
-            $('#lblMsg').empty();
-            return true;
-        }
-        //for Repair
-        if (Repair == null) {
-            $('#lblMsg').empty();
-            $('#lblMsg').append('Something went wrong! Reopen Option Page');
-            return false;
-        }
-        if (Repair == 'No Data Available') {
-            $('#lblMsg').empty();
-            $('#lblMsg').append('Select Repair');
-            return false;
-        }
-
+        
+        
         else {
             $('#lblMsg').empty();
             return true;
@@ -652,33 +231,20 @@
         var tDate = $('#toDt').val();
         var isAllDate = $('#isAllDate').is(':checked');
         var custRef = $('#custRef').val();
-        var programId = $('#ddProgram').val();
-
-        var ProgramName = $('#ddProgram option:selected').text();
-        //var program_Id = $('#ddlProgram option:selected').text();
-
-        var status = $('#lstStatus option:selected').text();
-        var statusid = $('#lstStatus option:selected').val();
-
-        var Repair = $('#lstRepair option:selected').text();
-        var RepairTypeID = $('#lstRepair option:selected').val();
+        
 
         var ischecked = $('#ischecked').is(':checked');
         var ischecked2 = $('#ischecked2').is(':checked');
         var ischecked3 = $('#ischecked3').is(':checked');
         $('#option').modal('hide');
 
-        if (ischecked2 == true) {
+  
 
-            OpenPage('\\SupplyChain\\WO\\repairedUnits?statusId=' + statusid + '&Repair=' + Repair + '&RepairTypeID=' + RepairTypeID + '&Option=' + 'op' + '&frmDt=' + fDate + ' &toDate=' + tDate + ' &custRef=' + custRef + '&status=' + status + '&ProgramID=' + programId + '&ProgramName=' + ProgramName + '&ischecked2=' + ischecked2 + ProgramName + '&type=' + '' +  '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
+            OpenPage('\\SupplyChain\\WO\\Index?Option=' + 'op' + '&frmDt=' + fDate + ' &toDate=' + tDate + ' &custRef=' + custRef + '&ischecked2=' + ischecked2 + '' +  '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
 
-        }
+        
 
-        else {
-
-            OpenPage('\\SupplyChain\\WO\\Index?statusId=' + statusid + '&Repair=' + Repair + '&RepairTypeID=' + RepairTypeID + '&Option=' + 'op' + '&frmDt=' + fDate + ' &toDate=' + tDate + '&isAllDate=' + isAllDate + ' &custRef=' + custRef + '&status=' + status + '&ProgramID=' + programId + '&ProgramName=' + ProgramName +  '&ischecked3=' + ischecked3 + ProgramName + '&ischecked=' + ischecked + '&type=' + '' +  '&menuTitle=' + $('.modal-header').html() + '&rptCode=' + '@Request.QueryString["rptCode"]')
-
-        }
+       
 
     }
 </script>

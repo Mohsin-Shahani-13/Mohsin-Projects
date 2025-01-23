@@ -88,6 +88,46 @@ namespace IP.Controllers
                 response["widget_count_count"] = oModel.widget_count_count;
                 response["widget_count_report_URL"] = oModel.widget_count_report_URL;
             }
+            else if (widget_type.ToLower() == "doughnut")
+            {
+                oModel.Get_Doughnut_Chart_Widget(widget_id);
+                response["chart_data"] = oModel.chart_data;
+                response["chart_title"] = oModel.chart_title;
+                response["widget_count_count"] = oModel.widget_count_count;
+
+                // Include percentage values if needed
+                if (oModel.chart_data.ContainsKey("percentage_values"))
+                {
+                    response["percentage_values"] = oModel.chart_data["percentage_values"];
+                }
+            }
+            else if (widget_type.ToLower() == "bar")
+            {
+                oModel.Get_Bar_Chart_Widget(widget_id);
+                response["chart_data"] = oModel.chart_data;
+                response["chart_title"] = oModel.chart_title;
+                response["widget_count_count"] = oModel.widget_count_count;
+
+                // Include percentage values if needed
+                if (oModel.chart_data.ContainsKey("percentage_values"))
+                {
+                    response["percentage_values"] = oModel.chart_data["percentage_values"];
+                }
+            }
+
+            else if (widget_type.ToLower() == "line")
+            {
+                oModel.Get_Line_Chart_Widget(widget_id);
+                response["chart_data"] = oModel.chart_data;
+                response["chart_title"] = oModel.chart_title;
+                response["widget_count_count"] = oModel.widget_count_count;
+
+                // Include percentage values if needed
+                if (oModel.chart_data.ContainsKey("percentage_values"))
+                {
+                    response["percentage_values"] = oModel.chart_data["percentage_values"];
+                }
+            }
             else if (widget_type.ToLower() == "count_group")
             {
                 oModel.Get_Group_Counts_Widget(widget_id);

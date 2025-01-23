@@ -318,6 +318,385 @@ namespace IP.Models
             chart_data["labels"] = x;
             chart_data["datasets"] = data_sets;
         }
+
+        public void Get_Doughnut_Chart_Widget(string widget_id)
+        {
+            cDAL portal_db = new cDAL("ACTIVE");
+
+            // Query to get widget details
+            string query = "SELECT WidgetTitle, WidgetQuery, ColumnFormat, BackgroundColor, ConType FROM IP.Widgets WHERE WidgetId = " + widget_id;
+            DataTable dtWidget = portal_db.GetData(query);
+
+            // Check if widget details are found
+            if (dtWidget.Rows.Count == 0)
+            {
+                chart_data = new Dictionary<string, object>
+                {
+                    ["labels"] = new string[] { "No Data" },
+                    ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#cccccc" } } }
+                };
+                chart_title = "No Data Available";
+                return;
+            }
+
+            // Query to get the actual data for the chart
+            query = dtWidget.Rows[0]["WidgetQuery"].ToString();
+            query = change_query_params(query);
+          
+           
+
+            string connection_type = dtWidget.Rows[0]["ConType"].ToString();
+            cDAL widget_db = get_widget_connection(connection_type.ToUpper());
+            DataTable dt = widget_db.GetData(query);
+
+            // Check if data is returned
+            if (dt.Rows.Count > 0)
+            {
+                // Get the chart title from the widget details
+                chart_title = dtWidget.Rows[0]["WidgetTitle"].ToString();
+
+                // Prepare data for doughnut chart
+                chart_data = new Dictionary<string, object>();
+
+                // Labels and colors
+                string[] headers = dtWidget.Rows[0]["ColumnFormat"].ToString().Split(',');
+                string[] back_color = dtWidget.Rows[0]["BackgroundColor"].ToString().Split(',');
+
+                // Ensure correct number of headers and colors
+                if (headers.Length != back_color.Length)
+                {
+                    chart_data = new Dictionary<string, object>
+                    {
+                        ["labels"] = new string[] { "Invalid Configuration" },
+                        ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#ff0000" } } }
+                    };
+                    chart_title = "Configuration Error";
+                    return;
+                }
+
+                // Prepare a single dataset for the doughnut chart
+                List<double> data_values = new List<double>();
+                List<string> data_colors = new List<string>();
+                List<string> status_labels = new List<string>(); // To store status labels
+
+                double totalQuantity = 0; // To calculate total quantity for percentage
+
+                // First loop to calculate total quantity
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i].Table.Columns.Contains("Quantity"))
+                    {
+                        totalQuantity += Convert.ToDouble(dt.Rows[i]["Quantity"]);
+                    }
+                }
+
+                // Second loop to populate chart data
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    // Ensure "Quantity" and "Status" columns exist
+                    if (dt.Rows[i].Table.Columns.Contains("Quantity") && dt.Rows[i].Table.Columns.Contains("Status"))
+                    {
+                        // Add the value for the doughnut slice (Quantity)
+                        double quantity = Convert.ToDouble(dt.Rows[i]["Quantity"]);
+                        data_values.Add(quantity);
+
+                        // Add the background color for this slice
+                        if (i < back_color.Length)
+                        {
+                            data_colors.Add(back_color[i]);
+                        }
+
+                        // Add the status as label
+                        status_labels.Add(dt.Rows[i]["Status"].ToString());
+                    }
+                }
+
+                // Calculate percentages
+                List<double> percentage_values = new List<double>();
+                for (int i = 0; i < data_values.Count; i++)
+                {
+                    double percentage = (totalQuantity > 0) ? (data_values[i] / totalQuantity) * 100 : 0; // Avoid division by zero
+                    percentage_values.Add(percentage);
+                }
+
+                // Populate chart data with a single dataset
+                chart_data["labels"] = status_labels.ToArray(); // Use Status as labels
+                chart_data["datasets"] = new List<object>
+        {
+            new
+            {
+                data = data_values.ToArray(), // Add all the data values (Quantity)
+                backgroundColor = data_colors.ToArray() // Add all the corresponding colors
+            }
+        };
+
+              
+            }
+            else
+            {
+                // Set default values if no data
+                chart_data = new Dictionary<string, object>
+                {
+                    ["labels"] = new string[] { "No Data" },
+                    ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#2860a5" } } }
+                };
+                chart_title = "No Data Available";
+            }
+        }
+
+
+        public void Get_Bar_Chart_Widget(string widget_id)
+        {
+            cDAL portal_db = new cDAL("ACTIVE");
+
+            // Query to get widget details
+            string query = "SELECT WidgetTitle, WidgetQuery, ColumnFormat, BackgroundColor, ConType FROM IP.Widgets WHERE WidgetId = " + widget_id;
+            DataTable dtWidget = portal_db.GetData(query);
+
+            // Check if widget details are found
+            if (dtWidget.Rows.Count == 0)
+            {
+                chart_data = new Dictionary<string, object>
+                {
+                    ["labels"] = new string[] { "No Data" },
+                    ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#cccccc" } } }
+                };
+                chart_title = "No Data Available";
+                return;
+            }
+
+            // Query to get the actual data for the chart
+            query = dtWidget.Rows[0]["WidgetQuery"].ToString();
+            query = change_query_params(query);
+            //query = query.Replace("<programid>", "10034"); // Replace with your actual program ID
+            query = query.Replace("<programId>", HttpContext.Current.Session["ProgramId"].ToString());
+
+            string connection_type = dtWidget.Rows[0]["ConType"].ToString();
+            cDAL widget_db = get_widget_connection(connection_type.ToUpper());
+            DataTable dt = widget_db.GetData(query);
+
+            // Check if data is returned
+            if (dt.Rows.Count > 0)
+            {
+                // Get the chart title from the widget details
+                chart_title = dtWidget.Rows[0]["WidgetTitle"].ToString();
+
+                // Prepare data for doughnut chart
+                chart_data = new Dictionary<string, object>();
+
+                // Labels and colors
+                string[] headers = dtWidget.Rows[0]["ColumnFormat"].ToString().Split(',');
+                string[] back_color = dtWidget.Rows[0]["BackgroundColor"].ToString().Split(',');
+
+                // Ensure correct number of headers and colors
+                if (headers.Length != back_color.Length)
+                {
+                    chart_data = new Dictionary<string, object>
+                    {
+                        ["labels"] = new string[] { "Invalid Configuration" },
+                        ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#ff0000" } } }
+                    };
+                    chart_title = "Configuration Error";
+                    return;
+                }
+
+                // Prepare a single dataset for the doughnut chart
+                List<double> data_values = new List<double>();
+                List<string> data_colors = new List<string>();
+                List<string> status_labels = new List<string>(); // To store status labels
+
+                double totalQuantity = 0; // To calculate total quantity for percentage
+
+                // First loop to calculate total quantity
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i].Table.Columns.Contains("Quantity"))
+                    {
+                        totalQuantity += Convert.ToDouble(dt.Rows[i]["Quantity"]);
+                    }
+                }
+
+                // Second loop to populate chart data
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    // Ensure "Quantity" and "Status" columns exist
+                    if (dt.Rows[i].Table.Columns.Contains("Quantity") && dt.Rows[i].Table.Columns.Contains("Status"))
+                    {
+                        // Add the value for the doughnut slice (Quantity)
+                        double quantity = Convert.ToDouble(dt.Rows[i]["Quantity"]);
+                        data_values.Add(quantity);
+
+                        // Add the background color for this slice
+                        if (i < back_color.Length)
+                        {
+                            data_colors.Add(back_color[i]);
+                        }
+
+                        // Add the status as label
+                        status_labels.Add(dt.Rows[i]["Status"].ToString());
+                    }
+                }
+
+                // Calculate percentages
+                List<double> percentage_values = new List<double>();
+                for (int i = 0; i < data_values.Count; i++)
+                {
+                    double percentage = (totalQuantity > 0) ? (data_values[i] / totalQuantity) * 100 : 0; // Avoid division by zero
+                    percentage_values.Add(percentage);
+                }
+
+                // Populate chart data with a single dataset
+                chart_data["labels"] = status_labels.ToArray(); // Use Status as labels
+                chart_data["datasets"] = new List<object>
+        {
+            new
+            {
+                data = data_values.ToArray(), // Add all the data values (Quantity)
+                backgroundColor = data_colors.ToArray() // Add all the corresponding colors
+            }
+        };
+
+                // Include the percentage values for further use if needed
+                chart_data["percentage_values"] = percentage_values.ToArray(); // Pass percentages if needed in the response
+            }
+            else
+            {
+                // Set default values if no data
+                chart_data = new Dictionary<string, object>
+                {
+                    ["labels"] = new string[] { "No Data" },
+                    ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#2860a5" } } }
+                };
+                chart_title = "No Data Available";
+            }
+        }
+
+        public void Get_Line_Chart_Widget(string widget_id)
+        {
+            cDAL portal_db = new cDAL("ACTIVE");
+
+            // Query to get widget details
+            string query = "SELECT WidgetTitle, WidgetQuery, ColumnFormat, BackgroundColor, ConType FROM IP.Widgets WHERE WidgetId = " + widget_id;
+            DataTable dtWidget = portal_db.GetData(query);
+
+            // Check if widget details are found
+            if (dtWidget.Rows.Count == 0)
+            {
+                chart_data = new Dictionary<string, object>
+                {
+                    ["labels"] = new string[] { "No Data" },
+                    ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#cccccc" } } }
+                };
+                chart_title = "No Data Available";
+                return;
+            }
+
+            // Query to get the actual data for the chart
+            query = dtWidget.Rows[0]["WidgetQuery"].ToString();
+            query = change_query_params(query);
+            //query = query.Replace("<programid>", "10034"); // Replace with your actual program ID
+            query = query.Replace("<programId>", HttpContext.Current.Session["ProgramId"].ToString());
+
+            string connection_type = dtWidget.Rows[0]["ConType"].ToString();
+            cDAL widget_db = get_widget_connection(connection_type.ToUpper());
+            DataTable dt = widget_db.GetData(query);
+
+            // Check if data is returned
+            if (dt.Rows.Count > 0)
+            {
+                // Get the chart title from the widget details
+                chart_title = dtWidget.Rows[0]["WidgetTitle"].ToString();
+
+                // Prepare data for doughnut chart
+                chart_data = new Dictionary<string, object>();
+
+                // Labels and colors
+                string[] headers = dtWidget.Rows[0]["ColumnFormat"].ToString().Split(',');
+                string[] back_color = dtWidget.Rows[0]["BackgroundColor"].ToString().Split(',');
+
+                // Ensure correct number of headers and colors
+                if (headers.Length != back_color.Length)
+                {
+                    chart_data = new Dictionary<string, object>
+                    {
+                        ["labels"] = new string[] { "Invalid Configuration" },
+                        ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#ff0000" } } }
+                    };
+                    chart_title = "Configuration Error";
+                    return;
+                }
+
+                // Prepare a single dataset for the doughnut chart
+                List<double> data_values = new List<double>();
+                List<string> data_colors = new List<string>();
+                List<string> status_labels = new List<string>(); // To store status labels
+
+                double totalQuantity = 0; // To calculate total quantity for percentage
+
+                // First loop to calculate total quantity
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i].Table.Columns.Contains("Quantity"))
+                    {
+                        totalQuantity += Convert.ToDouble(dt.Rows[i]["Quantity"]);
+                    }
+                }
+
+                // Second loop to populate chart data
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    // Ensure "Quantity" and "Status" columns exist
+                    if (dt.Rows[i].Table.Columns.Contains("Quantity") && dt.Rows[i].Table.Columns.Contains("Status"))
+                    {
+                        // Add the value for the doughnut slice (Quantity)
+                        double quantity = Convert.ToDouble(dt.Rows[i]["Quantity"]);
+                        data_values.Add(quantity);
+
+                        // Add the background color for this slice
+                        if (i < back_color.Length)
+                        {
+                            data_colors.Add(back_color[i]);
+                        }
+
+                        // Add the status as label
+                        status_labels.Add(dt.Rows[i]["Status"].ToString());
+                    }
+                }
+
+                // Calculate percentages
+                List<double> percentage_values = new List<double>();
+                for (int i = 0; i < data_values.Count; i++)
+                {
+                    double percentage = (totalQuantity > 0) ? (data_values[i] / totalQuantity) * 100 : 0; // Avoid division by zero
+                    percentage_values.Add(percentage);
+                }
+
+                // Populate chart data with a single dataset
+                chart_data["labels"] = status_labels.ToArray(); // Use Status as labels
+                chart_data["datasets"] = new List<object>
+        {
+            new
+            {
+                data = data_values.ToArray(), // Add all the data values (Quantity)
+                backgroundColor = data_colors.ToArray() // Add all the corresponding colors
+            }
+        };
+
+                // Include the percentage values for further use if needed
+                chart_data["percentage_values"] = percentage_values.ToArray(); // Pass percentages if needed in the response
+            }
+            else
+            {
+                // Set default values if no data
+                chart_data = new Dictionary<string, object>
+                {
+                    ["labels"] = new string[] { "No Data" },
+                    ["datasets"] = new List<object> { new { data = new[] { 0 }, backgroundColor = new[] { "#2860a5" } } }
+                };
+                chart_title = "No Data Available";
+            }
+        }
+
         public void Get_Stack_Chart_Widget(string widget_id)
         {
             cDAL portal_db = new cDAL("INIT");
